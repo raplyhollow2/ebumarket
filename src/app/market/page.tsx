@@ -2,7 +2,7 @@ import Link from "next/link";
 import { TeenShell } from "@/components/layout/teen-shell";
 import { StatusBadge } from "@/components/status-badge";
 import { createClient } from "@/lib/supabase/server";
-import { formatMoney } from "@/lib/format";
+import { formatMoney, DEFAULT_CURRENCY } from "@/lib/format";
 import type { ListingWithPhotos } from "@/lib/types";
 import { RequireAuthLink } from "@/components/auth/require-auth-link";
 

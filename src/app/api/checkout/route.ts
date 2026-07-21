@@ -68,7 +68,7 @@ export async function POST(req: Request) {
         {
           quantity: 1,
           price_data: {
-            currency: (listing.currency || "usd").toLowerCase(),
+            currency: (listing.currency || "btn").toLowerCase(),
             unit_amount: total,
             product_data: { name: listing.title },
           },

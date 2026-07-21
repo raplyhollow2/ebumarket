@@ -35,6 +35,7 @@ export type Profile = {
   display_name: string;
   role: UserRole;
   is_organization: boolean;
+  can_approve: boolean;
   area: string;
   preferred_payment: PaymentMethod | null;
   created_at: string;

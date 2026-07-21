@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { createClient } from "@/lib/supabase/client";
-import { formatMoney, platformFeeCents } from "@/lib/format";
+import { formatMoney, platformFeeCents, DEFAULT_CURRENCY } from "@/lib/format";
 import type { MeetupPoint, PaymentMethod } from "@/lib/types";
 import { AuthSheet } from "@/components/auth/auth-sheet";
 
@@ -31,7 +31,8 @@ export function BuySheet({
   listingId,
   sellerId,
   itemPriceCents,
-  currency,
+  currency = DEFAULT_CURRENCY,
+  feePercent = 5,
   isAuthed,
   meetups,
   preferredPayment,
@@ -41,7 +42,8 @@ export function BuySheet({
   listingId: string;
   sellerId: string;
   itemPriceCents: number;
-  currency: string;
+  currency?: string;
+  feePercent?: number;
   isAuthed: boolean;
   meetups: MeetupPoint[];
   preferredPayment: PaymentMethod | null;
@@ -54,7 +56,10 @@ export function BuySheet({
   );
   const [meetupId, setMeetupId] = useState(meetups[0]?.id ?? "");
   const [newMeetup, setNewMeetup] = useState("");
-  const fee = useMemo(() => platformFeeCents(itemPriceCents), [itemPriceCents]);
+  const fee = useMemo(
+    () => platformFeeCents(itemPriceCents, feePercent),
+    [itemPriceCents, feePercent],
+  );
   const total = itemPriceCents + fee;
 
   function confirm() {

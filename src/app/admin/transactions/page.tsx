@@ -10,27 +10,19 @@ import {
 } from "@/components/ui/table";
 import { StatusBadge } from "@/components/status-badge";
 import { createClient } from "@/lib/supabase/server";
-import { formatMoney } from "@/lib/format";
-import type { Profile } from "@/lib/types";
+import { formatMoney, DEFAULT_CURRENCY } from "@/lib/format";
+import { getViewerAccess } from "@/lib/settings";
 
 export default async function AdminTransactionsPage() {
+  const { user, isAdmin, canApprove } = await getViewerAccess();
+  if (!user) redirect("/admin");
+  if (!isAdmin && !canApprove) redirect("/admin");
+
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect("/");
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
-    .single();
-  if (!profile || (profile as Profile).role !== "admin") redirect("/admin");
-
   const { data: rows } = await supabase
     .from("transactions")
     .select(
-      "id, payment_method, status, total_cents, currency:listings(currency, title), created_at",
+      "id, payment_method, status, total_cents, created_at, listings(currency, title)",
     )
     .order("created_at", { ascending: false })
     .limit(100);
@@ -41,9 +33,16 @@ export default async function AdminTransactionsPage() {
         <h1 className="font-[family-name:var(--font-display)] text-3xl font-semibold">
           Transactions
         </h1>
-        <Link href="/admin" className="text-sm underline">
-          Queue
-        </Link>
+        <div className="flex gap-3 text-sm">
+          <Link href="/admin" className="underline">
+            Approval
+          </Link>
+          {isAdmin ? (
+            <Link href="/admin/settings" className="underline">
+              Settings
+            </Link>
+          ) : null}
+        </div>
       </div>
       <div className="overflow-hidden rounded-xl bg-card ring-1 ring-border/70">
         <Table>
@@ -57,7 +56,7 @@ export default async function AdminTransactionsPage() {
           </TableHeader>
           <TableBody>
             {(rows ?? []).map((r) => {
-              const listing = r.currency as unknown as {
+              const listing = r.listings as unknown as {
                 title?: string;
                 currency?: string;
               } | null;
@@ -69,7 +68,10 @@ export default async function AdminTransactionsPage() {
                     <StatusBadge status={r.status} />
                   </TableCell>
                   <TableCell className="text-right">
-                    {formatMoney(r.total_cents, listing?.currency ?? "USD")}
+                    {formatMoney(
+                      r.total_cents,
+                      listing?.currency ?? DEFAULT_CURRENCY,
+                    )}
                   </TableCell>
                 </TableRow>
               );

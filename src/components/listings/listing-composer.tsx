@@ -97,6 +97,7 @@ export function ListingComposer({
           size,
           condition,
           price_cents: priceCents,
+          currency: "BTN",
           status: "pending",
         })
         .select("id")
@@ -212,13 +213,13 @@ export function ListingComposer({
         </div>
         {type === "marketplace" && (
           <div className="space-y-1.5">
-            <Label htmlFor="price">Price (USD)</Label>
+            <Label htmlFor="price">Price (BTN / Nu.)</Label>
             <Input
               id="price"
               inputMode="decimal"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
-              placeholder="20"
+              placeholder="500"
             />
           </div>
         )}

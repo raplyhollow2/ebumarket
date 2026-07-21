@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { TeenShell } from "@/components/layout/teen-shell";
 import { MarketDetailClient } from "@/components/listings/market-detail-client";
 import { createClient } from "@/lib/supabase/server";
+import { getAppSettings } from "@/lib/settings";
+import { DEFAULT_CURRENCY } from "@/lib/format";
 import type { ListingWithPhotos, MeetupPoint, Profile } from "@/lib/types";
 
 export default async function MarketDetailPage({
@@ -12,6 +14,7 @@ export default async function MarketDetailPage({
 }) {
   const { id } = await params;
   const supabase = await createClient();
+  const settings = await getAppSettings();
   const { data, error } = await supabase
     .from("listings")
     .select("*, listing_photos(*), profiles:seller_id(display_name, area)")
@@ -19,7 +22,10 @@ export default async function MarketDetailPage({
     .maybeSingle();
 
   if (error || !data) notFound();
-  const listing = data as ListingWithPhotos;
+  const listing = {
+    ...(data as ListingWithPhotos),
+    currency: (data as ListingWithPhotos).currency || settings.currency || DEFAULT_CURRENCY,
+  };
 
   const {
     data: { user },
@@ -55,6 +61,7 @@ export default async function MarketDetailPage({
           isAuthed={Boolean(user)}
           meetups={meetups}
           preferredPayment={preferredPayment}
+          feePercent={settings.platformFeePercent}
         />
       </div>
     </TeenShell>

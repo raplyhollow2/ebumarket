@@ -58,7 +58,8 @@ Open [http://localhost:3000](http://localhost:3000).
 | Alex (admin) | alex@example.com | zyra-demo-alex |
 | Ebu (admin) | ebu@zyra.com | test123 |
 
-Admin approval queue: `/admin`
+Admin approval queue: `/admin`  
+Admin settings (currency, users, approvers): `/admin/settings`
 
 ## Env notes
 
