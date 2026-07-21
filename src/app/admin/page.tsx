@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { AdminQueueClient } from "@/app/admin/admin-queue-client";
+import { AdminLoginGate } from "@/app/admin/admin-login-gate";
 import { createClient } from "@/lib/supabase/server";
 import type { ListingWithPhotos, Profile } from "@/lib/types";
 
@@ -9,7 +9,10 @@ export default async function AdminPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) redirect("/");
+
+  if (!user) {
+    return <AdminLoginGate />;
+  }
 
   const { data: profile } = await supabase
     .from("profiles")
@@ -20,9 +23,15 @@ export default async function AdminPage() {
   if (!profile || (profile as Profile).role !== "admin") {
     return (
       <div className="mx-auto max-w-lg px-4 py-10">
-        <h1 className="text-2xl font-semibold">Admin</h1>
+        <h1 className="font-[family-name:var(--font-display)] text-3xl font-semibold">
+          Admin approval
+        </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Your account is not an admin. Seed Alex or promote a profile via SQL.
+          You&apos;re logged in, but this account is not an admin.
+        </p>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Use <span className="font-medium">ebu@zyra.com</span> or ask to be
+          promoted.
         </p>
         <Link href="/" className="mt-4 inline-block text-sm underline">
           Back home
@@ -42,10 +51,11 @@ export default async function AdminPage() {
       <div className="mb-6 flex items-center justify-between gap-3">
         <div>
           <h1 className="font-[family-name:var(--font-display)] text-3xl font-semibold">
-            Verification
+            Approval queue
           </h1>
           <p className="text-sm text-muted-foreground">
-            Pending {(listings ?? []).length}
+            Review photos, then Verify or Reject. Pending:{" "}
+            {(listings ?? []).length}
           </p>
         </div>
         <div className="flex gap-3 text-sm">
