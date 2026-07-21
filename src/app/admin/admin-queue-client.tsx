@@ -16,6 +16,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { createClient } from "@/lib/supabase/client";
+import { formatMoney, DEFAULT_CURRENCY } from "@/lib/format";
 import type { ListingWithPhotos } from "@/lib/types";
 
 export function AdminQueueClient({
@@ -120,7 +121,9 @@ export function AdminQueueClient({
               <p className="font-medium">{l.title}</p>
               <p className="text-xs text-muted-foreground">
                 {l.type} · {l.size} · {l.condition}
-                {l.price_cents != null ? ` · $${(l.price_cents / 100).toFixed(2)}` : " · Free"}
+                {l.price_cents != null
+                  ? ` · ${formatMoney(l.price_cents, l.currency || DEFAULT_CURRENCY)}`
+                  : " · Free"}
               </p>
             </div>
             <div className="mt-3 flex gap-2">

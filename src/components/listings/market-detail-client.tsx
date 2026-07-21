@@ -12,11 +12,13 @@ export function MarketDetailClient({
   isAuthed,
   meetups,
   preferredPayment,
+  feePercent = 5,
 }: {
   listing: ListingWithPhotos;
   isAuthed: boolean;
   meetups: MeetupPoint[];
   preferredPayment: PaymentMethod | null;
+  feePercent?: number;
 }) {
   const [open, setOpen] = useState(false);
   const photos = [...(listing.listing_photos ?? [])].sort(
@@ -80,6 +82,7 @@ export function MarketDetailClient({
             sellerId={listing.seller_id}
             itemPriceCents={listing.price_cents}
             currency={listing.currency}
+            feePercent={feePercent}
             isAuthed={isAuthed}
             meetups={meetups}
             preferredPayment={preferredPayment}

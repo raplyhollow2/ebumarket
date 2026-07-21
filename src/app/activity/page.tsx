@@ -39,7 +39,7 @@ export default async function ActivityPage() {
     await Promise.all([
       supabase
         .from("transactions")
-        .select("id, status, payment_method, total_cents, listings(title)")
+        .select("id, status, payment_method, total_cents, listings(title, currency)")
         .eq("buyer_id", user.id)
         .order("created_at", { ascending: false }),
       supabase

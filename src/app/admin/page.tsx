@@ -2,36 +2,28 @@ import Link from "next/link";
 import { AdminQueueClient } from "@/app/admin/admin-queue-client";
 import { AdminLoginGate } from "@/app/admin/admin-login-gate";
 import { createClient } from "@/lib/supabase/server";
-import type { ListingWithPhotos, Profile } from "@/lib/types";
+import { getViewerAccess } from "@/lib/settings";
+import type { ListingWithPhotos } from "@/lib/types";
 
 export default async function AdminPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { user, isAdmin, canApprove } = await getViewerAccess();
 
   if (!user) {
     return <AdminLoginGate />;
   }
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
-    .single();
-
-  if (!profile || (profile as Profile).role !== "admin") {
+  if (!canApprove) {
     return (
       <div className="mx-auto max-w-lg px-4 py-10">
         <h1 className="font-[family-name:var(--font-display)] text-3xl font-semibold">
-          Admin approval
+          Approval queue
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          You&apos;re logged in, but this account is not an admin.
+          You&apos;re logged in, but you don&apos;t have approval access.
         </p>
         <p className="mt-1 text-sm text-muted-foreground">
-          Use <span className="font-medium">ebu@zyra.com</span> or ask to be
-          promoted.
+          Ask an admin to enable <span className="font-medium">can approve</span>{" "}
+          for your account in Settings.
         </p>
         <Link href="/" className="mt-4 inline-block text-sm underline">
           Back home
@@ -40,6 +32,7 @@ export default async function AdminPage() {
     );
   }
 
+  const supabase = await createClient();
   const { data: listings } = await supabase
     .from("listings")
     .select("*, listing_photos(*)")
@@ -58,10 +51,15 @@ export default async function AdminPage() {
             {(listings ?? []).length}
           </p>
         </div>
-        <div className="flex gap-3 text-sm">
+        <div className="flex flex-wrap gap-3 text-sm">
           <Link href="/admin/transactions" className="underline">
             Transactions
           </Link>
+          {isAdmin ? (
+            <Link href="/admin/settings" className="underline">
+              Settings
+            </Link>
+          ) : null}
           <Link href="/" className="underline">
             App
           </Link>

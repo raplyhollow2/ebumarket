@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/status-badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { createClient } from "@/lib/supabase/client";
-import { formatMoney, statusLabel } from "@/lib/format";
+import { formatMoney, statusLabel, DEFAULT_CURRENCY } from "@/lib/format";
 import type { Listing, DonationClaim } from "@/lib/types";
 
 type Tx = {
@@ -15,7 +15,7 @@ type Tx = {
   status: string;
   payment_method: string;
   total_cents: number;
-  listings: { title: string } | null;
+  listings: { title: string; currency?: string } | null;
 };
 
 type ClaimRow = DonationClaim & {
@@ -85,7 +85,7 @@ export function ActivityClient({
             key={`t-${t.id}`}
             title={t.listings?.title ?? "Purchase"}
             status={t.status}
-            meta={`${t.payment_method.toUpperCase()} · ${formatMoney(t.total_cents)}`}
+            meta={`${t.payment_method.toUpperCase()} · ${formatMoney(t.total_cents, t.listings?.currency || DEFAULT_CURRENCY)}`}
           />
         ))}
         {claims.map((c) => (
@@ -120,7 +120,7 @@ export function ActivityClient({
             key={t.id}
             title={t.listings?.title ?? "Purchase"}
             status={t.status}
-            meta={`${t.payment_method.toUpperCase()} · ${formatMoney(t.total_cents)}`}
+            meta={`${t.payment_method.toUpperCase()} · ${formatMoney(t.total_cents, t.listings?.currency || DEFAULT_CURRENCY)}`}
           />
         ))}
       </TabsContent>
