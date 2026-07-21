@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,8 @@ export function ProfileClient({
   const [displayName, setDisplayName] = useState(profile.display_name);
   const [area, setArea] = useState(profile.area);
   const [label, setLabel] = useState("");
+  const canApprove =
+    profile.role === "admin" || Boolean(profile.can_approve);
 
   function saveProfile() {
     startTransition(async () => {
@@ -77,10 +80,28 @@ export function ProfileClient({
 
   return (
     <div className="space-y-6">
+      {canApprove ? (
+        <Link
+          href="/admin"
+          className="flex items-center justify-between rounded-2xl bg-primary px-4 py-3 text-primary-foreground"
+        >
+          <div>
+            <p className="font-medium">Approval queue</p>
+            <p className="text-xs text-primary-foreground/80">
+              Review pending marketplace & donation listings
+            </p>
+          </div>
+          <span aria-hidden>→</span>
+        </Link>
+      ) : null}
+
       <div className="space-y-3">
         <div className="space-y-1.5">
           <Label>Display name</Label>
-          <Input value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
+          <Input
+            value={displayName}
+            onChange={(e) => setDisplayName(e.target.value)}
+          />
         </div>
         <div className="space-y-1.5">
           <Label>Area</Label>
@@ -123,7 +144,12 @@ export function ProfileClient({
         </div>
       </div>
 
-      <Button variant="outline" className="w-full" disabled={pending} onClick={logout}>
+      <Button
+        variant="outline"
+        className="w-full"
+        disabled={pending}
+        onClick={logout}
+      >
         Log out
       </Button>
     </div>
