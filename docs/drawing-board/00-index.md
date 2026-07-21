@@ -45,8 +45,11 @@ docs/
 | Cores | Marketplace (paid) + Donation Hub (free) |
 | Trust | Listings start **Pending Verification**; go live when admin verifies |
 | Age gate | **13+ confirmation** on signup; short under-16 parental note in copy |
-| Payments | COD **or** Online via **Stripe test mode** (live DB rows + webhooks) |
-| Fee | **Configurable %** (`PLATFORM_FEE_PERCENT`); always shown in breakdown |
+| Payments | Buyer pays **platform** (COD meetup or Stripe test); seller claims payout |
+| Fee | Default **5%** (`PLATFORM_FEE_PERCENT` / admin); platform keeps fee, seller gets item price |
+| Split | Ledger: `fee_cents` · `seller_payout_cents` · `payout_status` (claim → paid out) |
+| Profiles | Public `/profile/[id]` for buyers & sellers; linked from listings & Activity |
+| Buy requests | Always routed to listing `seller_id` in Activity (accept / decline / claim) |
 | Meetup | COD requires a **saved meetup point** (inline quick-add if missing) |
 | Org claimers | Same account + `is_organization` flag |
 | Photos | Fixed required angles: Front / Back / Tag / Defect + “Add more” |
