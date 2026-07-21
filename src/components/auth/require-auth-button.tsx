@@ -38,6 +38,7 @@ export function RequireAuthButton({
         open={open}
         onOpenChange={setOpen}
         onSuccess={onAuthedClick}
+        initialMode="login"
       />
     </>
   );

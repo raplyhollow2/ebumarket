@@ -56,8 +56,9 @@ Open [http://localhost:3000](http://localhost:3000).
 | Jordan (buyer) | jordan@example.com | zyra-demo-jordan |
 | Sam (donor) | sam@example.com | zyra-demo-sam |
 | Alex (admin) | alex@example.com | zyra-demo-alex |
+| Ebu (admin) | ebu@zyra.com | test123 |
 
-Admin queue: `/admin`
+Admin approval queue: `/admin`
 
 ## Env notes
 
