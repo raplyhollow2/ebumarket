@@ -5,6 +5,10 @@ import { createClient } from "@/lib/supabase/server";
 import { getViewerAccess } from "@/lib/settings";
 import type { ListingWithPhotos } from "@/lib/types";
 
+type QueueItem = ListingWithPhotos & {
+  profiles?: { display_name: string; area: string } | null;
+};
+
 export default async function AdminPage() {
   const { user, isAdmin, canApprove } = await getViewerAccess();
 
@@ -33,21 +37,29 @@ export default async function AdminPage() {
   }
 
   const supabase = await createClient();
-  const { data: listings } = await supabase
-    .from("listings")
-    .select("*, listing_photos(*)")
-    .eq("status", "pending")
-    .order("created_at", { ascending: true });
+  const [{ data: listings }, { data: history }] = await Promise.all([
+    supabase
+      .from("listings")
+      .select("*, listing_photos(*), profiles:seller_id(display_name, area)")
+      .eq("status", "pending")
+      .order("created_at", { ascending: true }),
+    supabase
+      .from("listings")
+      .select("*, listing_photos(*), profiles:seller_id(display_name, area)")
+      .in("status", ["verified", "rejected"])
+      .order("updated_at", { ascending: false })
+      .limit(30),
+  ]);
 
   return (
     <div className="mx-auto min-h-dvh max-w-3xl px-4 py-6">
       <div className="mb-6 flex items-center justify-between gap-3">
         <div>
           <h1 className="font-[family-name:var(--font-display)] text-3xl font-semibold">
-            Approval queue
+            Approval
           </h1>
           <p className="text-sm text-muted-foreground">
-            Review photos, then Verify or Reject. Pending:{" "}
+            Review photos, then Approve or Reject. Pending:{" "}
             {(listings ?? []).length}
           </p>
         </div>
@@ -66,7 +78,8 @@ export default async function AdminPage() {
         </div>
       </div>
       <AdminQueueClient
-        listings={(listings ?? []) as ListingWithPhotos[]}
+        listings={(listings ?? []) as QueueItem[]}
+        history={(history ?? []) as QueueItem[]}
         adminId={user.id}
       />
     </div>
