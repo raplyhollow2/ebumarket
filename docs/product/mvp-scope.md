@@ -1,74 +1,77 @@
 # MVP Scope
 
-Prototype goal: **interactive web MVP** for usability testing — not production launch.
+Goal: **interactive web MVP on live Supabase data** for usability testing — not a client-only mock.
 
 ## In scope
 
 ### Accounts & profile
 
-- Sign up / log in (simple auth; local or mock OK)  
-- Profile with display name  
-- Location (general area) + meetup points CRUD  
+- Supabase Auth sign up / log in (Auth Sheet)  
+- Profile: display name, area, meetup points CRUD  
+- Roles: `user` | `admin`; `is_organization` flag  
 
 ### Marketplace
 
-- Create listing: title, category, size, condition, price, description  
-- Multi-angle photo upload (required set + optional extras)  
+- Single-screen sell composer (details + required photo angles + price)  
+- Uploads → Supabase Storage + `listing_photos`  
 - Listing enters **pending**; public Market shows **verified** only  
-- Item detail: carousel, **Pending / Verified** badge, price breakdown  
-- Buy path: COD or Online (online = simulated)  
-- Activity: my listings + my transactions  
+- Detail + Buy Sheet: COD or Stripe test online; fee breakdown  
+- Activity: live listings + transactions  
 
 ### Donation Hub
 
-- Create donation listing (photos + basic details, price = free)  
-- Browse + detail  
-- Claim/request flow with message + contact + pickup preference  
-- Donor sees incoming requests (approve/decline minimal)  
+- Single-screen donate composer  
+- Browse + Claim Sheet  
+- Donor approve/decline claims in Activity  
+- Same verification queue as marketplace  
 
 ### Admin
 
-- Verification queue with photo review  
-- Approve → verified / Reject → reason  
-- Transactions & item status overview  
+- Inline verification queue (Approve / Reject + reason)  
+- Transactions DataTable  
+- Audit events on verify/reject  
 
-### UX shell
+### Platform
 
-- Mobile-friendly layout  
-- Bottom nav for teen app surfaces  
-- Seed/demo data for testing sessions  
+- Next.js + TypeScript + Tailwind + **shadcn/ui**  
+- All reads/writes against **Supabase Postgres**  
+- Seed script into live DB for research personas  
+- Mobile-friendly teen shell + admin layout  
 
 ## Out of scope (MVP)
 
-- Real payment processor / payouts  
+- Production Stripe live mode / payouts / KYC  
 - Shipping labels & logistics  
-- Push notifications / email provider (in-app toasts enough)  
-- Advanced search/recommendations  
-- Full messaging/chat product  
+- Push / email provider (in-app toasts enough)  
+- Advanced search / recommendations  
+- Full messaging / chat product  
 - Native mobile apps  
-- Complex org verification KYC  
+- Complex org KYC  
 
-## Prototype fidelity
+## Fidelity
 
 | Layer | Approach |
 | --- | --- |
-| UI | Clean, teen-friendly; enough polish for trust testing |
-| Data | Client store + seed JSON, or lightweight backend |
-| Auth | Simple session; role switcher helpful for research (User / Admin) |
-| Photos | File input → local preview / object URLs |
+| UI | shadcn + teen-friendly polish for trust testing |
+| Data | **Live Supabase only** (seed = bootstrap) |
+| Auth | Supabase Auth + real admin seed user |
+| Photos | Supabase Storage |
+| Payments | Stripe **test mode** + webhooks |
 
-## Build slices (implementation order)
+## Build slices
 
-1. Shell + auth + profile/location  
-2. Marketplace list/detail + sell + pending states  
-3. Admin verify queue  
-4. Checkout COD/online + breakdown  
-5. Donation hub + claims  
-6. Activity + admin transactions board  
-7. Seed data + research role switcher  
+1. Supabase link + migrations + RLS + seed  
+2. Shell + Auth Sheet + profile/meetups  
+3. Market browse/detail + sell composer + pending  
+4. Admin inline verify  
+5. Buy Sheet + COD + Stripe test  
+6. Donation composer + claim Sheet  
+7. Activity + admin transactions  
 
-## Acceptance for “ready to test”
+## Acceptance — ready to test
 
-- Facilitator can run the 5 scripted tasks in [flows/user-flows.md](../flows/user-flows.md) without broken paths  
-- Badges and price breakdown visible without hunting  
-- Works on a phone-width viewport
+- Facilitator runs T1–T5 in [user-flows.md](../flows/user-flows.md) on **live** data  
+- Second browser/user sees verified items and activity updates without refresh hacks beyond normal revalidation  
+- Badges + price breakdown visible without hunting  
+- Phone-width viewport works  
+- No dependency on localStorage as database  

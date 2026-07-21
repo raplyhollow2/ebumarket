@@ -33,10 +33,11 @@
 ## 5. Alex — Zyra admin (team)
 
 - **Need:** Queue of pending listings with photos; approve/reject; see transaction status  
-- **Success:** Clear queue, one-tap verify, audit of what’s live vs pending  
+- **Success:** Clear queue, one-tap verify on live pending rows; audit of what’s live vs pending  
 
 ## Shared teen constraints
 
-- Short attention; large tap targets  
+- Short attention; large tap targets; **minimize steps** (composers + sheets)  
 - Location privacy: general area + meetup points, not exact home address by default  
-- Trust cues must be explicit (badge + short explanation)
+- Trust cues must be explicit (badge + short explanation)  
+- Multi-user reality: what they submit is what admins and others see in Supabase

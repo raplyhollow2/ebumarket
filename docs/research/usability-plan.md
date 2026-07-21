@@ -5,23 +5,24 @@
 1. Can teens complete sell → verify → buy without facilitator rescue?  
 2. Do users **notice** and correctly **interpret** Pending vs Verified badges?  
 3. Is payment method choice + price breakdown clear before commit?  
-4. Is Donation Hub claim flow understandable for teens and “org” role?  
-5. Where do users hesitate, mis-tap, or abandon?
+4. Is Donation Hub claim flow understandable for teens and org flag?  
+5. Where do users hesitate, mis-tap, or abandon?  
+6. Do low-friction patterns (composer / Buy Sheet) feel faster than expected marketplaces?
 
 ## Method
 
-- **Moderated** usability sessions (remote or in-person), phone or narrow browser  
+- **Moderated** usability sessions, phone or narrow browser  
 - Think-aloud  
-- Post-task ratings (SEQ) + short trust Likert  
-- Optional: capture event log from prototype  
+- Post-task SEQ + short trust Likert  
+- Optional: event log from live app  
 
-**Suggested sample:** 5–8 teens (mix of buyers/sellers intent) + 1–2 team members running admin path.
+**Sample:** 5–8 teens + 1–2 team members on admin path (Alex seed account).
 
 ## Session outline (~30–40 min)
 
 | Block | Time | Activity |
 | --- | --- | --- |
-| Intro | 5m | Consent, context: “prototype, not real money” |
+| Intro | 5m | Consent; “Stripe test / not real money” |
 | Tasks | 20m | Scripted tasks below |
 | Debrief | 10m | Trust + preference questions |
 
@@ -29,47 +30,46 @@
 
 | ID | Task | Success |
 | --- | --- | --- |
-| T1 | Create account and add one meetup point | Meetup saved on profile |
-| T2 | List a marketplace item with all required photo angles | Status Pending |
-| T3 | (Admin) Verify that listing | Item appears in Market as Verified |
-| T4 | Buy the item with COD; explain total before confirm | Correct method + can state total |
-| T5 | List or claim a donation | Request or listing created |
+| T1 | Create account and add one meetup point | Rows in `profiles` + `meetup_points` |
+| T2 | List a marketplace item with all required photo angles | Listing `pending` in Supabase |
+| T3 | (Admin Alex) Verify that listing | Item appears in Market as Verified |
+| T4 | Buy with COD; explain total before confirm | Correct method + can state total; `transactions` row |
+| T5 | List or claim a donation | Claim or listing created live |
 
-Facilitator may switch roles via prototype role switcher.
+Use **real seeded accounts** (Maya / Jordan / Sam / Alex). Do not use a fake client-only role switcher.
 
 ## Measures
 
 ### Behavioral
 
-- Task completion (yes/no)  
-- Time on task  
-- Errors / wrong paths  
+- Task completion, time on task, errors  
 - Whether badge was mentioned unprompted  
+- Taps to complete sell submit / buy confirm  
 
-### Self-report (examples)
+### Self-report
 
-- SEQ: “How easy was that task?” (1–7)  
+- SEQ (1–7)  
 - Trust: “I would trust buying a Verified by Zyra item” (1–5)  
-- Clarity: “I understood what Pending Verification means” (1–5)  
+- Clarity: “I understood Pending Verification” (1–5)  
 - Preference: Market vs Donate ease  
 
-### Engagement proxies (prototype events)
+### Engagement proxies
 
 - Funnels: start_sell → submit_listing; view_item → select_payment → confirm  
 - Donation: view → claim submit  
 
 ## What we will change after research
 
-Prioritize fixes that block trust or completion:
-
 1. Badge wording/placement  
-2. Sell photo step friction  
+2. Sell photo friction  
 3. Checkout breakdown comprehension  
 4. Donation claim language (teen vs org)  
+5. Sheet vs page affordances  
 
 ## Facilitator checklist
 
-- [ ] Seed data reset between participants  
+- [ ] Re-seed / reset Supabase demo data between participants  
 - [ ] Phone-width viewport  
 - [ ] Note exact quotes on trust  
+- [ ] Stripe test mode keys configured  
 - [ ] Export event log if enabled  

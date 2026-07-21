@@ -1,29 +1,31 @@
 # Requirements Traceability
 
-Maps the original project brief to drawing-board docs and MVP inclusion.
+Maps the project brief to drawing-board docs and MVP inclusion.
 
 | Brief requirement | Doc(s) | MVP |
 | --- | --- | --- |
-| Sign-up / login for teens | personas, flows A, wireframes 2, mvp-scope | Yes |
-| Location / meetup points | flows A, wireframes 3, IA | Yes |
-| Multi-angle photo upload | flows B, wireframes 6, trust checklist | Yes (fixed 4 angles + more) |
+| Sign-up / login for teens | personas, flows A, wireframes Auth Sheet, mvp-scope | Yes — Supabase Auth |
+| Location / meetup points | flows A, wireframes Profile, data-model | Yes — live `meetup_points` |
+| Multi-angle photo upload | flows B, wireframes Sell composer, trust checklist | Yes — Storage + fixed 4 angles |
 | Pending before live | trust-and-verification, flows B/E | Yes |
-| Admin badge Pending vs Verified by Zyra | trust-and-verification, wireframes 5 | Yes |
-| COD vs Online payment | flows C, trust payments, wireframes 5 | Yes (online simulated) |
-| Price / fee breakdown | trust-and-verification, wireframes 5 | Yes |
-| Donation listings | flows D, wireframes 8, mvp-scope | Yes |
-| Claim / request donations | flows D, wireframes 9 | Yes |
-| Admin review/approve listings | flows E, wireframes 10 | Yes |
-| Admin track transactions/statuses | wireframes 11, mvp-scope | Yes |
-| Mobile-friendly teen UI | vision principles, wireframes, mvp-scope | Yes (shell) |
-| Usability / trust research ready | usability-plan, mvp acceptance | Yes (goal of prototype) |
+| Admin badge Pending vs Verified by Zyra | trust-and-verification, ui-system | Yes |
+| COD vs Online payment | flows C, trust payments, tech-sketch | Yes — COD + Stripe test |
+| Price / fee breakdown | trust-and-verification, Buy Sheet | Yes — % fee always shown |
+| Donation listings | flows D, wireframes, mvp-scope | Yes |
+| Claim / request donations | flows D, Claim Sheet | Yes |
+| Admin review/approve listings | flows E, inline queue wireframe | Yes |
+| Admin track transactions/statuses | wireframes Admin tx, data-model | Yes |
+| Mobile-friendly teen UI | vision, ui-system, wireframes | Yes — shadcn shell |
+| Usability / trust research ready | usability-plan, mvp acceptance | Yes |
+| Live multi-user data | tech-sketch, data-model, mvp-scope | Yes — Supabase only |
+| Low-friction UX | interaction-principles, IA, flows | Yes — composers + sheets |
 
-## Proposed defaults (need team confirm)
-
-See open questions in [00-index.md](./00-index.md). Current drawing-board defaults:
+## Locked defaults
 
 1. Required photo angles: Front, Back, Tag, Defect/close-up  
 2. Donations use the **same** verification queue  
-3. Platform fee shown explicitly (amount configurable; can be zero for tests)  
-4. Online pay is **mocked** for the research prototype  
-5. Org claimers = same account type with org flag / self-describe in claim form  
+3. Platform fee = configurable **percent**; always shown  
+4. Online pay = **Stripe test mode** (live rows + webhooks)  
+5. Org claimers = same account + `is_organization`  
+6. Age = **13+** checkbox + under-16 parental note  
+7. Stack = Next.js + shadcn + Supabase (project `ynnmfnoxxwtpiiwrnpup`)  

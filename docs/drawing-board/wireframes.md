@@ -1,16 +1,16 @@
 # Wireframes (Low-Fidelity)
 
-ASCII layouts for structure only. Not final visual design.
+Structure only. Implementation uses **shadcn** Sheets, Badges, Forms — see [ui-system.md](../product/ui-system.md).
 
-Conventions: `[ ]` button · `( )` input · `{badge}` status · `···` scroll
+Conventions: `[ ]` button · `( )` input · `{badge}` · `···` scroll
 
 ---
 
-## 1. Welcome / Home (first viewport)
+## 1. Home (first viewport)
 
 ```text
 ┌─────────────────────────────┐
-│  ZYRA                       │  ← brand as hero signal
+│  ZYRA                       │  ← brand as hero
 │  Clothes that get           │
 │  a second life.             │
 │                             │
@@ -20,50 +20,35 @@ Conventions: `[ ]` button · `( )` input · `{badge}` status · `···` scroll
 │  [ Shop Market ]            │
 │  [ Donate / Claim ]         │
 │                             │
-│  ═══════════════════════    │  ← full-bleed fashion visual plane
-│  (atmosphere: real clothes) │
+│  ═══════════════════════    │  ← full-bleed fashion visual
 └─────────────────────────────┘
 Tab: Home · Market · Donate · Activity · Profile
 ```
 
-**Budget:** brand, one headline, one support line, one CTA group, one dominant visual. No stats row.
+Budget: brand, one headline, one support line, one CTA group, one dominant visual.
 
 ---
 
-## 2. Sign up
+## 2. Auth Sheet (moment of need)
 
 ```text
 ┌─────────────────────────────┐
-│  Create your Zyra           │
+│  Create your Zyra      [x]  │
 │  (display name)             │
-│  (email / username)         │
+│  (email)                    │
 │  (password)                 │
 │  [ ] I confirm I’m 13+      │
-│  [ Sign up ]                │
-│  Log in link                │
+│  Note: under 16 — ask a     │
+│  parent/guardian if unsure  │
+│  (area / neighborhood)      │
+│  (meetup spot optional)     │
+│  [ Sign up ]  Log in        │
 └─────────────────────────────┘
 ```
 
 ---
 
-## 3. Location & meetup points
-
-```text
-┌─────────────────────────────┐
-│  Your area                  │
-│  (City / neighborhood)      │
-│                             │
-│  Meetup spots (optional)    │
-│  • Mall food court    [x]   │
-│  • Library steps      [x]   │
-│  (+ Add spot)               │
-│  [ Save ]                   │
-└─────────────────────────────┘
-```
-
----
-
-## 4. Market browse
+## 3. Market browse
 
 ```text
 ┌─────────────────────────────┐
@@ -71,79 +56,64 @@ Tab: Home · Market · Donate · Activity · Profile
 │  Filter: size · category    │
 │  ┌────┐ ┌────┐              │
 │  │pic │ │pic │              │
-│  │$12 │ │$8  │              │
-│  │{V} │ │{V} │              │
+│  │$12 │ │$8  │  {V}         │
 │  └────┘ └────┘              │
 │  [ + Sell an item ]         │
 └─────────────────────────────┘
 ```
 
-`{V}` = Verified by Zyra (only live items shown to buyers).
+Only **verified** items. `{V}` = Verified by Zyra.
 
 ---
 
-## 5. Item detail (marketplace)
+## 4. Item detail + Buy Sheet
 
 ```text
 ┌─────────────────────────────┐
 │  ←  Photo carousel ···      │
-│  angles: Front Back Tag …   │
-│                             │
 │  Denim jacket               │
 │  {Verified by Zyra}         │
-│  Size M · Good condition    │
-│  Meetup area: Northside     │
-│                             │
+│  Size M · Good · Northside  │
+│  [ Buy ]                    │
+└─────────────────────────────┘
+
+Buy Sheet (slides up):
+┌─────────────────────────────┐
 │  Price breakdown            │
 │  Item          $20.00       │
 │  Platform fee   $1.00       │
 │  Total         $21.00       │
-│                             │
-│  Pay with:                  │
-│  (•) Cash on Delivery       │
-│  ( ) Online Transaction     │
-│  [ Continue ]               │
+│  (•) COD  ( ) Online        │
+│  Meetup: Mall food court ▾  │
+│  [ Confirm ]                │
 └─────────────────────────────┘
 ```
 
-Pending (seller view only):
-
-```text
-│  {Pending Verification}     │
-│  Buyers can’t see this yet. │
-```
+Online → Stripe Checkout (test); return to Activity with live status.
 
 ---
 
-## 6. Sell flow — photos
+## 5. Sell composer (single screen)
 
 ```text
 ┌─────────────────────────────┐
-│  Photos (required angles)   │
-│  [Front ] [Back  ]          │
-│  [Tag   ] [Defect]          │
-│  (+ More photos)            │
-│  [ Continue ]               │
+│  Sell an item               │
+│  (title) (category) (size)  │
+│  (condition) (price)        │
+│  (description)              │
+│  Photos (required)          │
+│  [Front] [Back] [Tag] [Def] │
+│  (+ More)                   │
+│  ···                        │
+│  [ Submit for verification ]│  ← sticky
 └─────────────────────────────┘
 ```
 
----
-
-## 7. Sell — submitted
-
-```text
-┌─────────────────────────────┐
-│  Sent for verification      │
-│  {Pending Verification}     │
-│  We’ll notify you when      │
-│  it’s Verified by Zyra.     │
-│  [ Back to Activity ]       │
-└─────────────────────────────┘
-```
+Success → toast + Activity shows `{Pending Verification}`.
 
 ---
 
-## 8. Donation Hub browse
+## 6. Donation browse + Claim Sheet
 
 ```text
 ┌─────────────────────────────┐
@@ -154,60 +124,84 @@ Pending (seller view only):
 │  └────┘ └────┘              │
 │  [ List a donation ]        │
 └─────────────────────────────┘
+
+Claim Sheet:
+│  (message) (contact)        │
+│  (pickup preference)        │
+│  [ ] Claiming as org        │
+│  [ Send request ]           │
 ```
+
+Donate composer mirrors sell (no price).
 
 ---
 
-## 9. Claim / request
+## 7. Activity (unified)
 
 ```text
 ┌─────────────────────────────┐
-│  Request this donation      │
-│  (Who are you? teen / org)  │
-│  (Message)                  │
-│  (Contact)                  │
-│  (Preferred pickup)         │
-│  [ Send request ]           │
+│  Activity                   │
+│  [ All ] [ Selling ] [ Buys ]│
+│  [ Claims ]                 │
+│  • Jacket  {Pending}        │
+│  • Hoodie  {Verified}       │
+│  • Buy COD {Requested}      │
+│  • Claim   {Approve?}       │
 └─────────────────────────────┘
 ```
 
 ---
 
-## 10. Admin — verification queue
+## 8. Profile + meetups
+
+```text
+┌─────────────────────────────┐
+│  Profile                    │
+│  Display name · area        │
+│  Meetup spots               │
+│  • Mall food court    [x]   │
+│  (+ Add spot)               │
+│  [ Log out ]                │
+└─────────────────────────────┘
+```
+
+---
+
+## 9. Admin — inline queue
 
 ```text
 ┌─────────────────────────────┐
 │  Admin · Verification       │
 │  Pending (12)               │
-│  • Denim jacket  Maya  [>]  │
-│  • Hoodie        Sam   [>]  │
-└─────────────────────────────┘
-
-Detail:
-│  All angles grid            │
-│  Listing fields             │
-│  [ Verify ]  [ Reject ]     │
-│  (rejection note)              │
+│  ┌───────────────────────┐  │
+│  │ thumbs: F B T D       │  │
+│  │ Denim jacket · Maya   │  │
+│  │ [ Verify ] [ Reject ] │  │
+│  └───────────────────────┘  │
+│  ··· next rows              │
 └─────────────────────────────┘
 ```
 
+Reject → AlertDialog for reason. No mandatory detail page for approve.
+
 ---
 
-## 11. Admin — transactions board
+## 10. Admin — transactions
 
 ```text
 ┌─────────────────────────────┐
 │  Transactions               │
 │  Filter: all / COD / online │
-│  Item · parties · method ·  │
-│  status · total             │
+│  DataTable: item · parties  │
+│  method · status · total    │
 └─────────────────────────────┘
 ```
 
 ---
 
-## Prototype notes
+## Notes
 
-- Prefer stacked single-column mobile layouts; desktop = same structure, wider max-width  
-- Cards only where they wrap a tappable listing tile (browse grids)  
-- Verification badge always adjacent to title on item detail
+- Stacked mobile layouts; desktop = wider max-width, same structure  
+- Cards only for tappable listing tiles  
+- Badge adjacent to title on detail  
+- All actions persist to Supabase (see [data-model.md](../product/data-model.md))

@@ -1,124 +1,99 @@
 # User Flows
 
-Flows are written for the usability-test prototype. Happy paths first; edge cases noted briefly.
+Happy paths for the live-data MVP. Designed for **fewer clicks** — see [interaction-principles.md](../drawing-board/interaction-principles.md).
 
 ---
 
-## A. Sign up & location setup
+## A. Sign up (one pass)
 
 ```mermaid
 flowchart LR
-  A[Welcome] --> B[Sign up]
-  B --> C[Create account]
-  C --> D[Location setup]
-  D --> E[Optional meetup points]
-  E --> F[Home]
+  Browse[Browse as guest] --> Action[Sell Buy or Claim]
+  Action --> AuthSheet[Auth Sheet]
+  AuthSheet --> Profile[Name credentials 13+ area meetup optional]
+  Profile --> Continue[Continue original action]
 ```
 
 **Steps**
 
-1. User opens Zyra → Welcome  
-2. Sign up: display name, email/username, password, age confirmation  
-3. Prompt: “Where do you usually meet?” → city/area + optional named meetup pins (e.g. “Mall food court”, “Library steps”)  
-4. Land on Home  
+1. Guest browses freely.  
+2. Protected action opens Auth Sheet.  
+3. Sign up: display name, email, password, **13+** checkbox, short under-16 parental note, area, optional first meetup.  
+4. `profiles` + optional `meetup_points` written to Supabase; continue the interrupted action.
 
-**Edge:** Skip meetup points → remind later from Profile / before first COD sale.
+**Edge:** Skip meetup → allowed; COD later opens inline quick-add.
 
 ---
 
-## B. Sell on marketplace (with verification)
+## B. Sell (single composer → pending)
 
 ```mermaid
 flowchart TD
-  A[Market / Sell CTA] --> B[Item details]
-  B --> C[Multi-angle photos]
-  C --> D[Price + condition]
-  D --> E[Review submit]
-  E --> F[Status: Pending Verification]
-  F --> G{Admin}
-  G -->|Approve| H[Verified — live]
-  G -->|Reject| I[Rejected + reason]
+  A[Sell CTA] --> B[Composer: details + photo slots + price]
+  B --> C[Submit]
+  C --> D[listing status pending in Supabase]
+  D --> E{Admin}
+  E -->|Approve| F[verified — live in Market]
+  E -->|Reject| G[rejected + reason — edit resubmit]
 ```
 
-**Photo angles (recommended fixed set for MVP)**
+**Photo angles (required):** Front, Back, Tag, Defect — each slot uploads to Supabase Storage + `listing_photos`.
 
-| Angle | Why |
-| --- | --- |
-| Front | Primary look |
-| Back | Completeness |
-| Tag / label | Brand/size authenticity |
-| Close-up / defect | Trust on condition |
+**Seller sees:** Pending badge in Activity; not visible in public Market.
 
-Allow “Add more” after the required set.
-
-**Seller sees:** badge “Pending Verification — not visible to buyers yet.”
+**Click target:** one Submit after fill.
 
 ---
 
-## C. Buy (COD or Online)
+## C. Buy (Sheet on detail)
 
 ```mermaid
 flowchart TD
-  A[Browse Market] --> B[Open verified item]
-  B --> C[View photos + badge]
-  C --> D[Price breakdown]
-  D --> E{Payment method}
-  E -->|COD| F[Confirm meetup preference]
-  E -->|Online| G[Mock online checkout]
-  F --> H[Request sent]
-  G --> H
-  H --> I[Activity: transaction status]
+  A[Open verified item] --> B[Buy Sheet]
+  B --> C[Price breakdown + COD or Online]
+  C --> D{Method}
+  D -->|COD| E[Meetup prefilled or quick-add]
+  D -->|Online| F[Stripe Checkout test mode]
+  E --> G[transactions row live]
+  F --> H[Webhook updates transaction status]
+  G --> I[Activity]
+  H --> I
 ```
 
-**Price breakdown (always shown before confirm)**
+**Price breakdown (always):** item · platform fee · **total** · method.
 
-- Item price  
-- Platform fee (if any; show even if ₱0 / $0 for research clarity)  
-- **Total**  
-- Short note: COD = pay at meetup; Online = pay now (simulated)
+**Click target:** ≤2 taps when logged in with meetup saved.
 
 ---
 
-## D. Donate & claim
+## D. Donate / claim
 
-```mermaid
-flowchart TD
-  A[Donation Hub] --> B[List donation]
-  B --> C[Photos + basic details]
-  C --> D[Published or Pending*]
-  D --> E[Browse donations]
-  E --> F[Claim / Request]
-  F --> G[Donor reviews claim]
-  G --> H[Arrange pickup]
-```
+**List donation:** same single-composer pattern; `price_cents` null; enters **pending** verification (same queue).
 
-\*MVP choice: donations can skip photo verification **or** share the same queue (simpler trust story if same queue). Default proposal: **same pending queue** for consistency; light review for free items.
+**Claim:** Sheet on detail — message, contact, pickup preference, org self-describe if needed → `donation_claims` row. Donor approves/declines from Activity.
 
 ---
 
-## E. Admin verification
+## E. Admin verify (inline)
 
 ```mermaid
 flowchart LR
-  A[Queue list] --> B[Open listing]
-  B --> C[Review all angles]
-  C --> D{Decision}
-  D -->|Verify| E[Live + Verified by Zyra]
-  D -->|Reject| F[Notify seller + reason]
+  Q[Queue row + photo strip] --> A[Approve]
+  Q --> R[Reject + reason AlertDialog]
+  A --> V[status verified + audit_events]
+  R --> X[status rejected + reason]
 ```
 
-Also: transactions board — filter by status (requested, completed, cancelled).
+**Click target:** Approve = 1 tap from queue.
 
 ---
 
-## F. Critical path for testing (scripted)
+## Facilitator script map
 
-| # | Task | Primary persona |
-| --- | --- | --- |
-| 1 | Create account + set meetup point | Maya |
-| 2 | List an item with 4 angles | Maya |
-| 3 | As admin, verify the listing | Alex |
-| 4 | As buyer, find item, choose COD, confirm | Jordan |
-| 5 | List a donation + claim as another user | Sam / Org |
-
-See [research/usability-plan.md](../research/usability-plan.md) for measures.
+| Research task | Flow |
+| --- | --- |
+| T1 Account + meetup | A |
+| T2 List item + photos | B |
+| T3 Admin verify | E |
+| T4 Buy COD + explain total | C |
+| T5 Donate or claim | D |

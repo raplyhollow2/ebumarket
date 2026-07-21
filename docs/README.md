@@ -1,25 +1,29 @@
 # Zyra — Project Documentation
 
-Teen-focused circular fashion platform for clothing reuse. Two cores: **Peer-to-Peer Marketplace** and **Donation Hub**, plus a basic admin panel for listing verification.
+Teen-focused circular fashion platform: **Peer-to-Peer Marketplace** + **Donation Hub** + admin verification.
 
-This folder is the **drawing board**: product intent, flows, wireframe specs, and MVP scope before implementation.
+This folder is the **drawing board** — product intent, flows, wireframes, live-data stack, and MVP scope. **Implementation starts from these docs.**
 
 ## Start here
 
 | Doc | Purpose |
 | --- | --- |
-| [drawing-board/00-index.md](./drawing-board/00-index.md) | Drawing-board index & how to use these docs |
-| [product/vision.md](./product/vision.md) | Problem, goals, principles, success metrics |
-| [product/personas.md](./product/personas.md) | Teen buyer/seller, donor, org claimer, admin |
+| [drawing-board/00-index.md](./drawing-board/00-index.md) | Locked decisions & doc map |
+| [drawing-board/interaction-principles.md](./drawing-board/interaction-principles.md) | Fewer clicks, more done |
+| [product/vision.md](./product/vision.md) | Problem, goals, principles |
+| [product/personas.md](./product/personas.md) | Teen / org / admin personas |
 | [product/information-architecture.md](./product/information-architecture.md) | Screens, nav, roles |
-| [flows/user-flows.md](./flows/user-flows.md) | End-to-end flows (signup → buy/sell/donate/admin) |
-| [drawing-board/wireframes.md](./drawing-board/wireframes.md) | Low-fi screen layouts for prototyping |
-| [drawing-board/trust-and-verification.md](./drawing-board/trust-and-verification.md) | Pending/verified badges & payment transparency |
-| [product/mvp-scope.md](./product/mvp-scope.md) | In/out of scope for usability-test MVP |
-| [product/tech-sketch.md](./product/tech-sketch.md) | Suggested stack & data model sketch |
-| [research/usability-plan.md](./research/usability-plan.md) | Testing goals, tasks, trust measures |
+| [flows/user-flows.md](./flows/user-flows.md) | End-to-end flows |
+| [drawing-board/wireframes.md](./drawing-board/wireframes.md) | Low-fi layouts |
+| [drawing-board/trust-and-verification.md](./drawing-board/trust-and-verification.md) | Badges & payments |
+| [product/mvp-scope.md](./product/mvp-scope.md) | In/out of scope + acceptance |
+| [product/tech-sketch.md](./product/tech-sketch.md) | Next.js + Supabase + Stripe |
+| [product/data-model.md](./product/data-model.md) | Schema, RLS, live-data rules |
+| [product/ui-system.md](./product/ui-system.md) | shadcn component map |
+| [research/usability-plan.md](./research/usability-plan.md) | Research tasks & measures |
 
 ## Status
 
-**Phase:** Drawing board / documentation  
-**Next:** Visual design direction → interactive MVP prototype for usability research
+**Phase:** Drawing board / documentation (implementation-ready)  
+**Backend:** Supabase project `ynnmfnoxxwtpiiwrnpup` (live Postgres / Auth / Storage)  
+**Next:** Implement MVP against tech-sketch + data-model

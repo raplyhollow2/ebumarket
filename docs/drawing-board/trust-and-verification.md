@@ -1,8 +1,6 @@
 # Trust, Verification & Payments
 
-## Why this exists
-
-Usability research needs to measure whether teens **notice**, **understand**, and **trust** Zyra’s verification and payment transparency.
+Usability research needs teens to **notice**, **understand**, and **trust** verification and payment transparency. All states below are **live rows** in Supabase.
 
 ---
 
@@ -12,47 +10,47 @@ Usability research needs to measure whether teens **notice**, **understand**, an
 | --- | --- | --- | --- |
 | `pending` | Seller + Admin | **Pending Verification** | Submitted; not in public Market |
 | `verified` | Everyone | **Verified by Zyra** | Photos/details reviewed; live |
-| `rejected` | Seller + Admin | **Needs changes** | Seller must edit & resubmit |
-| `sold` / `closed` | Contextual | **Sold** / **Closed** | No longer available |
+| `rejected` | Seller + Admin | **Needs changes** | Edit & resubmit → `pending` |
+| `sold` / `claimed` / `closed` | Contextual | **Sold** / **Claimed** / **Closed** | Unavailable |
 
 ### Admin review checklist (MVP)
 
-- [ ] Required angles present  
+- [ ] Required angles present (front, back, tag, defect)  
 - [ ] Photos look like the same item  
 - [ ] No obvious prohibited content  
 - [ ] Size/condition fields filled  
 - [ ] Price reasonable (marketplace)  
 
-Reject requires a short reason (shown to seller).
+Reject requires a short reason (stored on listing, shown to seller). Write `audit_events` on approve/reject.
 
 ### Donation items
 
-**Proposal:** same queue so trust language stays consistent. If review load is too high for research, donations can auto-publish with a weaker “Community listing” label — decide before build.
+**Locked:** same verification queue so trust language stays consistent.
 
 ---
 
-## Badge placement rules
+## Badge placement
 
 1. Item detail: directly under title  
 2. Browse tiles: small verified mark (live items only)  
-3. Seller Activity: full status chip including Pending  
-4. Never show Pending items in public Market browse  
+3. Activity: full status chip including Pending  
+4. Never show Pending in public Market browse  
 
-Helper text (first time):  
+First-time helper:  
 > “Verified by Zyra means our team checked the listing photos.”
 
 ---
 
 ## Payment methods
 
-| Method | Use case | Prototype behavior |
+| Method | Use case | Live behavior |
 | --- | --- | --- |
-| **Cash on Delivery (COD)** | Face-to-face meetup | Select meetup preference → create transaction `requested` |
-| **Online Transaction** | Remote/prepay preference | Mock checkout confirmation → `requested` or `paid_simulated` |
+| **COD** | Face-to-face meetup | Requires meetup point → insert `transactions` (`requested`) |
+| **Online** | Card / prepay | Stripe Checkout **test mode** → webhook updates status (`awaiting_payment` → `paid`) |
 
 ### Transparency breakdown (required UI)
 
-Always show before confirm:
+Always show in Buy Sheet before confirm:
 
 ```text
 Item price        …
@@ -62,27 +60,27 @@ Total due         …
 Pay by: COD | Online
 ```
 
-Optional research toggle: non-zero fee vs zero fee to test fee sensitivity.
+Fee percent from env / `app_config` (`PLATFORM_FEE_PERCENT`).
 
 ---
 
-## Transaction statuses (marketplace)
+## Transaction statuses
 
 | Status | Meaning |
 | --- | --- |
-| `requested` | Buyer submitted intent |
-| `accepted` | Seller accepted (optional step in MVP) |
-| `completed` | Marked done (meetup happened / mock pay done) |
-| `cancelled` | Either party cancelled |
+| `requested` | COD intent submitted |
+| `awaiting_payment` | Stripe session opened |
+| `paid` | Stripe webhook confirmed |
+| `accepted` | Seller accepted (optional MVP step) |
+| `completed` | Meetup / fulfillment done |
+| `cancelled` | Cancelled by party or system |
 
-Admin board mirrors these for oversight.
+Admin transactions board mirrors these from live queries.
 
 ---
 
-## Safety copy (lightweight, MVP)
-
-On COD confirm:
+## Safety copy (COD confirm)
 
 > Meet in a public place from your meetup list. Don’t share your home address in chat.
 
-(Full chat may be out of scope; show as static tip if no messaging.)
+(Full chat out of scope; static tip is enough.)

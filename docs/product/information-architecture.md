@@ -1,13 +1,15 @@
 # Information Architecture
 
+Low-friction IA: fewer routes, sheets for commit actions, live Supabase behind every surface.
+
 ## Roles
 
 | Role | Access |
 | --- | --- |
-| Guest | Browse public marketplace & donation teaser; prompted to sign up for actions |
-| Teen user | Profile, sell, buy, donate, claim |
-| Organization (optional flag) | Same as user + claim donations as org |
-| Admin | Admin dashboard: verification queue, transactions, statuses |
+| Guest | Browse verified Market & Donate; auth Sheet on Sell / Buy / Claim |
+| Teen user | Profile, sell, buy, donate, claim, Activity |
+| Organization | Same as user + `is_organization` on profile / claim form |
+| Admin | `/admin` queue + transactions (no teen tab bar) |
 
 ## Primary navigation (mobile)
 
@@ -17,88 +19,55 @@
 
 | Tab | Contents |
 | --- | --- |
-| Home | Brand + short pitch + dual CTAs: Shop / Donate |
-| Market | Browse/search marketplace listings (verified live) |
-| Donate | Donation Hub browse + “List a donation” |
-| Activity | My listings, requests, transactions |
-| Profile | Account, location/meetup points, logout |
-
-Admin is a separate route (`/admin`), not in teen tab bar.
+| Home | Brand hero + dual CTAs: Shop / Donate |
+| Market | Verified listings + Sell CTA → composer |
+| Donate | Hub browse + List donation → composer |
+| Activity | Unified live inbox: listings, buys, claims |
+| Profile | Account, area, meetup points, logout |
 
 ## Screen inventory (MVP)
 
-### Auth & profile
+### Core routes
 
-- Welcome / Home  
-- Sign up  
-- Log in  
-- Profile view/edit  
-- Location & meetup points setup  
+- Home  
+- Market browse / Market detail (+ **Buy Sheet**)  
+- Sell composer (`/market/new`) — single screen  
+- Donate browse / Donate detail (+ **Claim Sheet**)  
+- Donate composer (`/donate/new`) — single screen  
+- Activity (unified)  
+- Profile (includes meetup CRUD)  
+- Auth Sheet (signup/login; not a hard gate for browse)  
 
-### Marketplace
+### Admin routes
 
-- Market browse (list/grid)  
-- Item detail (photos, badge, price breakdown, payment options)  
-- Sell flow: details → multi-angle photos → review → submitted (pending)  
-- Checkout / request purchase (COD or Online)  
-- Seller “my listing” status (Pending / Verified / Rejected / Sold)  
+- Verification queue (inline Approve / Reject)  
+- Transactions DataTable  
 
-### Donation Hub
+### Removed vs earlier wizard IA
 
-- Donation browse  
-- Donation detail  
-- List donation (photos + basic details)  
-- Claim / request form  
-- My donation listings & incoming claims  
+- Separate location-only onboarding page (folded into signup + Profile)  
+- Multi-step sell routes (details → photos → review)  
+- Standalone checkout page (replaced by Buy Sheet)  
+- Separate “my listings” / “my transactions” teen pages (merged into Activity)  
 
-### Admin
+## Content objects (live tables)
 
-- Login (admin)  
-- Verification queue (photo review)  
-- Listing detail → Approve / Reject (+ note)  
-- Transactions / status board  
+See [data-model.md](./data-model.md): `profiles`, `meetup_points`, `listings`, `listing_photos`, `transactions`, `donation_claims`, `audit_events`.
 
-## Content objects
-
-```text
-User
-  └── Profile (display name, age band, location, meetupPoints[])
-
-Listing (type: marketplace | donation)
-  ├── photos[] (angle labels for marketplace)
-  ├── status: draft | pending | verified | rejected | claimed | sold | closed
-  ├── price? (marketplace only)
-  └── sellerId
-
-Transaction (marketplace)
-  ├── listingId, buyerId, sellerId
-  ├── paymentMethod: cod | online
-  ├── amounts: item, fee, total
-  └── status: requested | accepted | completed | cancelled
-
-DonationClaim
-  ├── listingId, claimerId
-  ├── message, contact
-  └── status: requested | approved | fulfilled | declined
-```
-
-## Hierarchy sketch
+## Hierarchy
 
 ```mermaid
 flowchart TB
   Home --> Market
   Home --> Donate
-  Home --> Auth
   Market --> ItemDetail
-  ItemDetail --> Checkout
-  Market --> SellFlow
-  SellFlow --> PendingState
+  ItemDetail --> BuySheet
+  Market --> SellComposer
   Donate --> DonationDetail
-  DonationDetail --> ClaimFlow
-  Donate --> ListDonation
-  Profile --> LocationSetup
-  Activity --> MyListings
-  Activity --> MyTransactions
+  DonationDetail --> ClaimSheet
+  Donate --> DonateComposer
+  Profile --> MeetupCRUD
+  Activity --> LiveRows
   Admin --> VerifyQueue
   Admin --> TxBoard
 ```

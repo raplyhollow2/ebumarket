@@ -4,17 +4,26 @@ Teen-focused **circular fashion** platform: Peer-to-Peer Marketplace + Donation 
 
 ## Current phase
 
-**Drawing board & documentation** — product intent, flows, wireframes, MVP scope, and usability research plan. No app code yet.
+**Drawing board & documentation** — product, flows, wireframes, **live Supabase** stack, shadcn UI system, and usability plan. App code follows these docs.
 
 → Start at **[docs/README.md](./docs/README.md)**  
-→ Drawing board index: **[docs/drawing-board/00-index.md](./docs/drawing-board/00-index.md)**
+→ Locked decisions: **[docs/drawing-board/00-index.md](./docs/drawing-board/00-index.md)**  
+→ Stack: **[docs/product/tech-sketch.md](./docs/product/tech-sketch.md)**
+
+## Stack (locked)
+
+- **Next.js** + TypeScript + **shadcn/ui**  
+- **Supabase** (Postgres + Auth + Storage + RLS) — all live data  
+- **Stripe test mode** for online payments  
+
+Env placeholders: [`.env.example`](./.env.example) (never commit real secrets).
 
 ## What’s next
 
-1. Resolve open questions in the drawing-board index  
-2. Visual design direction (teen-friendly, mobile-first)  
-3. Build interactive MVP prototype for usability testing  
+1. `supabase link` + migrations from [data-model.md](./docs/product/data-model.md)  
+2. Build MVP slices in [mvp-scope.md](./docs/product/mvp-scope.md)  
+3. Run usability sessions per [usability-plan.md](./docs/research/usability-plan.md)  
 
 ## Repo
 
-Formerly placeholder `ebumarket`; this project is documented and developed as **Zyra**.
+Formerly placeholder `ebumarket`; product is **Zyra**.
