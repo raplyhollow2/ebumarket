@@ -21,6 +21,7 @@ This folder is the **drawing board** — product intent, flows, wireframes, live
 | [product/data-model.md](./product/data-model.md) | Schema, RLS, live-data rules |
 | [product/ui-system.md](./product/ui-system.md) | shadcn component map |
 | [research/usability-plan.md](./research/usability-plan.md) | Research tasks & measures |
+| [research/marketplace-payment-model.md](./research/marketplace-payment-model.md) | Buyer→platform→seller split (5% fee), profiles, claims |
 
 ## Status
 

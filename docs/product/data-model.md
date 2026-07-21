@@ -80,24 +80,30 @@ Marketplace submit requires angles: front, back, tag, defect (+ optional other).
 
 ### `transactions`
 
-Marketplace purchases only.
+Marketplace purchases only. **Buyer pays platform; platform keeps `fee_cents`; seller share is `seller_payout_cents`.**
 
 | Column | Type | Notes |
 | --- | --- | --- |
 | `id` | uuid PK | |
 | `listing_id` | uuid FK | |
-| `buyer_id` / `seller_id` | uuid FK | |
+| `buyer_id` / `seller_id` | uuid FK | buy requests always include listing seller |
 | `payment_method` | text | `cod` \| `online` |
 | `meetup_point_id` | uuid? | required for COD |
-| `item_price_cents` | int | |
-| `fee_cents` | int | from `PLATFORM_FEE_PERCENT` |
-| `total_cents` | int | |
+| `item_price_cents` | int | listing price (= seller share when fee is additive) |
+| `fee_cents` | int | platform keep (default 5% of item) |
+| `total_cents` | int | amount buyer pays platform (`item + fee`) |
+| `seller_payout_cents` | int | amount platform delivers to seller |
+| `payout_status` | text | see below |
+| `payout_claimed_at` | timestamptz? | when seller claimed |
+| `payout_paid_at` | timestamptz? | when platform marked paid out |
 | `status` | text | see below |
 | `stripe_checkout_session_id` | text? | |
 | `stripe_payment_intent_id` | text? | |
 | `created_at` / `updated_at` | timestamptz | |
 
 **Status:** `requested` \| `awaiting_payment` \| `paid` \| `accepted` \| `completed` \| `cancelled`
+
+**Payout status:** `pending` \| `claimable` \| `claimed` \| `paid_out` \| `not_applicable`
 
 ### `donation_claims`
 

@@ -33,7 +33,8 @@ docs/
 ├── flows/
 │   └── user-flows.md
 └── research/
-    └── usability-plan.md
+    ├── usability-plan.md
+    └── marketplace-payment-model.md  ← buyer→platform→seller 5% split
 ```
 
 ## Decisions locked for MVP

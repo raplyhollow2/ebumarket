@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/status-badge";
@@ -17,6 +18,10 @@ export function DonateDetailClient({
   const photos = [...(listing.listing_photos ?? [])].sort(
     (a, b) => a.sort_order - b.sort_order,
   );
+  const donor = listing.profiles;
+  const donorHref = donor?.id
+    ? `/profile/${donor.id}`
+    : `/profile/${listing.seller_id}`;
 
   return (
     <div className="space-y-4">
@@ -46,7 +51,28 @@ export function DonateDetailClient({
         </div>
         <p className="mt-2 text-sm text-muted-foreground">
           Size {listing.size} · {listing.condition} · Free
+          {donor?.area ? ` · ${donor.area}` : ""}
         </p>
+        {donor ? (
+          <p className="mt-2 text-sm">
+            From{" "}
+            <Link href={donorHref} className="font-medium underline underline-offset-2">
+              {donor.display_name || "Donor"}
+            </Link>
+            {donor.is_organization ? (
+              <span className="ml-1 text-xs text-muted-foreground">(org)</span>
+            ) : null}
+          </p>
+        ) : (
+          <p className="mt-2 text-sm">
+            <Link
+              href={`/profile/${listing.seller_id}`}
+              className="font-medium underline underline-offset-2"
+            >
+              View donor profile
+            </Link>
+          </p>
+        )}
         <p className="mt-3 text-sm">{listing.description}</p>
       </div>
       {listing.status === "verified" && (

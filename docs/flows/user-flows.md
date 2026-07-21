@@ -49,20 +49,25 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-  A[Open verified item] --> B[Buy Sheet]
-  B --> C[Price breakdown + COD or Online]
+  A[Open verified item + seller profile] --> B[Buy Sheet]
+  B --> C[Split: item + 5% fee = total paid to platform]
   C --> D{Method}
-  D -->|COD| E[Meetup prefilled or quick-add]
-  D -->|Online| F[Stripe Checkout test mode]
-  E --> G[transactions row live]
-  F --> H[Webhook updates transaction status]
-  G --> I[Activity]
-  H --> I
+  D -->|COD| E[Meetup → tx requested → seller Activity]
+  D -->|Online| F[Stripe Checkout: buyer pays Zyra]
+  E --> G[Seller accept / decline / confirm cash]
+  F --> H[Webhook: paid + payout claimable]
+  H --> I[Seller claims payout · admin marks paid out]
+  G --> J[Activity for buyer and seller]
+  I --> J
 ```
 
-**Price breakdown (always):** item · platform fee · **total** · method.
+**Price breakdown (always):** item · platform fee (default 5%) · **total paid to Zyra** · **seller receives** · method.
+
+**Routing:** every buy creates a `transactions` row with `seller_id` = listing owner; seller sees it under Activity → Selling / Buys inbox.
 
 **Click target:** ≤2 taps when logged in with meetup saved.
+
+See [marketplace-payment-model.md](../research/marketplace-payment-model.md).
 
 ---
 

@@ -53,14 +53,16 @@ First-time helper:
 Always show in Buy Sheet before confirm:
 
 ```text
-Item price        …
-Platform fee      …   (disclose even if zero)
+Item price           …   → seller receives this
+Platform fee (5%)    …   → Zyra keeps this
 ─────────────────
-Total due         …
+Total paid to Zyra   …
 Pay by: COD | Online
 ```
 
-Fee percent from env / `app_config` (`PLATFORM_FEE_PERCENT`).
+Fee percent from env / `app_config` (`PLATFORM_FEE_PERCENT`, default **5**).
+
+**Split settlement:** Buyer always pays the **platform**. Online: webhook marks `paid` and `payout_status = claimable`; seller **claims payment**; admin marks `paid_out`. COD: seller accepts request, confirms cash at meetup (`seller_payout` not held by platform → `not_applicable`). Full design: [marketplace-payment-model.md](../research/marketplace-payment-model.md).
 
 ---
 
@@ -68,14 +70,24 @@ Fee percent from env / `app_config` (`PLATFORM_FEE_PERCENT`).
 
 | Status | Meaning |
 | --- | --- |
-| `requested` | COD intent submitted |
+| `requested` | COD intent submitted — **visible to seller** |
 | `awaiting_payment` | Stripe session opened |
-| `paid` | Stripe webhook confirmed |
-| `accepted` | Seller accepted (optional MVP step) |
+| `paid` | Platform received online payment (or COD cash confirmed) |
+| `accepted` | Seller accepted COD request |
 | `completed` | Meetup / fulfillment done |
 | `cancelled` | Cancelled by party or system |
 
-Admin transactions board mirrors these from live queries.
+### Payout statuses (online split)
+
+| Status | Meaning |
+| --- | --- |
+| `pending` | Waiting for buyer payment |
+| `claimable` | Seller may claim their share |
+| `claimed` | Seller claimed; awaiting delivery |
+| `paid_out` | Platform delivered seller share |
+| `not_applicable` | COD — seller took cash at meetup |
+
+Admin transactions board mirrors fee, seller payout, and payout status from live queries.
 
 ---
 

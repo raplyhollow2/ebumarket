@@ -34,13 +34,20 @@ export async function POST(req: Request) {
       });
       await client.connect();
       try {
+        // Buyer paid platform → fee retained; seller share becomes claimable
         await client.query(
           `update public.transactions
            set status = 'paid',
+               payout_status = 'claimable',
                stripe_payment_intent_id = $2,
                updated_at = now()
            where id = $1`,
-          [txId, typeof session.payment_intent === "string" ? session.payment_intent : null],
+          [
+            txId,
+            typeof session.payment_intent === "string"
+              ? session.payment_intent
+              : null,
+          ],
         );
         if (session.metadata?.listing_id) {
           await client.query(
@@ -48,6 +55,19 @@ export async function POST(req: Request) {
             [session.metadata.listing_id],
           );
         }
+        await client.query(
+          `insert into public.audit_events (actor_id, action, entity_type, entity_id, payload)
+           values (null, 'payment_received', 'transaction', $1, $2::jsonb)`,
+          [
+            txId,
+            JSON.stringify({
+              fee_cents: session.metadata?.fee_cents ?? null,
+              seller_payout_cents: session.metadata?.seller_payout_cents ?? null,
+              seller_id: session.metadata?.seller_id ?? null,
+              stripe_session_id: session.id,
+            }),
+          ],
+        );
       } finally {
         await client.end();
       }
