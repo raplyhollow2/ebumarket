@@ -9,7 +9,10 @@
       "Bash(git push:*)",
       "Bash(npm install:*)",
       "Bash(npm run build:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "WebFetch(domain:engineering.depop.com)",
+      "WebFetch(domain:medium.com)",
+      "WebFetch(domain:blog.prototypr.io)"
     ]
   }
 }

@@ -1,8 +1,15 @@
-import { BottomNav } from "@/components/layout/bottom-nav";
+'use client'
 
-export function TeenShell({ children }: { children: React.ReactNode }) {
+import { BottomNav } from "@/components/layout/bottom-nav"
+
+export interface TeenShellProps {
+  children: React.ReactNode
+  className?: string
+}
+
+export function TeenShell({ children, className = '' }: TeenShellProps) {
   return (
-    <div className="mx-auto min-h-dvh w-full max-w-lg bg-background">
+    <div className={`mobile-shell mx-auto min-h-dvh w-full max-w-lg bg-background ${className}`}>
       <main className="px-4 pb-24 pt-4">{children}</main>
       <BottomNav />
     </div>

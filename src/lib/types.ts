@@ -413,3 +413,226 @@ export type Notification = {
   is_read: boolean;
   created_at: string;
 };
+
+// ============================================================================
+// RBAC AND CMS TYPES
+// ============================================================================
+
+// Admin Role Types
+export type AdminRole = {
+  id: string;
+  name: string;
+  description: string | null;
+  permissions: string[];
+  created_at: string;
+  updated_at: string;
+};
+
+export type AdminRoleAssignment = {
+  id: string;
+  user_id: string;
+  role_id: string;
+  assigned_by: string | null;
+  assigned_at: string;
+  expires_at: string | null;
+  is_active: boolean;
+  admin_roles?: AdminRole;
+  profiles?: Pick<Profile, "display_name">;
+};
+
+export type AdminAuditLog = {
+  id: string;
+  actor_id: string | null;
+  action: string;
+  resource_type: string;
+  resource_id: string | null;
+  ip_address: string | null;
+  user_agent: string | null;
+  metadata: Record<string, unknown>;
+  status: "success" | "failure" | "partial";
+  created_at: string;
+  profiles?: Pick<Profile, "display_name">;
+};
+
+// CMS Types
+export type ContentBlockType = "hero" | "banner" | "feature" | "category_highlight" | "announcement";
+export type ContentBlockStatus = "draft" | "active" | "archived" | "scheduled";
+
+export type ContentBlock = {
+  id: string;
+  block_type: ContentBlockType;
+  title: string;
+  content: Record<string, unknown>;
+  targeting_rules: Record<string, unknown>;
+  schedule_start: string | null;
+  schedule_end: string | null;
+  priority: number;
+  status: ContentBlockStatus;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+  published_at: string | null;
+};
+
+export type HeroType = "slider" | "static" | "video" | "interactive" | "product_showcase";
+
+export type HeroSection = {
+  id: string;
+  name: string;
+  hero_type: HeroType;
+  slides: Record<string, unknown>[];
+  settings: Record<string, unknown>;
+  ab_test_config: Record<string, unknown>;
+  is_active: boolean;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type FeaturedSectionType = "listing_grid" | "category_showcase" | "seller_spotlight" | "collection";
+
+export type FeaturedSection = {
+  id: string;
+  section_name: string;
+  section_type: FeaturedSectionType;
+  content_config: Record<string, unknown>;
+  display_rules: Record<string, unknown>;
+  priority: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+// Analytics Types
+export type AnalyticsEvent = {
+  id: string;
+  event_type: string;
+  user_id: string | null;
+  session_id: string | null;
+  listing_id: string | null;
+  properties: Record<string, unknown>;
+  created_at: string;
+};
+
+export type AnalyticsDailyAggregate = {
+  date: string;
+  metric_name: string;
+  metric_value: number;
+  dimensions: Record<string, unknown>;
+  updated_at: string;
+};
+
+// A/B Testing Types
+export type ExperimentStatus = "draft" | "running" | "paused" | "completed" | "archived";
+
+export type ABExperiment = {
+  id: string;
+  name: string;
+  description: string | null;
+  variants: Record<string, unknown>[];
+  targeting_rules: Record<string, unknown>;
+  traffic_allocation: Record<string, unknown>;
+  metrics: Record<string, unknown>;
+  status: ExperimentStatus;
+  start_date: string | null;
+  end_date: string | null;
+  winning_variant: string | null;
+  statistical_significance: number | null;
+  sample_size: number | null;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ABExposureEvent = {
+  id: string;
+  experiment_id: string;
+  user_id: string | null;
+  session_id: string | null;
+  variant: string;
+  exposed_at: string;
+};
+
+export type ABConversionEvent = {
+  id: string;
+  experiment_id: string;
+  user_id: string | null;
+  variant: string;
+  metric_name: string;
+  metric_value: number | null;
+  occurred_at: string;
+};
+
+// Admin Permission Constants
+export const ADMIN_PERMISSIONS = [
+  "cms.manage",
+  "cms.publish",
+  "listings.moderate",
+  "analytics.view",
+  "media.manage",
+  "transactions.view",
+  "transactions.refund",
+  "reports.finance",
+  "gst.manage",
+  "payouts.manage",
+  "users.moderate",
+  "comments.moderate",
+  "support.respond",
+  "reports.view",
+  "admin.view",
+  "insights.view"
+] as const;
+
+export type AdminPermission = typeof ADMIN_PERMISSIONS[number];
+
+// Admin Role Constants
+export const DEFAULT_ADMIN_ROLES = {
+  SUPER_ADMIN: "Super Admin",
+  CONTENT_MANAGER: "Content Manager",
+  FINANCE_MANAGER: "Finance Manager",
+  COMMUNITY_MANAGER: "Community Manager",
+  ANALYTICS_VIEWER: "Analytics Viewer"
+} as const;
+
+// API Response Types for Admin
+export type AdminRolesResponse = {
+  success: boolean;
+  data?: AdminRole[];
+  error?: string;
+  count?: number;
+};
+
+export type AdminRoleAssignmentsResponse = {
+  success: boolean;
+  data?: AdminRoleAssignment[];
+  error?: string;
+  count?: number;
+};
+
+export type ContentBlocksResponse = {
+  success: boolean;
+  data?: ContentBlock[];
+  error?: string;
+  count?: number;
+};
+
+export type HeroSectionsResponse = {
+  success: boolean;
+  data?: HeroSection[];
+  error?: string;
+  count?: number;
+};
+
+export type ExperimentsResponse = {
+  success: boolean;
+  data?: ABExperiment[];
+  error?: string;
+  count?: number;
+};
+
+export type AdminAnalyticsResponse = {
+  success: boolean;
+  data?: AnalyticsDailyAggregate[] | Record<string, unknown>;
+  error?: string;
+  count?: number;
+};
