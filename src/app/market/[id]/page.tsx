@@ -17,7 +17,9 @@ export default async function MarketDetailPage({
   const settings = await getAppSettings();
   const { data, error } = await supabase
     .from("listings")
-    .select("*, listing_photos(*), profiles:seller_id(display_name, area)")
+    .select(
+      "*, listing_photos(*), profiles:seller_id(id, display_name, area, is_organization)",
+    )
     .eq("id", id)
     .maybeSingle();
 

@@ -20,10 +20,15 @@ This folder is the **drawing board** — product intent, flows, wireframes, live
 | [product/tech-sketch.md](./product/tech-sketch.md) | Next.js + Supabase + Stripe |
 | [product/data-model.md](./product/data-model.md) | Schema, RLS, live-data rules |
 | [product/ui-system.md](./product/ui-system.md) | shadcn component map |
+| [product/mobile-desktop-parity.md](./product/mobile-desktop-parity.md) | **Hard rule:** desktop features = mobile features |
+| [product/admin-erp.md](./product/admin-erp.md) | ERP modules to run the live site |
 | [research/usability-plan.md](./research/usability-plan.md) | Research tasks & measures |
+| [research/marketplace-payment-model.md](./research/marketplace-payment-model.md) | Split payment ledger |
 
 ## Status
 
-**Phase:** Drawing board / documentation (implementation-ready)  
+**Phase:** MVP live + Depop Phase 1–3 (desktop shell, admin/ERP/CMS, hero/personalization/A/B)  
+**Parity:** Every user-facing and admin feature must work on **mobile and desktop** — see [mobile-desktop-parity.md](./product/mobile-desktop-parity.md)  
+**ERP:** Ops control plane documented in [admin-erp.md](./product/admin-erp.md) (`AdminShell` on all `/admin/*` routes)  
 **Backend:** Supabase project `ynnmfnoxxwtpiiwrnpup` (live Postgres / Auth / Storage)  
-**Next:** Implement MVP against tech-sketch + data-model
+**Next:** Usability research (T1–T5); Depop Phase 4–5 optional

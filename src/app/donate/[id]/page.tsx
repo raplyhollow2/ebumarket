@@ -14,7 +14,9 @@ export default async function DonateDetailPage({
   const supabase = await createClient();
   const { data } = await supabase
     .from("listings")
-    .select("*, listing_photos(*)")
+    .select(
+      "*, listing_photos(*), profiles:seller_id(id, display_name, area, is_organization)",
+    )
     .eq("id", id)
     .eq("type", "donation")
     .maybeSingle();

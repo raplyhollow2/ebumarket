@@ -38,10 +38,17 @@ Low-friction IA: fewer routes, sheets for commit actions, live Supabase behind e
 - Profile (includes meetup CRUD)  
 - Auth Sheet (signup/login; not a hard gate for browse)  
 
-### Admin routes
+### Admin ERP routes (mobile + desktop)
 
-- Verification queue (inline Approve / Reject)  
-- Transactions DataTable  
+- `/admin/dashboard` — ERP overview  
+- `/admin` — Verification queue (inline Approve / Reject)  
+- `/admin/transactions` — Money / payout ledger  
+- `/admin/cms` — Homepage heroes & content  
+- `/admin/experiments` — A/B experiments  
+- `/admin/analytics` — Ops analytics  
+- `/admin/settings` — Currency, fees, users, approvers  
+
+All modules share `AdminShell` so phone operators can run the site. See [admin-erp.md](./admin-erp.md) and [mobile-desktop-parity.md](./mobile-desktop-parity.md).
 
 ### Removed vs earlier wizard IA
 

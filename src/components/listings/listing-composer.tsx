@@ -3,7 +3,7 @@
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { TeenShell } from "@/components/layout/teen-shell";
+import { ResponsiveLayoutWrapper } from "@/components/layout/ResponsiveLayoutWrapper";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -144,7 +144,7 @@ export function ListingComposer({
   }
 
   return (
-    <TeenShell>
+    <ResponsiveLayoutWrapper>
       <div className="mb-4">
         <h1 className="font-[family-name:var(--font-display)] text-3xl font-semibold">
           {type === "marketplace" ? "Sell an item" : "List a donation"}
@@ -285,6 +285,6 @@ export function ListingComposer({
           {pending ? "Submitting…" : "Submit for verification"}
         </Button>
       </div>
-    </TeenShell>
+    </ResponsiveLayoutWrapper>
   );
 }

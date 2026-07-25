@@ -25,11 +25,14 @@ Goal: **interactive web MVP on live Supabase data** for usability testing — no
 - Donor approve/decline claims in Activity  
 - Same verification queue as marketplace  
 
-### Admin
+### Admin ERP
 
 - Inline verification queue (Approve / Reject + reason)  
-- Transactions DataTable  
-- Audit events on verify/reject  
+- Transactions DataTable + seller payout actions  
+- CMS heroes + A/B experiments + analytics dashboard  
+- Settings: currency, fee %, users / approvers  
+- Shared `AdminShell` — same modules on mobile and desktop  
+- Audit events on verify/reject
 
 ### Platform
 

@@ -98,7 +98,7 @@ export function PersonalizedFeed({ userId, className = '' }: PersonalizedFeedPro
                 <p className="text-gray-600 dark:text-gray-400 mb-4">
                   Start liking and following listings to get personalized recommendations!
                 </p>
-                <Button variant="outline">
+                <Button variant="outline" onClick={() => { window.location.href = '/market' }}>
                   Browse Marketplace
                 </Button>
               </CardContent>

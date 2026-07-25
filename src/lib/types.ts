@@ -17,7 +17,34 @@ export type TransactionStatus =
   | "accepted"
   | "completed"
   | "cancelled";
+export type PayoutStatus =
+  | "pending"
+  | "claimable"
+  | "claimed"
+  | "paid_out"
+  | "not_applicable";
 export type ClaimStatus = "requested" | "approved" | "fulfilled" | "declined";
+
+export type Transaction = {
+  id: string;
+  listing_id: string;
+  buyer_id: string;
+  seller_id: string;
+  payment_method: PaymentMethod;
+  meetup_point_id: string | null;
+  item_price_cents: number;
+  fee_cents: number;
+  total_cents: number;
+  seller_payout_cents: number;
+  payout_status: PayoutStatus;
+  payout_claimed_at: string | null;
+  payout_paid_at: string | null;
+  status: TransactionStatus;
+  stripe_checkout_session_id: string | null;
+  stripe_payment_intent_id: string | null;
+  created_at: string;
+  updated_at: string;
+};
 
 export type DonationClaim = {
   id: string;
@@ -80,7 +107,10 @@ export type ListingPhoto = {
 
 export type ListingWithPhotos = Listing & {
   listing_photos: ListingPhoto[];
-  profiles?: Pick<ExtendedProfile, "display_name" | "area"> | null;
+  profiles?: Pick<
+    ExtendedProfile,
+    "id" | "display_name" | "area" | "is_organization" | "avatar_url" | "followers_count"
+  > | null;
 };
 
 export const REQUIRED_ANGLES: PhotoAngle[] = [

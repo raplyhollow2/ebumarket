@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ResponsiveLayoutWrapper } from "@/components/layout/ResponsiveLayoutWrapper";
 import { AuthSheetTrigger } from "@/components/auth/auth-sheet-trigger";
 import { ProfileClient } from "@/app/profile/profile-client";
@@ -37,9 +38,19 @@ export default async function ProfilePage() {
 
   return (
     <ResponsiveLayoutWrapper>
-      <h1 className="mb-4 font-[family-name:var(--font-display)] text-3xl font-semibold">
-        Profile
-      </h1>
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <h1 className="font-[family-name:var(--font-display)] text-3xl font-semibold">
+          Profile
+        </h1>
+        {profile ? (
+          <Link
+            href={`/profile/${(profile as Profile).id}`}
+            className="text-sm text-muted-foreground underline"
+          >
+            Public view
+          </Link>
+        ) : null}
+      </div>
       {profile ? (
         <ProfileClient
           profile={profile as Profile}

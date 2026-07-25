@@ -17,7 +17,6 @@ import {
   Home,
   TrendingUp,
   Package,
-  MessageSquare,
   Eye
 } from 'lucide-react'
 import Link from 'next/link'
@@ -111,14 +110,13 @@ export function AdminERPDashboard() {
   }
 
   const navItems = [
-    { icon: Home, label: 'Overview', href: '/admin', current: true },
-    { icon: ShoppingBag, label: 'Listings', href: '/admin/listings', count: stats?.pendingListings || 0 },
-    { icon: Users, label: 'Users', href: '/admin/users' },
-    { icon: MessageSquare, label: 'Messages', href: '/admin/messages' },
+    { icon: Home, label: 'Dashboard', href: '/admin/dashboard', current: true },
+    { icon: ShoppingBag, label: 'Approval queue', href: '/admin', count: stats?.pendingListings || 0 },
     { icon: DollarSign, label: 'Transactions', href: '/admin/transactions' },
     { icon: FileText, label: 'CMS', href: '/admin/cms' },
+    { icon: Activity, label: 'A/B experiments', href: '/admin/experiments' },
     { icon: BarChart3, label: 'Analytics', href: '/admin/analytics' },
-    { icon: Shield, label: 'Roles', href: '/admin/roles' },
+    { icon: Users, label: 'Users & fees', href: '/admin/settings' },
     { icon: Settings, label: 'Settings', href: '/admin/settings' },
   ]
 
@@ -132,9 +130,9 @@ export function AdminERPDashboard() {
     },
     {
       icon: Users,
-      label: 'Manage Users',
-      description: 'View and moderate users',
-      href: '/admin/users',
+      label: 'Users & approvers',
+      description: 'Roles, can_approve, fees',
+      href: '/admin/settings',
       color: 'bg-green-500'
     },
     {
@@ -166,21 +164,15 @@ export function AdminERPDashboard() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="font-[family-name:var(--font-display)] text-3xl font-bold">
-            Admin ERP Dashboard
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            Welcome back, {userRole || 'Admin'}
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <Button variant="outline" onClick={() => router.push('/')}>
-            View App
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-sm text-muted-foreground">
+          Welcome back, {userRole || 'Admin'} — run Zyra from phone or desktop.
+        </p>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button variant="outline" size="sm" onClick={() => router.push('/admin')}>
+            Open queue
           </Button>
-          <Button onClick={() => router.push('/admin/settings')}>
+          <Button size="sm" onClick={() => router.push('/admin/settings')}>
             <Settings className="w-4 h-4 mr-2" />
             Settings
           </Button>

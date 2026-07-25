@@ -1,17 +1,16 @@
-import Link from "next/link";
 import { ResponsiveLayoutWrapper } from "@/components/layout/ResponsiveLayoutWrapper";
-import { StatusBadge } from "@/components/status-badge";
-import { ListingCard } from "@/components/listings/ListingCard";
+import { MarketBrowseClient } from "@/components/listings/MarketBrowseClient";
 import { RequireAuthLink } from "@/components/auth/require-auth-link";
 import { createClient } from "@/lib/supabase/server";
-import { getGridClassName } from "@/lib/grid-system";
-import type { ListingWithPhotos, ExtendedListingWithPhotos } from "@/lib/types";
+import type { ExtendedListingWithPhotos } from "@/lib/types";
 
 export default async function DonatePage() {
   const supabase = await createClient();
   const { data } = await supabase
     .from("listings")
-    .select("*, listing_photos(*), profiles:seller_id(display_name, area, avatar_url, followers_count)")
+    .select(
+      "*, listing_photos(*), profiles:seller_id(display_name, area, avatar_url, followers_count)",
+    )
     .eq("type", "donation")
     .eq("status", "verified")
     .order("created_at", { ascending: false });
@@ -27,9 +26,7 @@ export default async function DonatePage() {
           <h1 className="font-[family-name:var(--font-display)] text-3xl font-semibold">
             Donation Hub
           </h1>
-          <p className="text-sm text-muted-foreground">
-            Free clothes near you.
-          </p>
+          <p className="text-sm text-muted-foreground">Free clothes near you.</p>
         </div>
         <RequireAuthLink href="/donate/new" isAuthed={Boolean(user)}>
           + List
@@ -40,19 +37,7 @@ export default async function DonatePage() {
           No donations live yet. List something to give away.
         </div>
       ) : (
-        <div className={getGridClassName('marketplace')}>
-          {listings.map((item) => (
-            <ListingCard
-              key={item.id}
-              listing={item}
-              isDesktop={true}
-              showActions={true}
-              onLike={(listingId) => console.log('Like:', listingId)}
-              onShare={(listingId) => console.log('Share:', listingId)}
-              onQuickView={(listingId) => console.log('Quick view:', listingId)}
-            />
-          ))}
-        </div>
+        <MarketBrowseClient listings={listings} isAuthed={Boolean(user)} />
       )}
     </ResponsiveLayoutWrapper>
   );

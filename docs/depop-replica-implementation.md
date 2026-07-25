@@ -1,9 +1,9 @@
 # Depop.com Replica Implementation Guide
 ## World-Class Desktop Template + Admin ERP/CMS System + Hero Technology
 
-**Project Status**: Ready for Implementation
+**Project Status**: Phase 1–3 implemented (desktop shell, admin/ERP/CMS, hero/personalization/A/B). **Mobile ↔ desktop parity is mandatory** — see `docs/product/mobile-desktop-parity.md`. ERP ops surface documented in `docs/product/admin-erp.md`. Phase 4–5 remaining.
 **Timeline**: 5-6 months comprehensive implementation
-**Last Updated**: 2025-01-25
+**Last Updated**: 2026-07-25
 
 ---
 

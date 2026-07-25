@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { BuySheet } from "@/components/listings/buy-sheet";
@@ -24,6 +25,10 @@ export function MarketDetailClient({
   const photos = [...(listing.listing_photos ?? [])].sort(
     (a, b) => a.sort_order - b.sort_order,
   );
+  const seller = listing.profiles;
+  const sellerHref = seller?.id
+    ? `/profile/${seller.id}`
+    : `/profile/${listing.seller_id}`;
 
   return (
     <div className="space-y-4 md:space-y-6">
@@ -64,8 +69,28 @@ export function MarketDetailClient({
           <div className="space-y-2">
             <p className="text-sm text-muted-foreground">
               Size {listing.size} · {listing.condition}
-              {listing.profiles?.area ? ` · ${listing.profiles.area}` : ""}
+              {seller?.area ? ` · ${seller.area}` : ""}
             </p>
+            {seller ? (
+              <p className="text-sm">
+                Sold by{" "}
+                <Link href={sellerHref} className="font-medium underline underline-offset-2">
+                  {seller.display_name || "Seller"}
+                </Link>
+                {seller.is_organization ? (
+                  <span className="ml-1 text-xs text-muted-foreground">(org)</span>
+                ) : null}
+              </p>
+            ) : (
+              <p className="text-sm">
+                <Link
+                  href={`/profile/${listing.seller_id}`}
+                  className="font-medium underline underline-offset-2"
+                >
+                  View seller profile
+                </Link>
+              </p>
+            )}
             {listing.price_cents != null && (
               <p className="text-2xl font-semibold md:text-3xl">
                 {formatMoney(listing.price_cents, listing.currency)}
@@ -76,7 +101,8 @@ export function MarketDetailClient({
           <div className="space-y-2">
             <p className="text-sm leading-relaxed md:text-base">{listing.description}</p>
             <p className="text-xs text-muted-foreground">
-              Verified by Zyra means our team checked the listing photos.
+              Verified by Zyra means our team checked the listing photos. You pay
+              Zyra; we keep {feePercent}% and deliver the rest to the seller.
             </p>
           </div>
         </div>

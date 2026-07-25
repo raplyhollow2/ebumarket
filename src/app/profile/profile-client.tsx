@@ -80,6 +80,18 @@ export function ProfileClient({
 
   return (
     <div className="space-y-6">
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-sm text-muted-foreground">
+          Buyers and sellers can see your public profile.
+        </p>
+        <Link
+          href={`/profile/${profile.id}`}
+          className="shrink-0 text-sm underline underline-offset-2"
+        >
+          View public profile
+        </Link>
+      </div>
+
       {canApprove ? (
         <Link
           href="/admin"

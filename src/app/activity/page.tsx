@@ -3,6 +3,7 @@ import { ResponsiveLayoutWrapper } from "@/components/layout/ResponsiveLayoutWra
 import { AuthSheetTrigger } from "@/components/auth/auth-sheet-trigger";
 import { ActivityClient } from "@/components/activity/activity-client";
 import { createClient } from "@/lib/supabase/server";
+import { getViewerAccess } from "@/lib/settings";
 import type { Listing, DonationClaim } from "@/lib/types";
 
 export default async function ActivityPage() {
@@ -27,6 +28,8 @@ export default async function ActivityPage() {
     );
   }
 
+  const { isAdmin } = await getViewerAccess();
+
   const { data: listings } = await supabase
     .from("listings")
     .select("*")
@@ -35,30 +38,59 @@ export default async function ActivityPage() {
 
   const listingIds = (listings ?? []).map((l) => l.id);
 
-  const [{ data: transactions }, { data: myClaims }, { data: incomingClaims }] =
-    await Promise.all([
-      supabase
-        .from("transactions")
-        .select("id, status, payment_method, total_cents, listings(title, currency)")
-        .eq("buyer_id", user.id)
-        .order("created_at", { ascending: false }),
-      supabase
-        .from("donation_claims")
-        .select("*, listings(title, seller_id)")
-        .eq("claimer_id", user.id)
-        .order("created_at", { ascending: false }),
-      listingIds.length
-        ? supabase
-            .from("donation_claims")
-            .select("*, listings(title, seller_id)")
-            .in("listing_id", listingIds)
-            .order("created_at", { ascending: false })
-        : Promise.resolve({ data: [] as never[] }),
-    ]);
+  const [
+    { data: myBuys },
+    { data: sellingBuys },
+    { data: myClaims },
+    { data: incomingClaims },
+  ] = await Promise.all([
+    supabase
+      .from("transactions")
+      .select(
+        `id, status, payment_method, item_price_cents, fee_cents, total_cents,
+         seller_payout_cents, payout_status, buyer_id, seller_id, listing_id,
+         listings(title, currency),
+         buyer:profiles!buyer_id(id, display_name),
+         seller:profiles!seller_id(id, display_name)`,
+      )
+      .eq("buyer_id", user.id)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("transactions")
+      .select(
+        `id, status, payment_method, item_price_cents, fee_cents, total_cents,
+         seller_payout_cents, payout_status, buyer_id, seller_id, listing_id,
+         listings(title, currency),
+         buyer:profiles!buyer_id(id, display_name),
+         seller:profiles!seller_id(id, display_name)`,
+      )
+      .eq("seller_id", user.id)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("donation_claims")
+      .select("*, listings(title, seller_id)")
+      .eq("claimer_id", user.id)
+      .order("created_at", { ascending: false }),
+    listingIds.length
+      ? supabase
+          .from("donation_claims")
+          .select("*, listings(title, seller_id)")
+          .in("listing_id", listingIds)
+          .order("created_at", { ascending: false })
+      : Promise.resolve({ data: [] as never[] }),
+  ]);
 
-  const claimMap = new Map<string, DonationClaim & { listings: { title: string; seller_id: string } | null }>();
+  const claimMap = new Map<
+    string,
+    DonationClaim & { listings: { title: string; seller_id: string } | null }
+  >();
   for (const c of [...(myClaims ?? []), ...(incomingClaims ?? [])]) {
     claimMap.set(c.id, c as never);
+  }
+
+  const txMap = new Map<string, never>();
+  for (const t of [...(myBuys ?? []), ...(sellingBuys ?? [])]) {
+    txMap.set(t.id, t as never);
   }
 
   return (
@@ -73,9 +105,10 @@ export default async function ActivityPage() {
       </div>
       <ActivityClient
         listings={(listings ?? []) as Listing[]}
-        transactions={(transactions ?? []) as never}
+        transactions={[...txMap.values()]}
         claims={[...claimMap.values()]}
         userId={user.id}
+        isAdmin={isAdmin}
       />
     </ResponsiveLayoutWrapper>
   );

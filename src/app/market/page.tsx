@@ -1,18 +1,17 @@
 import Link from "next/link";
 import { ResponsiveLayoutWrapper } from "@/components/layout/ResponsiveLayoutWrapper";
-import { StatusBadge } from "@/components/status-badge";
-import { ListingCard } from "@/components/listings/ListingCard";
+import { MarketBrowseClient } from "@/components/listings/MarketBrowseClient";
 import { createClient } from "@/lib/supabase/server";
-import { formatMoney, DEFAULT_CURRENCY } from "@/lib/format";
-import { getGridClassName } from "@/lib/grid-system";
-import type { ListingWithPhotos, ExtendedListingWithPhotos } from "@/lib/types";
+import type { ExtendedListingWithPhotos } from "@/lib/types";
 import { RequireAuthLink } from "@/components/auth/require-auth-link";
 
 async function getVerifiedListings(type: "marketplace" | "donation") {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("listings")
-    .select("*, listing_photos(*), profiles:seller_id(display_name, area, avatar_url, followers_count)")
+    .select(
+      "*, listing_photos(*), profiles:seller_id(display_name, area, avatar_url, followers_count)",
+    )
     .eq("type", type)
     .eq("status", "verified")
     .order("created_at", { ascending: false });
@@ -64,19 +63,7 @@ export default async function MarketPage() {
           </Link>
         </div>
       ) : (
-        <div className={getGridClassName('marketplace')}>
-          {listings.map((item) => (
-            <ListingCard
-              key={item.id}
-              listing={item}
-              isDesktop={true}
-              showActions={true}
-              onLike={(listingId) => console.log('Like:', listingId)}
-              onShare={(listingId) => console.log('Share:', listingId)}
-              onQuickView={(listingId) => console.log('Quick view:', listingId)}
-            />
-          ))}
-        </div>
+        <MarketBrowseClient listings={listings} isAuthed={Boolean(user)} />
       )}
     </ResponsiveLayoutWrapper>
   );

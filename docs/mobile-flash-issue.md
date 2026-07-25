@@ -253,4 +253,4 @@ export function ResponsiveLayoutWrapper({ children, className }: Props) {
 **Root Cause**: Client-side responsive detection with SSR mismatch
 **Impact**: All desktop users experience visual flash on page load
 **Solution**: Implement CSS-first responsive approach
-**Status**: Documented, ready for implementation
+**Status**: Addressed via CSS-first `ResponsiveLayoutWrapper` (`md:hidden` / `hidden md:block`)

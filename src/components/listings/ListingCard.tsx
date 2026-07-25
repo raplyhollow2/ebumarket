@@ -15,6 +15,7 @@ interface ListingCardProps {
   onShare?: (listingId: string) => void
   onQuickView?: (listingId: string) => void
   showActions?: boolean
+  /** Visual enhancement only — all features remain available on mobile */
   isDesktop?: boolean
 }
 
@@ -30,6 +31,8 @@ export function ListingCard({
   const [isLiked, setIsLiked] = useState(listing.is_liked || false)
   const mainPhoto = listing.listing_photos?.[0]
   const isFree = listing.price_cents === 0
+  const detailHref =
+    listing.type === 'donation' ? `/donate/${listing.id}` : `/market/${listing.id}`
 
   const handleLike = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -53,7 +56,7 @@ export function ListingCard({
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault()
-      window.location.href = `/market/${listing.id}`
+      window.location.href = detailHref
     }
   }
 
@@ -67,7 +70,7 @@ export function ListingCard({
       role="button"
       aria-label={`View ${listing.title}`}
     >
-      <Link href={`/market/${listing.id}`}>
+      <Link href={detailHref}>
         <div className="relative aspect-square bg-gray-100 overflow-hidden">
           {mainPhoto ? (
             <Image
@@ -83,8 +86,8 @@ export function ListingCard({
             </div>
           )}
 
-          {/* Desktop Quick Actions Overlay */}
-          {isDesktop && (
+          {/* Desktop hover Quick View (mobile uses explicit button below) */}
+          {isDesktop && showActions && (
             <div
               className={`absolute inset-0 bg-black/40 transition-opacity duration-300 ${
                 isHovered ? 'opacity-100' : 'opacity-0'
@@ -117,7 +120,6 @@ export function ListingCard({
             {isFree ? 'Free' : `Nu. ${((listing.price_cents || 0) / 100).toFixed(2)}`}
           </div>
 
-          {/* Desktop Hover Actions */}
           {isDesktop && showActions && (
             <div
               className={`absolute top-2 left-1/2 -translate-x-1/2 flex gap-2 transition-all duration-300 z-20 ${
@@ -148,9 +150,9 @@ export function ListingCard({
         </div>
       </Link>
 
-      <CardContent className="p-4">
+      <CardContent className="p-3 md:p-4">
         <div className="flex items-start justify-between gap-2 mb-2">
-          <Link href={`/market/${listing.id}`} className="flex-1">
+          <Link href={detailHref} className="flex-1">
             <h3 className="font-medium line-clamp-2 hover:text-pink-600 transition-colors">
               {listing.title}
             </h3>
@@ -161,30 +163,24 @@ export function ListingCard({
           {listing.description}
         </p>
 
-        {/* Seller Info (Desktop) */}
-        {isDesktop && listing.profiles && (
+        {/* Seller info — mobile + desktop */}
+        {listing.profiles && (
           <div className="flex items-center gap-2 mb-3 text-xs text-gray-500">
             <User size={12} />
-            <span>{listing.profiles.display_name}</span>
+            <span className="truncate">{listing.profiles.display_name}</span>
             {listing.profiles.area && (
               <>
                 <span>•</span>
-                <span className="flex items-center gap-1">
+                <span className="flex items-center gap-1 truncate">
                   <MapPin size={12} />
                   {listing.profiles.area}
                 </span>
               </>
             )}
-            {listing.profiles.followers_count !== undefined && listing.profiles.followers_count > 0 && (
-              <>
-                <span>•</span>
-                <span>{listing.profiles.followers_count} followers</span>
-              </>
-            )}
           </div>
         )}
 
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-3 text-xs text-gray-500">
             <span className="flex items-center gap-1">
               <Eye size={14} />
@@ -194,20 +190,21 @@ export function ListingCard({
               <Heart size={14} />
               {listing.likes_count || 0}
             </span>
-            <span className="flex items-center gap-1">
+            <span className="hidden items-center gap-1 sm:flex">
               <MessageCircle size={14} />
               {listing.comments_count || 0}
             </span>
           </div>
 
-          {/* Mobile Actions */}
-          {!isDesktop && showActions && (
-            <div className="flex items-center gap-1">
+          {/* Always-visible actions (parity: not hover-only) */}
+          {showActions && (
+            <div className="flex items-center gap-0.5">
               <Button
                 size="icon"
                 variant="ghost"
-                className="h-8 w-8"
+                className="h-9 w-9"
                 onClick={handleLike}
+                aria-label="Like"
               >
                 <Heart
                   size={16}
@@ -217,16 +214,26 @@ export function ListingCard({
               <Button
                 size="icon"
                 variant="ghost"
-                className="h-8 w-8"
+                className="h-9 w-9"
                 onClick={handleShare}
+                aria-label="Share"
               >
                 <Share2 size={16} />
+              </Button>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="h-9 w-9"
+                onClick={handleQuickView}
+                aria-label="Quick view"
+              >
+                <Eye size={16} />
               </Button>
             </div>
           )}
         </div>
 
-        <div className="flex items-center gap-2 mt-3">
+        <div className="flex items-center gap-2 mt-3 flex-wrap">
           {listing.size && (
             <Badge variant="outline" className="text-xs">
               {listing.size}

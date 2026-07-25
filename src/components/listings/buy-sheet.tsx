@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { createClient } from "@/lib/supabase/client";
-import { formatMoney, platformFeeCents, DEFAULT_CURRENCY } from "@/lib/format";
+import { formatMoney, splitPaymentCents, DEFAULT_CURRENCY } from "@/lib/format";
 import type { MeetupPoint, PaymentMethod } from "@/lib/types";
 import { AuthSheet } from "@/components/auth/auth-sheet";
 
@@ -56,11 +56,10 @@ export function BuySheet({
   );
   const [meetupId, setMeetupId] = useState(meetups[0]?.id ?? "");
   const [newMeetup, setNewMeetup] = useState("");
-  const fee = useMemo(
-    () => platformFeeCents(itemPriceCents, feePercent),
+  const split = useMemo(
+    () => splitPaymentCents(itemPriceCents, feePercent),
     [itemPriceCents, feePercent],
   );
-  const total = itemPriceCents + fee;
 
   function confirm() {
     if (!isAuthed) {
@@ -104,23 +103,26 @@ export function BuySheet({
 
       if (method === "online") {
         if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
-          // Fallback when Stripe keys are not configured: create awaiting_payment row
           const { error } = await supabase.from("transactions").insert({
             listing_id: listingId,
             buyer_id: user.id,
             seller_id: sellerId,
             payment_method: "online",
             meetup_point_id: null,
-            item_price_cents: itemPriceCents,
-            fee_cents: fee,
-            total_cents: total,
+            item_price_cents: split.item_price_cents,
+            fee_cents: split.fee_cents,
+            total_cents: split.total_cents,
+            seller_payout_cents: split.seller_payout_cents,
+            payout_status: "pending",
             status: "awaiting_payment",
           });
           if (error) {
             toast.error(error.message);
             return;
           }
-          toast.message("Stripe not configured — request saved as awaiting payment");
+          toast.message(
+            "Stripe not configured — request saved. Seller will see it in Activity.",
+          );
           onOpenChange(false);
           router.push("/activity");
           router.refresh();
@@ -146,16 +148,18 @@ export function BuySheet({
         seller_id: sellerId,
         payment_method: "cod",
         meetup_point_id: meetupPointId,
-        item_price_cents: itemPriceCents,
-        fee_cents: fee,
-        total_cents: total,
+        item_price_cents: split.item_price_cents,
+        fee_cents: split.fee_cents,
+        total_cents: split.total_cents,
+        seller_payout_cents: split.seller_payout_cents,
+        payout_status: "not_applicable",
         status: "requested",
       });
       if (error) {
         toast.error(error.message);
         return;
       }
-      toast.success("COD request sent");
+      toast.success("Buy request sent to seller");
       onOpenChange(false);
       router.push("/activity");
       router.refresh();
@@ -169,22 +173,24 @@ export function BuySheet({
           <SheetHeader>
             <SheetTitle>Buy</SheetTitle>
             <SheetDescription>
-              Meet in a public place from your meetup list. Don&apos;t share your home address.
+              You pay Zyra. We keep {feePercent}% and deliver the item price to
+              the seller. Meet in a public place — don&apos;t share your home
+              address.
             </SheetDescription>
           </SheetHeader>
           <div className="mt-4 space-y-4 pb-6">
             <div className="rounded-xl bg-muted/70 p-3 text-sm">
               <div className="flex justify-between">
-                <span>Item</span>
-                <span>{formatMoney(itemPriceCents, currency)}</span>
+                <span>Item (seller receives)</span>
+                <span>{formatMoney(split.item_price_cents, currency)}</span>
               </div>
               <div className="mt-1 flex justify-between text-muted-foreground">
-                <span>Platform fee</span>
-                <span>{formatMoney(fee, currency)}</span>
+                <span>Platform fee ({feePercent}%)</span>
+                <span>{formatMoney(split.fee_cents, currency)}</span>
               </div>
               <div className="mt-2 flex justify-between border-t border-border pt-2 font-medium">
-                <span>Total</span>
-                <span>{formatMoney(total, currency)}</span>
+                <span>You pay Zyra</span>
+                <span>{formatMoney(split.total_cents, currency)}</span>
               </div>
             </div>
 
@@ -203,7 +209,7 @@ export function BuySheet({
                   variant={method === "online" ? "default" : "outline"}
                   onClick={() => setMethod("online")}
                 >
-                  Online
+                  Online to Zyra
                 </Button>
               </div>
             </div>
@@ -234,7 +240,11 @@ export function BuySheet({
             )}
 
             <Button className="h-12 w-full" disabled={pending} onClick={confirm}>
-              {pending ? "Confirming…" : "Confirm"}
+              {pending
+                ? "Confirming…"
+                : method === "online"
+                  ? "Pay Zyra"
+                  : "Send request to seller"}
             </Button>
           </div>
         </SheetContent>
