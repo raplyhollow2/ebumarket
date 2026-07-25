@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { TeenShell } from "@/components/layout/teen-shell";
+import { ResponsiveLayoutWrapper } from "@/components/layout/ResponsiveLayoutWrapper";
 import { DonateDetailClient } from "@/components/listings/donate-detail-client";
 import { createClient } from "@/lib/supabase/server";
 import type { ListingWithPhotos } from "@/lib/types";
@@ -24,7 +24,7 @@ export default async function DonateDetailPage({
   } = await supabase.auth.getUser();
 
   return (
-    <TeenShell>
+    <ResponsiveLayoutWrapper>
       <Link href="/donate" className="text-sm text-muted-foreground">
         ← Donation Hub
       </Link>
@@ -34,6 +34,6 @@ export default async function DonateDetailPage({
           isAuthed={Boolean(user)}
         />
       </div>
-    </TeenShell>
+    </ResponsiveLayoutWrapper>
   );
 }

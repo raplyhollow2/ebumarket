@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { TeenShell } from "@/components/layout/teen-shell";
+import { ResponsiveLayoutWrapper } from "@/components/layout/ResponsiveLayoutWrapper";
 import { MarketDetailClient } from "@/components/listings/market-detail-client";
 import { createClient } from "@/lib/supabase/server";
 import { getAppSettings } from "@/lib/settings";
@@ -51,7 +51,7 @@ export default async function MarketDetailPage({
   }
 
   return (
-    <TeenShell>
+    <ResponsiveLayoutWrapper>
       <Link href="/market" className="text-sm text-muted-foreground">
         ← Market
       </Link>
@@ -64,6 +64,6 @@ export default async function MarketDetailPage({
           feePercent={settings.platformFeePercent}
         />
       </div>
-    </TeenShell>
+    </ResponsiveLayoutWrapper>
   );
 }

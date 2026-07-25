@@ -19,48 +19,88 @@ export function DonateDetailClient({
   );
 
   return (
-    <div className="space-y-4">
-      <div className="-mx-4 overflow-hidden">
-        <div className="flex snap-x snap-mandatory gap-2 overflow-x-auto px-4">
-          {photos.map((p) => (
-            <div
-              key={p.id}
-              className="relative aspect-[3/4] w-[85%] shrink-0 snap-center overflow-hidden rounded-2xl bg-muted"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={p.public_url}
-                alt={listing.title}
-                className="h-full w-full object-cover"
-              />
+    <div className="space-y-4 md:space-y-6">
+      {/* Photo Gallery - Responsive Design */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {photos.map((p, index) => (
+          <div
+            key={p.id}
+            className={`relative aspect-[3/4] overflow-hidden rounded-2xl bg-muted ${
+              index === 0 ? 'md:col-span-2 md:row-span-2' : ''
+            }`}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={p.public_url}
+              alt={listing.title}
+              className="h-full w-full object-cover transition-transform hover:scale-105"
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* Product Details - Desktop Layout */}
+      <div className="grid gap-6 md:grid-cols-3">
+        <div className="md:col-span-2 space-y-4">
+          <div>
+            <h1 className="font-[family-name:var(--font-display)] text-3xl font-semibold md:text-4xl lg:text-5xl">
+              {listing.title}
+            </h1>
+            <div className="mt-3">
+              <StatusBadge status={listing.status} />
             </div>
-          ))}
+          </div>
+
+          <div className="space-y-2">
+            <p className="text-sm text-muted-foreground">
+              Size {listing.size} · {listing.condition} · Free
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <p className="text-sm leading-relaxed md:text-base">{listing.description}</p>
+            <p className="text-xs text-muted-foreground">
+              Donation items are verified by Zyra team for quality.
+            </p>
+          </div>
+        </div>
+
+        {/* Claim Card - Desktop Side Panel */}
+        <div className="md:col-span-1">
+          <div className="sticky top-4 rounded-lg border bg-card p-4 shadow-sm md:p-6">
+            {listing.status === "verified" ? (
+              <div className="space-y-4">
+                <div className="border-b pb-4">
+                  <p className="text-sm text-muted-foreground">Price</p>
+                  <p className="text-2xl font-semibold">Free</p>
+                </div>
+
+                <Button className="h-12 w-full" onClick={() => setOpen(true)}>
+                  Claim Item
+                </Button>
+
+                <div className="space-y-2 text-xs text-muted-foreground">
+                  <p>· Free donation item</p>
+                  <p>· Verified by Zyra team</p>
+                  <p>· Arrange pickup with seller</p>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center text-muted-foreground">
+                <p>This item is not currently available</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
-      <div>
-        <h1 className="font-[family-name:var(--font-display)] text-3xl font-semibold">
-          {listing.title}
-        </h1>
-        <div className="mt-2">
-          <StatusBadge status={listing.status} />
-        </div>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Size {listing.size} · {listing.condition} · Free
-        </p>
-        <p className="mt-3 text-sm">{listing.description}</p>
-      </div>
+
       {listing.status === "verified" && (
-        <>
-          <Button className="h-12 w-full" onClick={() => setOpen(true)}>
-            Request / Claim
-          </Button>
-          <ClaimSheet
-            open={open}
-            onOpenChange={setOpen}
-            listingId={listing.id}
-            isAuthed={isAuthed}
-          />
-        </>
+        <ClaimSheet
+          open={open}
+          onOpenChange={setOpen}
+          listingId={listing.id}
+          isAuthed={isAuthed}
+        />
       )}
     </div>
   );
