@@ -21,6 +21,7 @@ This folder is the **drawing board** — product intent, flows, wireframes, live
 | [product/data-model.md](./product/data-model.md) | Schema, RLS, live-data rules |
 | [product/ui-system.md](./product/ui-system.md) | shadcn component map |
 | [product/mobile-desktop-parity.md](./product/mobile-desktop-parity.md) | **Hard rule:** desktop features = mobile features |
+| [product/pwa.md](./product/pwa.md) | Installable PWA (manifest, SW, icons) |
 | [product/admin-erp.md](./product/admin-erp.md) | ERP modules to run the live site |
 | [product/donation-centers-and-profiles.md](./product/donation-centers-and-profiles.md) | Orphanages/centers, donor tiers, Tumblr-like profiles |
 | [production/00-index.md](./production/00-index.md) | **Production:** routes, APIs, middleware, schema, phases |
