@@ -1,20 +1,9 @@
 import Link from "next/link";
 import { CATEGORIES } from "@/lib/types";
+import { BHUTAN_IMAGES } from "@/lib/bhutan-images";
 
 const CATEGORY_VISUAL: Record<string, string> = {
-  Tops: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=600&q=80",
-  Bottoms:
-    "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=600&q=80",
-  Dresses:
-    "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=600&q=80",
-  Outerwear:
-    "https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=600&q=80",
-  Shoes:
-    "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=600&q=80",
-  Accessories:
-    "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=600&q=80",
-  Other:
-    "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?auto=format&fit=crop&w=600&q=80",
+  ...BHUTAN_IMAGES.categories,
 };
 
 export function HomeCategories() {

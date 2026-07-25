@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { AuthSheetTrigger } from "@/components/auth/auth-sheet-trigger";
 import { cn } from "@/lib/utils";
+import { BHUTAN_IMAGES } from "@/lib/bhutan-images";
 import type { HeroSlide } from "@/components/admin/cms/HeroBuilder";
 
 export type PublicHeroSection = {
@@ -40,7 +41,7 @@ export function HeroSlider({
           type: "image" as const,
           background: {
             type: "image" as const,
-            src: "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=2000&q=80",
+            src: BHUTAN_IMAGES.hero,
             overlay: "linear-gradient(160deg,rgba(28,48,36,0.55),rgba(28,48,36,0.25))",
           },
           foreground: {

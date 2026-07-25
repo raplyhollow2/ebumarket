@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { AuthSheetTrigger } from "@/components/auth/auth-sheet-trigger";
 import { cn } from "@/lib/utils";
+import { BHUTAN_IMAGES } from "@/lib/bhutan-images";
 
-const HERO_IMAGE =
-  "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=2400&q=80";
+const HERO_IMAGE = BHUTAN_IMAGES.hero;
 
 export function HomeHero({ isAuthed }: { isAuthed: boolean }) {
   return (

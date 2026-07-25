@@ -241,7 +241,7 @@ INSERT INTO public.donation_centers (
   'A residential home supporting children with daily care, school, and community. They especially need jackets, school shirts, and shoes in sizes S–M.',
   'Thimphu',
   'care@thimphuhome.example',
-  'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=1600&q=80',
+  '/bhutan/center-thimphu-home.webp',
   ARRAY['Jackets', 'School shirts', 'Shoes', 'Blankets'],
   true,
   true
@@ -254,7 +254,7 @@ INSERT INTO public.donation_centers (
   'Community drop-in centre for teens — skills workshops, sports, and peer support. Accepts clean casual wear and sports kits.',
   'Paro',
   'hello@paroyouth.example',
-  'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1600&q=80',
+  '/bhutan/center-paro-youth.webp',
   ARRAY['Sportswear', 'Hoodies', 'Trainers'],
   true,
   true
@@ -267,7 +267,7 @@ INSERT INTO public.donation_centers (
   'Short-stay shelter supporting families. Needs sturdy everyday clothes and warm layers year-round.',
   'Phuentsholing',
   'hub@plshelter.example',
-  'https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?auto=format&fit=crop&w=1600&q=80',
+  '/bhutan/center-pl-shelter.webp',
   ARRAY['Warm layers', 'Pants', 'Socks'],
   true,
   true
@@ -280,7 +280,7 @@ INSERT INTO public.donation_centers (
   'Coordinates clothing drives with partner orphanages and centres. Tag your donation here when you want it redistributed where needed most.',
   'Nationwide',
   'collective@bycso.example',
-  'https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&w=1600&q=80',
+  '/bhutan/center-cso.webp',
   ARRAY['Mixed sizes', 'School uniforms', 'Accessories'],
   true,
   true

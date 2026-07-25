@@ -57,36 +57,24 @@ type SeedListing = {
   centerSlug?: string;
 };
 
-/** Distinct Unsplash fashion images for seed photos */
+/** Distinct Bhutanese demo images for seed photos (served from /public/bhutan) */
 const IMAGES = {
-  denim:
-    "https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=800&q=80",
-  tee: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=80",
-  hoodie:
-    "https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=800&q=80",
-  dress:
-    "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=800&q=80",
-  sneakers:
-    "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80",
-  jacket:
-    "https://images.unsplash.com/photo-1544022613-e87ca75a784a?auto=format&fit=crop&w=800&q=80",
-  skirt:
-    "https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?auto=format&fit=crop&w=800&q=80",
-  sweater:
-    "https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&w=800&q=80",
-  pants:
-    "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=800&q=80",
-  bag: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=800&q=80",
-  boots:
-    "https://images.unsplash.com/photo-1608256246200-53e635b5b65f?auto=format&fit=crop&w=800&q=80",
-  shirt:
-    "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80",
-  coat: "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?auto=format&fit=crop&w=800&q=80",
-  shorts:
-    "https://images.unsplash.com/photo-1591195853828-11db59a44f6b?auto=format&fit=crop&w=800&q=80",
-  scarf:
-    "https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?auto=format&fit=crop&w=800&q=80",
-  kids: "https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?auto=format&fit=crop&w=800&q=80",
+  denim: "/bhutan/listing-denim.webp",
+  tee: "/bhutan/cat-tops.webp",
+  hoodie: "/bhutan/listing-hoodie.webp",
+  dress: "/bhutan/cat-dresses.webp",
+  sneakers: "/bhutan/cat-shoes.webp",
+  jacket: "/bhutan/cat-outerwear.webp",
+  skirt: "/bhutan/cat-dresses.webp",
+  sweater: "/bhutan/cat-tops.webp",
+  pants: "/bhutan/cat-bottoms.webp",
+  bag: "/bhutan/cat-accessories.webp",
+  boots: "/bhutan/cat-shoes.webp",
+  shirt: "/bhutan/cat-tops.webp",
+  coat: "/bhutan/listing-coat.webp",
+  shorts: "/bhutan/cat-bottoms.webp",
+  scarf: "/bhutan/listing-scarf.webp",
+  kids: "/bhutan/listing-kids.webp",
 };
 
 const CATALOG: SeedListing[] = [
@@ -547,8 +535,8 @@ async function main() {
          background_style, layout_style, show_donation_stats, show_listings, custom_links
        ) values (
          $1,
-         'https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&w=1600&q=80',
-         'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80',
+         '/bhutan/profile-banner.webp',
+         '/bhutan/profile-avatar.webp',
          'Giving clothes a second life in Phuentsholing — open to centre drives.',
          '#1c3024', 'soft_wash', 'classic', true, true,
          '[{"label":"Donation Hub","url":"/donate"}]'::jsonb
@@ -560,6 +548,20 @@ async function main() {
          accent_color = excluded.accent_color,
          updated_at = now()`,
       [ids.Sam],
+    );
+  }
+
+  // Keep centre covers on Bhutanese local assets
+  const centerCovers: Record<string, string> = {
+    "thimphu-childrens-home": "/bhutan/center-thimphu-home.webp",
+    "paro-youth-centre": "/bhutan/center-paro-youth.webp",
+    "phuentsholing-shelter-hub": "/bhutan/center-pl-shelter.webp",
+    "bhutan-youth-cso": "/bhutan/center-cso.webp",
+  };
+  for (const [slug, cover] of Object.entries(centerCovers)) {
+    await pg.query(
+      `update public.donation_centers set cover_url = $2, updated_at = now() where slug = $1`,
+      [slug, cover],
     );
   }
 
