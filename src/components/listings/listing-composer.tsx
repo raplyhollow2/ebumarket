@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ResponsiveLayoutWrapper } from "@/components/layout/ResponsiveLayoutWrapper";
@@ -16,23 +17,34 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { createClient } from "@/lib/supabase/client";
+import { CENTER_TYPE_LABELS } from "@/lib/donor-tiers";
 import {
   CATEGORIES,
   CONDITIONS,
   REQUIRED_ANGLES,
   SIZES,
+  type DonationCenter,
   type ListingType,
   type PhotoAngle,
 } from "@/lib/types";
 
 type Slot = { file: File | null; preview: string | null };
 
+const NONE_CENTER = "__none__";
+
 export function ListingComposer({
   type,
   userId,
+  centers = [],
+  initialCenterId = null,
 }: {
   type: ListingType;
   userId: string;
+  centers?: Pick<
+    DonationCenter,
+    "id" | "name" | "center_type" | "area" | "is_verified"
+  >[];
+  initialCenterId?: string | null;
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -42,6 +54,11 @@ export function ListingComposer({
   const [size, setSize] = useState<string>(SIZES[2]);
   const [condition, setCondition] = useState<string>(CONDITIONS[1]);
   const [price, setPrice] = useState("");
+  const [centerId, setCenterId] = useState<string>(
+    initialCenterId && centers.some((c) => c.id === initialCenterId)
+      ? initialCenterId
+      : NONE_CENTER,
+  );
   const [slots, setSlots] = useState<Record<PhotoAngle, Slot>>({
     front: { file: null, preview: null },
     back: { file: null, preview: null },
@@ -49,6 +66,11 @@ export function ListingComposer({
     defect: { file: null, preview: null },
     other: { file: null, preview: null },
   });
+
+  const selectedCenter = useMemo(
+    () => centers.find((c) => c.id === centerId) ?? null,
+    [centers, centerId],
+  );
 
   const requiredReady = useMemo(
     () => REQUIRED_ANGLES.every((a) => slots[a].file),
@@ -99,6 +121,8 @@ export function ListingComposer({
           price_cents: priceCents,
           currency: "BTN",
           status: "pending",
+          center_id:
+            type === "donation" && centerId !== NONE_CENTER ? centerId : null,
         })
         .select("id")
         .single();
@@ -155,6 +179,45 @@ export function ListingComposer({
       </div>
 
       <div className="space-y-4 pb-24">
+        {type === "donation" && centers.length > 0 ? (
+          <div className="space-y-1.5">
+            <Label>Donate to (optional)</Label>
+            <Select value={centerId} onValueChange={(v) => v && setCenterId(v)}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Peer gift or pick a centre" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={NONE_CENTER}>
+                  Peer gift — anyone can claim
+                </SelectItem>
+                {centers.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    {c.name}
+                    {c.area ? ` · ${c.area}` : ""}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {selectedCenter ? (
+              <p className="text-xs text-muted-foreground">
+                Tagged for {selectedCenter.name} (
+                {CENTER_TYPE_LABELS[selectedCenter.center_type] ?? "centre"}).{" "}
+                <Link href="/donate/centers" className="underline">
+                  Browse centres
+                </Link>
+              </p>
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                Or{" "}
+                <Link href="/donate/centers" className="underline">
+                  browse orphanages & centres
+                </Link>{" "}
+                first.
+              </p>
+            )}
+          </div>
+        ) : null}
+
         <div className="space-y-1.5">
           <Label htmlFor="title">Title</Label>
           <Input

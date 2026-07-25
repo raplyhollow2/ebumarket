@@ -19,6 +19,7 @@ export function DonateDetailClient({
     (a, b) => a.sort_order - b.sort_order,
   );
   const donor = listing.profiles;
+  const center = listing.donation_centers;
   const donorHref = donor?.id
     ? `/profile/${donor.id}`
     : `/profile/${listing.seller_id}`;
@@ -81,6 +82,20 @@ export function DonateDetailClient({
                 </Link>
               </p>
             )}
+            {center ? (
+              <p className="text-sm">
+                For{" "}
+                <Link
+                  href={`/donate/centers/${center.id}`}
+                  className="font-medium underline underline-offset-2"
+                >
+                  {center.name}
+                </Link>
+                {center.area ? (
+                  <span className="text-muted-foreground"> · {center.area}</span>
+                ) : null}
+              </p>
+            ) : null}
           </div>
 
           <div className="space-y-2">

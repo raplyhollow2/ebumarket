@@ -25,6 +25,81 @@ export type PayoutStatus =
   | "not_applicable";
 export type ClaimStatus = "requested" | "approved" | "fulfilled" | "declined";
 
+export type CenterType =
+  | "orphanage"
+  | "community_center"
+  | "cso"
+  | "shelter"
+  | "other";
+
+export type DonorTier = "seedling" | "helper" | "guardian" | "champion";
+
+export type ProfileBackgroundStyle =
+  | "plain"
+  | "soft_wash"
+  | "grid_dots"
+  | "photo_blur";
+
+export type ProfileLayoutStyle = "classic" | "stacked" | "magazine";
+
+export type DonationCenter = {
+  id: string;
+  name: string;
+  center_type: CenterType;
+  slug: string;
+  tagline: string;
+  description: string;
+  area: string;
+  contact_email: string | null;
+  contact_phone: string | null;
+  website: string | null;
+  cover_url: string | null;
+  logo_url: string | null;
+  needs: string[];
+  is_verified: boolean;
+  is_active: boolean;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type CenterMember = {
+  id: string;
+  center_id: string;
+  user_id: string;
+  member_role: "owner" | "staff";
+  created_at: string;
+};
+
+export type DonorStats = {
+  user_id: string;
+  points: number;
+  items_donated: number;
+  items_fulfilled: number;
+  center_donations: number;
+  tier: DonorTier;
+  updated_at: string;
+};
+
+export type ProfileCustomLink = {
+  label: string;
+  url: string;
+};
+
+export type ProfileTheme = {
+  user_id: string;
+  banner_url: string | null;
+  avatar_url: string | null;
+  bio: string;
+  accent_color: string;
+  background_style: ProfileBackgroundStyle;
+  layout_style: ProfileLayoutStyle;
+  show_donation_stats: boolean;
+  show_listings: boolean;
+  custom_links: ProfileCustomLink[];
+  updated_at: string;
+};
+
 export type Transaction = {
   id: string;
   listing_id: string;
@@ -91,6 +166,7 @@ export type Listing = {
   reject_reason: string | null;
   verified_at: string | null;
   verified_by: string | null;
+  center_id: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -110,6 +186,10 @@ export type ListingWithPhotos = Listing & {
   profiles?: Pick<
     ExtendedProfile,
     "id" | "display_name" | "area" | "is_organization" | "avatar_url" | "followers_count"
+  > | null;
+  donation_centers?: Pick<
+    DonationCenter,
+    "id" | "name" | "slug" | "center_type" | "area"
   > | null;
 };
 
@@ -327,6 +407,10 @@ export type ExtendedListing = Listing & {
 export type ExtendedListingWithPhotos = ExtendedListing & {
   listing_photos: ListingPhoto[];
   profiles?: Pick<ExtendedProfile, "display_name" | "area" | "avatar_url" | "followers_count"> | null;
+  donation_centers?: Pick<
+    DonationCenter,
+    "id" | "name" | "slug" | "center_type" | "area"
+  > | null;
 };
 
 // Seller Analytics Types

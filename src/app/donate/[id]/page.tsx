@@ -15,7 +15,7 @@ export default async function DonateDetailPage({
   const { data } = await supabase
     .from("listings")
     .select(
-      "*, listing_photos(*), profiles:seller_id(id, display_name, area, is_organization)",
+      "*, listing_photos(*), profiles:seller_id(id, display_name, area, is_organization), donation_centers:center_id(id, name, slug, center_type, area)",
     )
     .eq("id", id)
     .eq("type", "donation")
