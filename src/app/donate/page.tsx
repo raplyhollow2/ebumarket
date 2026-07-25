@@ -9,7 +9,7 @@ export default async function DonatePage() {
   const { data } = await supabase
     .from("listings")
     .select(
-      "*, listing_photos(*), profiles:seller_id(display_name, area, avatar_url, followers_count)",
+      "*, listing_photos(*), profiles:seller_id(display_name, area)",
     )
     .eq("type", "donation")
     .eq("status", "verified")

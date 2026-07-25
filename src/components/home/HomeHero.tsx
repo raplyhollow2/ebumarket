@@ -1,73 +1,77 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import { AuthSheetTrigger } from '@/components/auth/auth-sheet-trigger'
-import { cn } from '@/lib/utils'
+import Link from "next/link";
+import { AuthSheetTrigger } from "@/components/auth/auth-sheet-trigger";
+import { cn } from "@/lib/utils";
+
+const HERO_IMAGE =
+  "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=2400&q=80";
 
 export function HomeHero({ isAuthed }: { isAuthed: boolean }) {
   return (
-    <section className="relative -mx-4 -mt-4 flex min-h-[calc(100dvh-4.5rem)] flex-col overflow-hidden md:min-h-[560px] md:rounded-2xl">
-      <div
-        className="absolute inset-0 bg-[linear-gradient(160deg,rgba(28,48,36,0.55),rgba(28,48,36,0.25)),url('https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center md:bg-[linear-gradient(135deg,rgba(28,48,36,0.4),rgba(45,35,20,0.3)),url('https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=2000&q=80')]"
-        aria-hidden
-      />
-      <div className="relative z-10 flex flex-1 flex-col justify-end px-5 pb-8 pt-16 text-white md:justify-center md:px-12 md:py-20">
-        <div className="max-w-4xl">
-          <p className="font-[family-name:var(--font-display)] text-5xl font-semibold tracking-tight drop-shadow-sm md:text-7xl md:font-bold">
+    <section className="relative flex min-h-[100dvh] flex-col overflow-hidden md:min-h-[calc(100dvh-7rem)]">
+      {/* Full-bleed visual plane */}
+      <div className="absolute inset-0" aria-hidden>
+        <div
+          className="home-hero-kenburns absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: `url('${HERO_IMAGE}')`,
+          }}
+        />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(18,28,22,0.15)_0%,rgba(18,28,22,0.35)_45%,rgba(18,28,22,0.82)_100%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_20%,rgba(212,175,120,0.18),transparent_50%)]" />
+      </div>
+
+      <div className="relative z-10 flex flex-1 flex-col justify-end px-5 pb-10 pt-20 text-white md:justify-center md:px-12 md:pb-16 lg:px-20">
+        <div className="home-hero-rise max-w-3xl">
+          <p className="font-[family-name:var(--font-display)] text-[clamp(3.5rem,12vw,7.5rem)] font-semibold leading-[0.88] tracking-[-0.04em]">
             ZYRA
           </p>
-          <h1 className="mt-3 max-w-[14ch] font-[family-name:var(--font-display)] text-3xl font-medium leading-tight md:mt-4 md:max-w-3xl md:text-5xl md:font-semibold">
-            Clothes that get a second life.
+          <h1 className="home-hero-rise-delay mt-5 max-w-[16ch] font-[family-name:var(--font-display)] text-[clamp(1.75rem,4.5vw,3.25rem)] font-medium leading-[1.1] tracking-tight md:mt-6">
+            Buy preloved. Wear it your way.
           </h1>
-          <p className="mt-3 max-w-[28ch] text-sm text-white/85 md:mt-6 md:max-w-2xl md:text-xl md:text-white/90">
-            Teen marketplace + free donation hub — verified listings you can trust.
+          <p className="home-hero-rise-delay-2 mt-4 max-w-[32ch] text-base text-white/88 md:mt-5 md:max-w-xl md:text-lg">
+            Teen marketplace and free donation hub — Verified by Zyra, built for
+            circular fashion in Bhutan.
           </p>
 
-          <div className="mt-6 flex flex-col gap-2 md:mt-8 md:flex-row md:flex-wrap md:items-center md:gap-4">
+          <div className="home-hero-rise-delay-2 mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center md:mt-9">
             <Link
               href="/market"
               className={cn(
-                'flex h-12 items-center justify-center rounded-lg bg-white px-6 text-base font-medium text-primary transition hover:bg-white/90',
-                'md:h-14 md:rounded-full md:px-8 md:text-lg md:font-semibold',
+                "inline-flex h-12 items-center justify-center rounded-md bg-white px-7 text-base font-semibold text-[#1c3024] transition duration-300",
+                "hover:bg-white/92 hover:tracking-wide md:h-14 md:px-8",
               )}
             >
               Shop Market
             </Link>
             <Link
-              href="/donate"
+              href="/market/new"
               className={cn(
-                'flex h-12 items-center justify-center rounded-lg border border-white/40 bg-white/10 px-6 text-base font-medium text-white transition hover:bg-white/20',
-                'md:h-14 md:rounded-full md:border-2 md:px-8 md:text-lg md:font-semibold',
+                "inline-flex h-12 items-center justify-center rounded-md border border-white/55 bg-white/10 px-7 text-base font-semibold text-white backdrop-blur-sm transition duration-300",
+                "hover:bg-white/20 md:h-14 md:px-8",
               )}
             >
-              Donate / Claim
+              Sell an item
             </Link>
-
             {!isAuthed ? (
-              <div className="mt-2 grid grid-cols-2 gap-2 md:mt-0 md:flex md:items-center md:gap-3">
-                <AuthSheetTrigger
-                  label="Log in"
-                  mode="login"
-                  variant="secondary"
-                  className="h-11 rounded-lg bg-white/90 text-primary hover:bg-white md:h-12 md:rounded-full md:px-6"
-                />
-                <AuthSheetTrigger
-                  label="Sign up"
-                  mode="signup"
-                  className="h-11 rounded-lg border border-white/50 bg-transparent text-white hover:bg-white/15 hover:text-white md:h-12 md:rounded-full md:border-2 md:px-6"
-                />
-              </div>
+              <AuthSheetTrigger
+                label="Join Zyra"
+                mode="signup"
+                variant="ghost"
+                className="h-12 rounded-md border-0 bg-transparent px-2 text-base font-medium text-white underline decoration-white/40 underline-offset-4 hover:bg-transparent hover:text-white hover:decoration-white md:h-14"
+              />
             ) : (
               <Link
-                href="/profile"
-                className="flex h-11 items-center justify-center rounded-lg px-6 text-base font-medium text-white transition hover:bg-white/10 md:h-12 md:rounded-full"
+                href="/donate"
+                className="inline-flex h-12 items-center justify-center px-2 text-base font-medium text-white underline decoration-white/40 underline-offset-4 hover:decoration-white md:h-14"
               >
-                Go to profile
+                Donation Hub
               </Link>
             )}
           </div>
         </div>
       </div>
     </section>
-  )
+  );
 }

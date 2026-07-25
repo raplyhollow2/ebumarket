@@ -5,16 +5,22 @@ import { createClient } from "@/lib/supabase/server";
 import type { ExtendedListingWithPhotos } from "@/lib/types";
 import { RequireAuthLink } from "@/components/auth/require-auth-link";
 
-async function getVerifiedListings(type: "marketplace" | "donation") {
+async function getVerifiedListings(category?: string) {
   const supabase = await createClient();
-  const { data, error } = await supabase
+  let query = supabase
     .from("listings")
     .select(
-      "*, listing_photos(*), profiles:seller_id(display_name, area, avatar_url, followers_count)",
+      "*, listing_photos(*), profiles:seller_id(display_name, area)",
     )
-    .eq("type", type)
+    .eq("type", "marketplace")
     .eq("status", "verified")
     .order("created_at", { ascending: false });
+
+  if (category) {
+    query = query.eq("category", category);
+  }
+
+  const { data, error } = await query;
   if (error) {
     console.error(error);
     return [] as ExtendedListingWithPhotos[];
@@ -22,8 +28,13 @@ async function getVerifiedListings(type: "marketplace" | "donation") {
   return (data ?? []) as ExtendedListingWithPhotos[];
 }
 
-export default async function MarketPage() {
-  const listings = await getVerifiedListings("marketplace");
+export default async function MarketPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ category?: string }>;
+}) {
+  const { category } = await searchParams;
+  const listings = await getVerifiedListings(category);
   const supabase = await createClient();
   const {
     data: { user },
@@ -35,6 +46,9 @@ export default async function MarketPage() {
         <div>
           <h1 className="font-[family-name:var(--font-display)] text-3xl font-semibold tracking-tight">
             Market
+            {category ? (
+              <span className="text-muted-foreground"> · {category}</span>
+            ) : null}
           </h1>
           <p className="text-sm text-muted-foreground">
             Only Verified by Zyra listings.
@@ -53,7 +67,9 @@ export default async function MarketPage() {
         <div className="rounded-2xl border border-dashed border-border bg-card/60 p-8 text-center">
           <p className="font-medium">No live items yet</p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Be first — list something for verification.
+            {category
+              ? `Nothing verified in ${category} right now.`
+              : "Be first — list something for verification."}
           </p>
           <Link
             href="/market/new"
