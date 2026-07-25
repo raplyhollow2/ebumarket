@@ -75,13 +75,21 @@ Donor Activity → approve → listing status claimed → +15 points path
 ```ts
 {
   user_id,
-  banner_url, avatar_url, bio,
+  banner_url,   // public URL from Storage bucket profile-media (upload UI)
+  avatar_url,   // same
+  bio,
   accent_color, background_style, layout_style,
   show_donation_stats, show_listings,
   custom_links: { label, url }[],  // UI max 5
   updated_at
 }
 ```
+
+Upload: `ImageUploadField` → `uploadPublicImage({ bucket: "profile-media", folder: userId, kind })` → save URL on theme.
+
+### Centre cover (`donation_centers.cover_url`)
+
+Admin `/admin/centers` uploads via `center-media` bucket; URL stored on row.
 
 ### Centre create (admin)
 
@@ -133,7 +141,7 @@ Rendered by `DonorBadge` (`showProgress` on own profile).
 | --- | --- |
 | Staff special claim queue for tagged items | P1 UI (members assigned); P2 dedicated Activity filter |
 | Claimed items visible on centre page to public | P2 RLS decision |
-| Profile image upload to Storage | P2 |
+| Profile image upload to Storage | **Done** — `profile-media` / `center-media` + `ImageUploadField` |
 | Post-verify toast “+10 progress” | P1 |
 | `/api/admin/dashboard-stats` unauthenticated | P1 harden |
 | Dead mock donation components | P1 mark deprecated / remove imports |

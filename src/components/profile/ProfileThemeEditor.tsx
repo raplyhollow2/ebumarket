@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { ImageUploadField } from "@/components/ui/ImageUploadField";
 import { createClient } from "@/lib/supabase/client";
 import type {
   ProfileBackgroundStyle,
@@ -166,22 +167,26 @@ export function ProfileThemeEditor({
         </div>
       </div>
 
-      <div className="space-y-1.5">
-        <Label>Banner image URL</Label>
-        <Input
-          value={bannerUrl}
-          onChange={(e) => setBannerUrl(e.target.value)}
-          placeholder="https://…"
-        />
-      </div>
-      <div className="space-y-1.5">
-        <Label>Avatar image URL</Label>
-        <Input
-          value={avatarUrl}
-          onChange={(e) => setAvatarUrl(e.target.value)}
-          placeholder="https://…"
-        />
-      </div>
+      <ImageUploadField
+        label="Banner image"
+        value={bannerUrl}
+        onChange={setBannerUrl}
+        bucket="profile-media"
+        folder={userId}
+        kind="banner"
+        aspectClass="aspect-[21/9]"
+        disabled={pending}
+      />
+      <ImageUploadField
+        label="Avatar image"
+        value={avatarUrl}
+        onChange={setAvatarUrl}
+        bucket="profile-media"
+        folder={userId}
+        kind="avatar"
+        aspectClass="aspect-square max-w-[140px]"
+        disabled={pending}
+      />
       <div className="space-y-1.5">
         <Label>Bio</Label>
         <Textarea

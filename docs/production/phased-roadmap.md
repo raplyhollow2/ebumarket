@@ -41,7 +41,7 @@ Production work after v1 centres/tiers/themes ship.
 | --- | --- |
 | 2.1 | Activity tab: “Centre inbox” for `center_members` (claims on tagged listings) |
 | 2.2 | Optional RLS: centre members SELECT tagged listings including pending claims context |
-| 2.3 | Profile banner/avatar upload to Supabase Storage bucket `profile-media` |
+| 2.3 | Profile banner/avatar upload to Supabase Storage bucket `profile-media` (+ `center-media`) | **Done** (Phase 1.5) |
 | 2.4 | Top-donors / tier toast on donor verify path (non-admin) |
 | 2.5 | Remove dead mock components from repo |
 | 2.6 | Wire orphaned social/messaging pages OR document as deferred APIs-only |

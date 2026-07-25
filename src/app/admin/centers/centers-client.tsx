@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ImageUploadField } from "@/components/ui/ImageUploadField";
 import { createClient } from "@/lib/supabase/client";
 import { CENTER_TYPE_LABELS } from "@/lib/donor-tiers";
 import type {
@@ -253,10 +254,15 @@ export function AdminCentersClient({
             />
           </div>
           <div className="space-y-1.5 sm:col-span-2">
-            <Label>Cover image URL</Label>
-            <Input
+            <ImageUploadField
+              label="Cover image"
               value={coverUrl}
-              onChange={(e) => setCoverUrl(e.target.value)}
+              onChange={setCoverUrl}
+              bucket="center-media"
+              folder="covers"
+              kind="cover"
+              aspectClass="aspect-[21/9]"
+              disabled={pending}
             />
           </div>
         </div>
@@ -324,6 +330,40 @@ export function AdminCentersClient({
                 ))
               )}
             </ul>
+            <div className="pt-1">
+              <ImageUploadField
+                label="Update cover"
+                value={c.cover_url ?? ""}
+                onChange={(url) => {
+                  startTransition(async () => {
+                    const supabase = createClient();
+                    const { error } = await supabase
+                      .from("donation_centers")
+                      .update({
+                        cover_url: url || null,
+                        updated_at: new Date().toISOString(),
+                      })
+                      .eq("id", c.id);
+                    if (error) {
+                      toast.error(error.message);
+                      return;
+                    }
+                    setCenters((prev) =>
+                      prev.map((x) =>
+                        x.id === c.id ? { ...x, cover_url: url || null } : x,
+                      ),
+                    );
+                    toast.success("Cover saved");
+                    router.refresh();
+                  });
+                }}
+                bucket="center-media"
+                folder={c.id}
+                kind="cover"
+                aspectClass="aspect-[21/9]"
+                disabled={pending}
+              />
+            </div>
           </div>
         ))}
       </section>

@@ -144,11 +144,18 @@ Tier thresholds: 0 / 25 / 75 / 150.
 
 ## 4. Storage
 
-| Bucket | Used for |
-| --- | --- |
-| `listing-photos` | Composer uploads `{userId}/{listingId}/{angle}-{ts}` |
+| Bucket | Public | Path convention | Used for |
+| --- | --- | --- | --- |
+| `listing-photos` | yes | `{userId}/{listingId}/{angle}-{ts}` | Listing composer (Market + Donate) |
+| `profile-media` | yes | `{userId}/banner-{ts}.{ext}`, `{userId}/avatar-…` | Profile theme banner + avatar uploads |
+| `center-media` | yes | `{centerId\|covers}/cover-{ts}.{ext}` | Admin centre cover uploads |
 
-Profile theme images today: **URL fields only** (no dedicated storage bucket yet — Phase 2).
+**UI:** `src/components/ui/ImageUploadField.tsx` + `src/lib/storage-upload.ts`  
+**DB columns store `public_url`** (`profile_themes.banner_url` / `avatar_url`, `donation_centers.cover_url`, `listing_photos.public_url`).
+
+Seed may still use external Unsplash URLs for demo rows; **user/admin uploads always go to Storage**.
+
+Migration: `supabase/migrations/20260725150000_profile_center_media_storage.sql`
 
 ---
 
