@@ -18,6 +18,7 @@ This folder is the **drawing board** — product intent, flows, wireframes, live
 | [drawing-board/trust-and-verification.md](./drawing-board/trust-and-verification.md) | Badges & payments |
 | [product/mvp-scope.md](./product/mvp-scope.md) | In/out of scope + acceptance |
 | [product/tech-sketch.md](./product/tech-sketch.md) | Next.js + Supabase + Stripe |
+| [presentations/Zyra-Product-Overview.pptx](./presentations/Zyra-Product-Overview.pptx) | International product PPT (16:9) |
 | [product/data-model.md](./product/data-model.md) | Schema, RLS, live-data rules |
 | [product/ui-system.md](./product/ui-system.md) | shadcn component map |
 | [product/mobile-desktop-parity.md](./product/mobile-desktop-parity.md) | **Hard rule:** desktop features = mobile features |
