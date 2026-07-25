@@ -58,7 +58,7 @@ export function BoostedListings({ className = '' }: BoostedListingsProps) {
           {[1, 2, 3, 4].map(i => (
             <Card key={i}>
               <CardContent className="p-0">
-                <div className="aspect-square bg-gray-200 animate-pulse"></div>
+                <div className="aspect-[3/4] bg-muted animate-pulse"></div>
               </CardContent>
             </Card>
           ))}

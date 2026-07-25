@@ -23,7 +23,7 @@ export function ResponsiveLayoutWrapper({
         <DesktopNavigation />
       </div>
 
-      <main className="mx-auto w-full max-w-lg px-4 pb-24 pt-4 md:container md:max-w-none md:px-4 md:py-6 md:pb-8">
+      <main className="mx-auto w-full max-w-lg px-4 pb-24 pt-4 md:max-w-7xl md:px-6 md:py-6 md:pb-8 lg:px-8">
         {children}
       </main>
 

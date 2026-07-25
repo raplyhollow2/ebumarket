@@ -110,10 +110,11 @@ export function MarketBrowseClient({
   return (
     <>
       <div className={getGridClassName(grid)}>
-        {items.map((item) => (
+        {items.map((item, index) => (
           <ListingCard
             key={item.id}
             listing={item}
+            index={index}
             isDesktop
             showActions
             onLike={onLike}

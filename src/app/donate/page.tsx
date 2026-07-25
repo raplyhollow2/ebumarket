@@ -113,9 +113,9 @@ export default async function DonatePage() {
               See all
             </Link>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {featuredCenters.slice(0, 2).map((c) => (
-              <CenterCard key={c.id} center={c} />
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-4">
+            {featuredCenters.map((c, i) => (
+              <CenterCard key={c.id} center={c} index={i} />
             ))}
           </div>
         </section>
