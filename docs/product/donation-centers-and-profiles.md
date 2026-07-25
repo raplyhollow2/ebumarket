@@ -6,13 +6,15 @@
 
 ---
 
-## Client goals (locked)
+## Donation basket (multi-item)
 
-1. **Centers as destinations** — Orphanages and community centres are first-class places people can **select and donate to** (clothes still free; destination is explicit).  
-2. **Motivate donors** — Ratings / tiers so people want to donate more.  
-3. **Tumblr-like profiles** — Highly customizable public profiles (theme, banner, bio, layout).
+Donors can add **multiple clothes** in one session on `/donate/new`:
 
-Peer-to-peer Donation Hub (claim from a person) **stays**. This adds **donate-to-center** alongside it.
+1. Fill item + photos → **Add to basket**  
+2. Repeat for more items (centre tag can differ per item)  
+3. **Submit basket** → creates N `listings` (`type=donation`, `status=pending`)  
+
+Marketplace sell remains single-item. Claim stays per listing (different donors/pickups).
 
 ---
 

@@ -116,6 +116,9 @@ export default async function DonationCenterDetailPage({
           >
             Donate to this place
           </RequireAuthLink>
+          <p className="text-center text-xs text-muted-foreground">
+            Opens donation basket — add multiple items for this centre.
+          </p>
         </div>
       </div>
 

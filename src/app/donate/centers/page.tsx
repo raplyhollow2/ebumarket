@@ -37,7 +37,7 @@ export default async function DonationCentersPage() {
           </p>
         </div>
         <RequireAuthLink href="/donate/new" isAuthed={Boolean(user)}>
-          + List
+          + Basket
         </RequireAuthLink>
       </div>
 

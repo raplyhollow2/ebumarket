@@ -66,11 +66,11 @@ export default async function DonatePage() {
             Donation Hub
           </h1>
           <p className="text-sm text-muted-foreground">
-            Peer gifts and centre destinations — free clothes near you.
+            Peer gifts and centre destinations — add multiple items in a basket.
           </p>
         </div>
         <RequireAuthLink href="/donate/new" isAuthed={Boolean(user)}>
-          + List
+          + Basket
         </RequireAuthLink>
       </div>
 

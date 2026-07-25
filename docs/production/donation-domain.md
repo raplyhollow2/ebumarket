@@ -6,7 +6,7 @@ Maps every UI surface → file → query/mutation → table → RLS.
 
 ## 1. End-to-end flows
 
-### A. Browse centre → donate tagged item
+### A. Browse centre → donate tagged items (basket)
 
 ```
 GET /donate/centers
@@ -15,10 +15,9 @@ GET /donate/centers/[id]
   → donation_centers by id
   → listings WHERE center_id = id AND type=donation AND status=verified
 CTA → /donate/new?center=[id] (auth hard)
-  → ListingComposer insert listings { type:donation, center_id, status:pending }
-Admin /admin queue → status=verified
-  → trigger recompute_donor_stats(seller_id)
-Centre page shows item; /donate hub lists it
+  → Donation basket: Add to basket (N items) → Submit all
+  → N × listings { type:donation, center_id?, status:pending }
+Admin /admin queue → status=verified per item
 ```
 
 ### B. Peer gift (no centre)
