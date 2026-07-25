@@ -43,9 +43,9 @@ export function DesktopNavigation() {
   ]
 
   return (
-    <nav className="border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950">
+    <nav className="border-b border-border bg-card">
       <div className="container mx-auto px-4">
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-2 overflow-x-auto py-1 lg:gap-4">
           {categories.map((category) => (
             <DropdownMenu
               key={category.name}
@@ -55,7 +55,8 @@ export function DesktopNavigation() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="gap-1 text-gray-700 hover:text-pink-600 dark:text-gray-300 dark:hover:text-pink-400"
+                  className="gap-1 text-foreground hover:text-primary"
+                  data-active={activeMenu === category.name || undefined}
                 >
                   {category.name}
                   <ChevronDown className="h-4 w-4" />
@@ -67,66 +68,56 @@ export function DesktopNavigation() {
                 sideOffset={4}
               >
                 <div className="p-4">
-                  <h3 className="font-semibold text-sm mb-2">{category.name}</h3>
+                  <h3 className="mb-2 text-sm font-semibold">{category.name}</h3>
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <p className="text-xs text-gray-500 mb-1">Categories</p>
+                      <p className="mb-1 text-xs text-muted-foreground">Categories</p>
                       {category.subcategories.map((sub) => (
                         <Link
                           key={sub}
                           href={`/market?category=${category.name}&subcategory=${sub}`}
-                          className="block px-2 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
+                          className="block rounded px-2 py-1 text-sm hover:bg-muted"
                         >
                           {sub}
                         </Link>
                       ))}
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500 mb-1">Trending</p>
-                      {category.trending.map((trending) => (
+                      <p className="mb-1 text-xs text-muted-foreground">Trending</p>
+                      {category.trending.map((item) => (
                         <Link
-                          key={trending}
-                          href={`/market?q=${trending}`}
-                          className="block px-2 py-1 text-sm text-pink-600 hover:text-pink-700 dark:text-pink-400 dark:hover:text-pink-300"
+                          key={item}
+                          href={`/market?q=${encodeURIComponent(item)}`}
+                          className="block rounded px-2 py-1 text-sm hover:bg-muted"
                         >
-                          {trending}
+                          {item}
                         </Link>
                       ))}
                     </div>
+                  </div>
+                  <div className="mt-3 border-t border-border pt-3 text-center">
+                    <Link
+                      href={`/market?category=${category.name}`}
+                      className="text-sm font-medium text-primary hover:underline"
+                    >
+                      Shop all {category.name}
+                    </Link>
                   </div>
                 </div>
               </DropdownMenuContent>
             </DropdownMenu>
           ))}
-
-          <Link href="/market?sort=trending">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-gray-700 hover:text-pink-600 dark:text-gray-300 dark:hover:text-pink-400"
-            >
-              Trending
-            </Button>
+          <Link
+            href="/donate"
+            className="shrink-0 px-2 py-2 text-sm font-medium text-primary hover:underline"
+          >
+            Donate
           </Link>
-
-          <Link href="/market?filter=verified">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-gray-700 hover:text-pink-600 dark:text-gray-300 dark:hover:text-pink-400"
-            >
-              ✓ Verified
-            </Button>
-          </Link>
-
-          <Link href="/market?type=donation">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-gray-700 hover:text-pink-600 dark:text-gray-300 dark:hover:text-pink-400"
-            >
-              Donations
-            </Button>
+          <Link
+            href="/donate/centers"
+            className="shrink-0 px-2 py-2 text-sm text-muted-foreground hover:text-foreground"
+          >
+            Centres
           </Link>
         </div>
       </div>

@@ -101,18 +101,27 @@ export function ProfileThemeEditor({
         .filter((l) => l.label && l.url)
         .slice(0, 5);
 
+      const safeUrl = (u: string) => {
+        const t = u.trim();
+        if (!t) return null;
+        if (t.startsWith("https://") || t.startsWith("http://")) return t;
+        return null;
+      };
+
       const supabase = createClient();
       const payload = {
         user_id: userId,
-        banner_url: bannerUrl.trim() || null,
-        avatar_url: avatarUrl.trim() || null,
+        banner_url: safeUrl(bannerUrl),
+        avatar_url: safeUrl(avatarUrl),
         bio: bio.trim(),
         accent_color: accent.trim() || "#1c3024",
         background_style: background,
         layout_style: layout,
         show_donation_stats: showStats,
         show_listings: showListings,
-        custom_links: cleanLinks,
+        custom_links: cleanLinks.filter(
+          (l) => l.url.startsWith("https://") || l.url.startsWith("http://") || l.url.startsWith("/"),
+        ),
         updated_at: new Date().toISOString(),
       };
 

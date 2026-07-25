@@ -221,7 +221,7 @@ export function HeroBuilder({ onSave, onCancel, initialConfig }: HeroBuilderProp
                       <p className="text-lg mb-4">{slide.foreground.subheadline}</p>
                     )}
                     {slide.foreground.cta && (
-                      <Button className="bg-pink-600 hover:bg-pink-700">
+                      <Button className="bg-primary hover:bg-primary/90">
                         {slide.foreground.cta.text}
                       </Button>
                     )}
@@ -241,7 +241,7 @@ export function HeroBuilder({ onSave, onCancel, initialConfig }: HeroBuilderProp
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold">Hero Section Builder</h2>
-          <p className="text-sm text-gray-600">Create and customize your hero sections</p>
+          <p className="text-sm text-muted-foreground">Create and customize your hero sections</p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" onClick={onCancel}>
@@ -386,7 +386,7 @@ export function HeroBuilder({ onSave, onCancel, initialConfig }: HeroBuilderProp
             </CardHeader>
             <CardContent>
               {config.slides.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-muted-foreground">
                   No slides yet. Add your first slide to get started.
                 </div>
               ) : (
@@ -396,8 +396,8 @@ export function HeroBuilder({ onSave, onCancel, initialConfig }: HeroBuilderProp
                       key={slide.id}
                       className={`p-3 border rounded-lg cursor-pointer transition-all ${
                         activeSlideId === slide.id
-                          ? 'border-pink-500 bg-pink-50 dark:bg-pink-900/20'
-                          : 'hover:bg-gray-50 dark:hover:bg-gray-800'
+                          ? 'border-primary bg-primary/10'
+                          : 'hover:bg-muted'
                       }`}
                       onClick={() => setActiveSlideId(slide.id)}
                     >
@@ -414,7 +414,7 @@ export function HeroBuilder({ onSave, onCancel, initialConfig }: HeroBuilderProp
                           <Trash2 className="h-3 w-3" />
                         </Button>
                       </div>
-                      <div className="aspect-video bg-gray-100 rounded mb-2 overflow-hidden">
+                      <div className="aspect-video bg-muted rounded mb-2 overflow-hidden">
                         {slide.background.src ? (
                           <img
                             src={slide.background.src}
@@ -422,7 +422,7 @@ export function HeroBuilder({ onSave, onCancel, initialConfig }: HeroBuilderProp
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-gray-400">
+                          <div className="w-full h-full flex items-center justify-center text-muted-foreground">
                             <ImageIcon className="h-8 w-8" />
                           </div>
                         )}
@@ -524,7 +524,7 @@ export function HeroBuilder({ onSave, onCancel, initialConfig }: HeroBuilderProp
               <CardTitle className="text-base">Content Styling</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-600">Advanced content styling options coming soon.</p>
+              <p className="text-muted-foreground">Advanced content styling options coming soon.</p>
             </CardContent>
           </Card>
         </TabsContent>
@@ -549,15 +549,15 @@ export function HeroBuilder({ onSave, onCancel, initialConfig }: HeroBuilderProp
                     }
                   />
                 </div>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-muted-foreground">
                   Enable A/B testing to optimize hero section performance
                 </p>
               </div>
 
               {config.ab_test_config.enabled && (
-                <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <div className="p-4 bg-muted rounded-lg">
                   <p className="text-sm font-medium mb-2">A/B Testing Configuration</p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-muted-foreground">
                     Configure variants and traffic allocation for testing different hero versions.
                   </p>
                 </div>

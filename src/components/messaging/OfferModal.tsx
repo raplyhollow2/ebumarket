@@ -103,7 +103,7 @@ export function OfferModal({
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Tag size={20} className="text-pink-500" />
+            <Tag size={20} className="text-primary" />
             Make an Offer
           </DialogTitle>
         </DialogHeader>
@@ -208,7 +208,7 @@ export function OfferModal({
           <Button
             onClick={handleSendOffer}
             disabled={isPending || offerAmount <= 0 || offerAmount >= listingPrice}
-            className="bg-gradient-to-r from-pink-500 to-purple-500"
+            className="bg-primary"
           >
             {isPending ? 'Sending...' : 'Send Offer'}
           </Button>

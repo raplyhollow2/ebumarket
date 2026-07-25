@@ -82,7 +82,7 @@ export function CommentForm({
 
   return (
     <div className={`${className}`}>
-      <div className={`relative ${isFocused ? 'ring-2 ring-pink-500 rounded-lg' : ''}`}>
+      <div className={`relative ${isFocused ? 'ring-2 ring-ring rounded-lg' : ''}`}>
         <Textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}

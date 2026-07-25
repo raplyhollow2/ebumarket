@@ -38,12 +38,18 @@ export function ActivityClient({
   listings,
   transactions,
   claims,
+  centerListings = [],
+  centerClaims = [],
+  centerNames = {},
   userId,
   isAdmin = false,
 }: {
   listings: Listing[];
   transactions: Tx[];
   claims: ClaimRow[];
+  centerListings?: Listing[];
+  centerClaims?: ClaimRow[];
+  centerNames?: Record<string, string>;
   userId: string;
   isAdmin?: boolean;
 }) {
@@ -52,6 +58,7 @@ export function ActivityClient({
 
   const myBuys = transactions.filter((t) => t.buyer_id === userId);
   const sellingBuys = transactions.filter((t) => t.seller_id === userId);
+  const hasCentreTab = centerListings.length > 0 || centerClaims.length > 0;
 
   function updateClaim(id: string, status: "approved" | "declined") {
     startTransition(async () => {
@@ -155,11 +162,16 @@ export function ActivityClient({
 
   return (
     <Tabs defaultValue="all">
-      <TabsList className="mb-3 grid w-full grid-cols-4">
+      <TabsList
+        className={`mb-3 grid w-full ${hasCentreTab ? "grid-cols-5" : "grid-cols-4"}`}
+      >
         <TabsTrigger value="all">All</TabsTrigger>
         <TabsTrigger value="selling">Selling</TabsTrigger>
         <TabsTrigger value="buys">Buys</TabsTrigger>
         <TabsTrigger value="claims">Claims</TabsTrigger>
+        {hasCentreTab ? (
+          <TabsTrigger value="centres">Centres</TabsTrigger>
+        ) : null}
       </TabsList>
 
       <TabsContent value="all" className="space-y-2">
@@ -283,6 +295,38 @@ export function ActivityClient({
           <p className="text-sm text-muted-foreground">No donation claims yet.</p>
         )}
       </TabsContent>
+
+      {hasCentreTab ? (
+        <TabsContent value="centres" className="space-y-3">
+          <p className="text-xs text-muted-foreground">
+            Items tagged to centres you staff — open to claim, or watch incoming
+            requests.
+          </p>
+          {centerListings.map((l) => (
+            <Row
+              key={`cl-${l.id}`}
+              title={l.title}
+              status={l.status}
+              meta={`${centerNames[l.center_id ?? ""] ?? "Centre"} · ${l.category} · ${l.size}`}
+              href={`/donate/${l.id}`}
+            />
+          ))}
+          {centerClaims.map((c) => (
+            <ClaimAction
+              key={`cc-${c.id}`}
+              claim={c}
+              userId={userId}
+              pending={pending}
+              onUpdate={updateClaim}
+            />
+          ))}
+          {centerListings.length + centerClaims.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              No centre-tagged activity yet.
+            </p>
+          ) : null}
+        </TabsContent>
+      ) : null}
     </Tabs>
   );
 }

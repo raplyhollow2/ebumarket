@@ -152,8 +152,8 @@ export function CollectionsButton({
           disabled={isPending}
           className={`${sizeClasses[size]} ${className} ${
             isSaved
-              ? 'text-pink-500 hover:text-pink-600 hover:bg-pink-50 dark:hover:bg-pink-950'
-              : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-800'
+              ? 'text-primary hover:bg-primary/10'
+              : 'text-muted-foreground hover:bg-muted'
           }`}
         >
           {isPending ? (

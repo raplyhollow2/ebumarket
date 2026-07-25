@@ -111,11 +111,11 @@ export function OfferCard({
     : 0
 
   return (
-    <Card className={`${className} border-l-4 border-l-pink-500`}>
+    <Card className={`${className} border-l-4 border-l-primary`}>
       <CardContent className="p-4">
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-2">
-            <Tag size={18} className="text-pink-500" />
+            <Tag size={18} className="text-primary" />
             <span className="font-semibold">Pending Offer</span>
             <Badge variant="secondary">
               <Clock size={12} className="mr-1" />

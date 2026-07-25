@@ -38,11 +38,19 @@ export default async function ActivityPage() {
 
   const listingIds = (listings ?? []).map((l) => l.id);
 
+  const { data: memberships } = await supabase
+    .from("center_members")
+    .select("center_id, member_role, donation_centers:center_id(id, name)")
+    .eq("user_id", user.id);
+
+  const centerIds = (memberships ?? []).map((m) => m.center_id as string);
+
   const [
     { data: myBuys },
     { data: sellingBuys },
     { data: myClaims },
     { data: incomingClaims },
+    { data: centerListings },
   ] = await Promise.all([
     supabase
       .from("transactions")
@@ -78,7 +86,30 @@ export default async function ActivityPage() {
           .in("listing_id", listingIds)
           .order("created_at", { ascending: false })
       : Promise.resolve({ data: [] as never[] }),
+    centerIds.length
+      ? supabase
+          .from("listings")
+          .select("id, title, status, type, center_id, category, size")
+          .in("center_id", centerIds)
+          .eq("type", "donation")
+          .order("created_at", { ascending: false })
+          .limit(40)
+      : Promise.resolve({ data: [] as never[] }),
   ]);
+
+  let resolvedCenterClaims: never[] = [];
+  const centerListingIds = ((centerListings ?? []) as { id: string }[]).map(
+    (l) => l.id,
+  );
+  if (centerListingIds.length) {
+    const { data } = await supabase
+      .from("donation_claims")
+      .select("*, listings(title, seller_id, center_id)")
+      .in("listing_id", centerListingIds)
+      .order("created_at", { ascending: false })
+      .limit(40);
+    resolvedCenterClaims = (data ?? []) as never[];
+  }
 
   const claimMap = new Map<
     string,
@@ -107,6 +138,16 @@ export default async function ActivityPage() {
         listings={(listings ?? []) as Listing[]}
         transactions={[...txMap.values()]}
         claims={[...claimMap.values()]}
+        centerListings={(centerListings ?? []) as Listing[]}
+        centerClaims={resolvedCenterClaims as (DonationClaim & {
+          listings: { title: string; seller_id: string; center_id?: string } | null;
+        })[]}
+        centerNames={Object.fromEntries(
+          (memberships ?? []).map((m) => [
+            m.center_id,
+            (m.donation_centers as { name?: string } | null)?.name ?? "Centre",
+          ]),
+        )}
         userId={user.id}
         isAdmin={isAdmin}
       />

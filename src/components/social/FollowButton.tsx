@@ -100,8 +100,8 @@ export function FollowButton({
       disabled={isPending}
       className={`${sizeClasses[size]} ${className} ${
         isFollowing
-          ? 'border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800'
-          : 'bg-gradient-to-r from-pink-500 to-purple-500 text-white hover:from-pink-600 hover:to-purple-600'
+          ? 'border-border text-muted-foreground hover:bg-muted'
+          : 'bg-primary text-primary-foreground hover:bg-primary/90'
       }`}
     >
       {isPending ? (

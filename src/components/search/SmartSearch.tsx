@@ -26,47 +26,48 @@ export function SmartSearch({ isFocused, onFocusChange }: SmartSearchProps) {
       return
     }
 
-    // Simulate search suggestions
     const timer = setTimeout(() => {
-      const mockSuggestions = [
+      const next = [
         `${query} vintage`,
         `${query} oversized`,
         `${query} premium`,
         `${query} collection`,
-        `${query} limited edition`
+        `${query} limited edition`,
       ]
-      setSuggestions(mockSuggestions.slice(0, 5))
+      setSuggestions(next.slice(0, 5))
     }, 200)
 
     return () => clearTimeout(timer)
   }, [query])
 
   useEffect(() => {
-    // Load recent searches from localStorage
     const stored = localStorage.getItem('recentSearches')
     if (stored) {
-      setRecentSearches(JSON.parse(stored))
+      try {
+        setRecentSearches(JSON.parse(stored))
+      } catch {
+        setRecentSearches([])
+      }
     }
 
-    // Mock trending searches
     setTrendingSearches([
       'Vintage Band Tees',
       'Mom Jeans',
       'Platform Sneakers',
       'Vintage Bags',
-      'Oversized Hoodies'
+      'Oversized Hoodies',
     ])
   }, [])
 
   const handleSearch = (searchQuery: string) => {
     if (!searchQuery.trim()) return
 
-    // Save to recent searches
-    const newRecent = [searchQuery, ...recentSearches.filter(s => s !== searchQuery)].slice(0, 5)
+    const newRecent = [
+      searchQuery,
+      ...recentSearches.filter((s) => s !== searchQuery),
+    ].slice(0, 5)
     setRecentSearches(newRecent)
     localStorage.setItem('recentSearches', JSON.stringify(newRecent))
-
-    // Navigate to search results
     window.location.href = `/market?q=${encodeURIComponent(searchQuery)}`
   }
 
@@ -76,9 +77,11 @@ export function SmartSearch({ isFocused, onFocusChange }: SmartSearchProps) {
   }
 
   return (
-    <div className={`relative transition-all duration-300 ${isFocused ? 'scale-105' : ''}`}>
+    <div
+      className={`relative transition-all duration-300 ${isFocused ? 'scale-[1.02]' : ''}`}
+    >
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           ref={inputRef}
           type="search"
@@ -87,7 +90,6 @@ export function SmartSearch({ isFocused, onFocusChange }: SmartSearchProps) {
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => onFocusChange(true)}
           onBlur={() => {
-            // Delay to allow clicks on search results
             setTimeout(() => onFocusChange(false), 200)
           }}
           onKeyDown={(e) => {
@@ -95,9 +97,9 @@ export function SmartSearch({ isFocused, onFocusChange }: SmartSearchProps) {
               handleSearch(query)
             }
           }}
-          className="pl-10 pr-24 h-10 rounded-full border-gray-300 bg-gray-50 focus:bg-white focus:border-pink-500 focus:ring-pink-500 dark:border-gray-700 dark:bg-gray-900 dark:focus:bg-gray-950"
+          className="h-10 rounded-full border-border bg-muted/60 pl-10 pr-24 focus-visible:bg-background focus-visible:ring-ring"
         />
-        <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+        <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-1">
           {query && (
             <Button
               variant="ghost"
@@ -113,6 +115,7 @@ export function SmartSearch({ isFocused, onFocusChange }: SmartSearchProps) {
             size="sm"
             className="h-6 w-6 p-0"
             onClick={() => setShowFilters(!showFilters)}
+            aria-label="Filters"
           >
             <Filter className="h-4 w-4" />
           </Button>
@@ -120,17 +123,20 @@ export function SmartSearch({ isFocused, onFocusChange }: SmartSearchProps) {
       </div>
 
       {(isFocused || query) && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-950 rounded-lg shadow-lg border border-gray-200 dark:border-gray-800 z-50 overflow-hidden">
+        <div className="absolute top-full right-0 left-0 z-50 mt-2 overflow-hidden rounded-lg border border-border bg-popover text-popover-foreground shadow-lg">
           {query ? (
             <div className="p-2">
-              <div className="text-xs text-gray-500 px-3 py-2">Suggestions</div>
+              <div className="px-3 py-2 text-xs text-muted-foreground">
+                Suggestions
+              </div>
               {suggestions.map((suggestion, index) => (
                 <button
                   key={index}
+                  type="button"
                   onClick={() => handleSearch(suggestion)}
-                  className="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded flex items-center gap-2"
+                  className="flex w-full items-center gap-2 rounded px-3 py-2 text-left hover:bg-muted"
                 >
-                  <Search className="h-4 w-4 text-gray-400" />
+                  <Search className="h-4 w-4 text-muted-foreground" />
                   <span>{suggestion}</span>
                 </button>
               ))}
@@ -140,7 +146,7 @@ export function SmartSearch({ isFocused, onFocusChange }: SmartSearchProps) {
               {recentSearches.length > 0 && (
                 <div className="mb-2">
                   <div className="flex items-center justify-between px-3 py-2">
-                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <Clock className="h-3 w-3" />
                       Recent
                     </div>
@@ -158,7 +164,7 @@ export function SmartSearch({ isFocused, onFocusChange }: SmartSearchProps) {
                       <Badge
                         key={index}
                         variant="secondary"
-                        className="cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800"
+                        className="cursor-pointer hover:bg-muted"
                         onClick={() => handleSearch(search)}
                       >
                         {search}
@@ -169,7 +175,7 @@ export function SmartSearch({ isFocused, onFocusChange }: SmartSearchProps) {
               )}
 
               <div>
-                <div className="flex items-center gap-2 px-3 py-2 text-xs text-gray-500">
+                <div className="flex items-center gap-2 px-3 py-2 text-xs text-muted-foreground">
                   <TrendingUp className="h-3 w-3" />
                   Trending
                 </div>
@@ -178,7 +184,7 @@ export function SmartSearch({ isFocused, onFocusChange }: SmartSearchProps) {
                     <Badge
                       key={index}
                       variant="secondary"
-                      className="cursor-pointer hover:bg-pink-100 dark:hover:bg-pink-900 text-pink-600 dark:text-pink-400"
+                      className="cursor-pointer text-primary hover:bg-primary/10"
                       onClick={() => handleSearch(search)}
                     >
                       {search}
@@ -187,32 +193,34 @@ export function SmartSearch({ isFocused, onFocusChange }: SmartSearchProps) {
                 </div>
               </div>
 
-              <div className="border-t border-gray-200 dark:border-gray-800 pt-2 mt-2 px-3">
-                <div className="text-xs text-gray-500 mb-2">Quick Links</div>
+              <div className="mt-2 border-t border-border px-3 pt-2">
+                <div className="mb-2 text-xs text-muted-foreground">
+                  Quick Links
+                </div>
                 <div className="grid grid-cols-2 gap-2">
                   <Link
-                    href="/market?sort=trending"
-                    className="text-sm hover:text-pink-600 dark:hover:text-pink-400"
+                    href="/market"
+                    className="text-sm hover:text-primary"
                   >
-                    Trending Items
+                    Market
                   </Link>
                   <Link
-                    href="/market?filter=verified"
-                    className="text-sm hover:text-pink-600 dark:hover:text-pink-400"
+                    href="/donate"
+                    className="text-sm hover:text-primary"
                   >
-                    Verified Sellers
+                    Donation Hub
                   </Link>
                   <Link
-                    href="/market?type=donation"
-                    className="text-sm hover:text-pink-600 dark:hover:text-pink-400"
+                    href="/donate/centers"
+                    className="text-sm hover:text-primary"
                   >
-                    Donations
+                    Centres
                   </Link>
                   <Link
-                    href="/market?category=Tops"
-                    className="text-sm hover:text-pink-600 dark:hover:text-pink-400"
+                    href="/donate/leaderboard"
+                    className="text-sm hover:text-primary"
                   >
-                    New Arrivals
+                    Top donors
                   </Link>
                 </div>
               </div>

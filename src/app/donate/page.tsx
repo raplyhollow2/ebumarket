@@ -81,6 +81,12 @@ export default async function DonatePage() {
         >
           Centres & orphanages
         </Link>
+        <Link
+          href="/donate/leaderboard"
+          className="rounded-full bg-muted px-4 py-2 text-sm font-medium"
+        >
+          Top donors
+        </Link>
         <a
           href="#peer-gifts"
           className="rounded-full bg-muted px-4 py-2 text-sm font-medium"

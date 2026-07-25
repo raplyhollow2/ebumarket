@@ -62,7 +62,7 @@ export function ListingCard({
 
   return (
     <Card
-      className="overflow-hidden hover:shadow-xl transition-all duration-300 group cursor-pointer"
+      className="overflow-hidden transition-all duration-300 group cursor-pointer hover:ring-1 hover:ring-border"
       onMouseEnter={() => isDesktop && setIsHovered(true)}
       onMouseLeave={() => isDesktop && setIsHovered(false)}
       onKeyDown={handleKeyDown}
@@ -71,32 +71,30 @@ export function ListingCard({
       aria-label={`View ${listing.title}`}
     >
       <Link href={detailHref}>
-        <div className="relative aspect-square bg-gray-100 overflow-hidden">
+        <div className="relative aspect-square overflow-hidden bg-muted">
           {mainPhoto ? (
             <Image
               src={mainPhoto.public_url}
               alt={listing.title || 'Listing'}
               fill
-              className="object-cover group-hover:scale-105 transition-transform duration-300"
+              className="object-cover transition-transform duration-300 group-hover:scale-105"
               sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-400">
+            <div className="flex h-full w-full items-center justify-center text-muted-foreground">
               No image
             </div>
           )}
 
-          {/* Desktop hover Quick View (mobile uses explicit button below) */}
           {isDesktop && showActions && (
             <div
-              className={`absolute inset-0 bg-black/40 transition-opacity duration-300 ${
+              className={`absolute inset-0 flex items-center justify-center gap-2 bg-foreground/40 transition-opacity duration-300 ${
                 isHovered ? 'opacity-100' : 'opacity-0'
-              } flex items-center justify-center gap-2`}
+              }`}
             >
               <Button
                 size="sm"
                 variant="secondary"
-                className="transform hover:scale-110 transition-transform"
                 onClick={handleQuickView}
               >
                 Quick View
@@ -105,42 +103,42 @@ export function ListingCard({
           )}
 
           {listing.is_boosted && (
-            <Badge className="absolute top-2 left-2 bg-pink-500 z-10">
+            <Badge className="absolute top-2 left-2 z-10 bg-primary text-primary-foreground">
               Promoted
             </Badge>
           )}
 
           {isFree && (
-            <Badge className="absolute top-2 right-2 bg-green-500 z-10">
+            <Badge className="absolute top-2 right-2 z-10 bg-accent text-accent-foreground">
               FREE
             </Badge>
           )}
 
-          <div className="absolute bottom-2 right-2 bg-black/60 text-white px-2 py-1 rounded text-sm z-10">
+          <div className="absolute bottom-2 right-2 z-10 rounded bg-foreground/70 px-2 py-1 text-sm text-background">
             {isFree ? 'Free' : `Nu. ${((listing.price_cents || 0) / 100).toFixed(2)}`}
           </div>
 
           {isDesktop && showActions && (
             <div
-              className={`absolute top-2 left-1/2 -translate-x-1/2 flex gap-2 transition-all duration-300 z-20 ${
-                isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'
+              className={`absolute top-2 left-1/2 z-20 flex -translate-x-1/2 gap-2 transition-all duration-300 ${
+                isHovered ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'
               }`}
             >
               <Button
                 size="icon"
                 variant="secondary"
-                className="h-8 w-8 bg-white/90 hover:bg-white"
+                className="h-8 w-8 bg-card/90 hover:bg-card"
                 onClick={handleLike}
               >
                 <Heart
                   size={16}
-                  className={isLiked ? 'fill-pink-500 text-pink-500' : ''}
+                  className={isLiked ? 'fill-primary text-primary' : ''}
                 />
               </Button>
               <Button
                 size="icon"
                 variant="secondary"
-                className="h-8 w-8 bg-white/90 hover:bg-white"
+                className="h-8 w-8 bg-card/90 hover:bg-card"
                 onClick={handleShare}
               >
                 <Share2 size={16} />
@@ -151,21 +149,20 @@ export function ListingCard({
       </Link>
 
       <CardContent className="p-3 md:p-4">
-        <div className="flex items-start justify-between gap-2 mb-2">
+        <div className="mb-2 flex items-start justify-between gap-2">
           <Link href={detailHref} className="flex-1">
-            <h3 className="font-medium line-clamp-2 hover:text-pink-600 transition-colors">
+            <h3 className="line-clamp-2 font-medium transition-colors hover:text-primary">
               {listing.title}
             </h3>
           </Link>
         </div>
 
-        <p className="text-sm text-gray-600 line-clamp-2 mb-3">
+        <p className="mb-3 line-clamp-2 text-sm text-muted-foreground">
           {listing.description}
         </p>
 
-        {/* Seller info — mobile + desktop */}
         {listing.profiles && (
-          <div className="flex items-center gap-2 mb-3 text-xs text-gray-500">
+          <div className="mb-3 flex items-center gap-2 text-xs text-muted-foreground">
             <User size={12} />
             <span className="truncate">{listing.profiles.display_name}</span>
             {listing.profiles.area && (
@@ -181,7 +178,7 @@ export function ListingCard({
         )}
 
         <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-3 text-xs text-gray-500">
+          <div className="flex items-center gap-3 text-xs text-muted-foreground">
             <span className="flex items-center gap-1">
               <Eye size={14} />
               {listing.views_count || 0}
@@ -196,7 +193,6 @@ export function ListingCard({
             </span>
           </div>
 
-          {/* Always-visible actions (parity: not hover-only) */}
           {showActions && (
             <div className="flex items-center gap-0.5">
               <Button
@@ -208,7 +204,7 @@ export function ListingCard({
               >
                 <Heart
                   size={16}
-                  className={isLiked ? 'fill-pink-500 text-pink-500' : ''}
+                  className={isLiked ? 'fill-primary text-primary' : ''}
                 />
               </Button>
               <Button
@@ -233,7 +229,7 @@ export function ListingCard({
           )}
         </div>
 
-        <div className="flex items-center gap-2 mt-3 flex-wrap">
+        <div className="mt-3 flex flex-wrap items-center gap-2">
           {listing.size && (
             <Badge variant="outline" className="text-xs">
               {listing.size}

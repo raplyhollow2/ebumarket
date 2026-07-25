@@ -60,7 +60,7 @@ export function RMAIntegration({
   const mobileBanks = [
     { id: 'bnb', name: 'BNB mPay', logo: '🏦', color: 'text-blue-600' },
     { id: 'bob', name: 'BOB mBoB', logo: '🏦', color: 'text-green-600' },
-    { id: 'bdb', name: 'BDB ePay', logo: '🏦', color: 'text-purple-600' }
+    { id: 'bdb', name: 'BDB ePay', logo: '🏦', color: 'text-primary' }
   ]
 
   const handlePayment = async () => {
@@ -130,7 +130,7 @@ export function RMAIntegration({
                   key={method.id}
                   className={`flex items-start gap-3 p-4 border rounded-lg cursor-pointer transition-all ${
                     selectedMethod === method.id
-                      ? 'border-pink-500 bg-pink-50 dark:bg-pink-900/20'
+                      ? 'border-primary bg-primary/10'
                       : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
                   }`}
                 >
@@ -178,7 +178,7 @@ export function RMAIntegration({
                     key={bank.id}
                     className={`flex flex-col items-center p-3 border rounded-lg cursor-pointer transition-all ${
                       selectedBank === bank.id
-                        ? 'border-pink-500 bg-pink-50 dark:bg-pink-900/20'
+                        ? 'border-primary bg-primary/10'
                         : 'border-gray-200 dark:border-gray-700'
                     }`}
                   >

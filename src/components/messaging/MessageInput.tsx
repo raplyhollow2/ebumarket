@@ -132,7 +132,7 @@ export function MessageInput({
           onClick={handleSend}
           disabled={disabled || !message.trim()}
           size="icon"
-          className="bg-gradient-to-r from-pink-500 to-purple-500"
+          className="bg-primary"
         >
           <Send size={20} />
         </Button>

@@ -152,7 +152,7 @@ export function ConversationsList({
 
       {/* New Message Button */}
       <div className="p-4 border-t dark:border-gray-700">
-        <Button className="w-full bg-gradient-to-r from-pink-500 to-purple-500">
+        <Button className="w-full bg-primary">
           <MessageCircle size={18} className="mr-2" />
           Start new conversation
         </Button>

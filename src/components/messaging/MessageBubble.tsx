@@ -32,7 +32,7 @@ export function MessageBubble({ message, isOwn, showAvatar = true, className = '
         <div
           className={`px-4 py-2 rounded-2xl ${
             isOwn
-              ? 'bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-br-sm'
+              ? 'bg-primary text-white rounded-br-sm'
               : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-bl-sm'
           }`}
         >

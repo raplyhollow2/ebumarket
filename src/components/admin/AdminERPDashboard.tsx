@@ -142,7 +142,7 @@ export function AdminERPDashboard() {
       label: 'CMS Content',
       description: 'Manage hero sections',
       href: '/admin/cms',
-      color: 'bg-purple-500'
+      color: 'bg-primary'
     },
     {
       icon: BarChart3,
@@ -275,7 +275,7 @@ export function AdminERPDashboard() {
                   <div className="mt-1">
                     {activity.type === 'listing' && <Package className="w-4 h-4 text-blue-500" />}
                     {activity.type === 'sale' && <DollarSign className="w-4 h-4 text-green-500" />}
-                    {activity.type === 'user' && <Users className="w-4 h-4 text-purple-500" />}
+                    {activity.type === 'user' && <Users className="w-4 h-4 text-primary" />}
                     {activity.type === 'approval' && <Shield className="w-4 h-4 text-orange-500" />}
                   </div>
                   <div className="flex-1">
@@ -378,7 +378,7 @@ function MetricCard({
         <span className="text-sm text-muted-foreground">{label}</span>
         <span className="font-semibold">{value}</span>
       </div>
-      <div className="w-full bg-gray-200 rounded-full h-2">
+      <div className="w-full bg-muted rounded-full h-2">
         <div
           className="bg-primary h-2 rounded-full transition-all"
           style={{ width: `${Math.min(progress, 100)}%` }}

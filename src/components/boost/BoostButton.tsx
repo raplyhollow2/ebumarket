@@ -41,7 +41,7 @@ export function BoostButton({
           variant="ghost"
           size="icon"
           onClick={() => setIsOpen(true)}
-          className={`${sizeClasses[size]} ${className} text-pink-500 hover:text-pink-600 hover:bg-pink-50 dark:hover:bg-pink-950`}
+          className={`${sizeClasses[size]} ${className} text-primary hover:text-primary hover:bg-primary dark:hover:bg-primary`}
           title="Boost this listing"
         >
           <TrendingUp size={iconSizes[size]} className="fill-current" />

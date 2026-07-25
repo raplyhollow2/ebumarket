@@ -8,7 +8,9 @@
 | [system-map.md](./system-map.md) | Every App route, API route, middleware, auth gate |
 | [schema-reference.md](./schema-reference.md) | Migrations order + tables/columns/RLS (donation domain deep) |
 | [donation-domain.md](./donation-domain.md) | Hyper-specific front ↔ DB ↔ flows for centres / tiers / themes |
-| [phased-roadmap.md](./phased-roadmap.md) | Phased implementation plan (P0–P3) |
+| [phased-roadmap.md](./phased-roadmap.md) | Phased implementation plan (P0–P4) |
+| [production-readiness.md](./production-readiness.md) | Ship / defer checklist |
+| [deferred-apis.md](./deferred-apis.md) | APIs without pages |
 
 Product intent (non-inventory): [../product/donation-centers-and-profiles.md](../product/donation-centers-and-profiles.md)
 
@@ -18,4 +20,5 @@ Product intent (non-inventory): [../product/donation-centers-and-profiles.md](..
 2. **Mobile = desktop** for every feature ([../product/mobile-desktop-parity.md](../product/mobile-desktop-parity.md)).  
 3. **Schema changes** = new file under `supabase/migrations/`; apply to project `ynnmfnoxxwtpiiwrnpup` before merge.  
 4. **Auth:** middleware refreshes session only; pages/APIs enforce access.  
-5. Dead/mock components must not be imported by `src/app/**/page.tsx`.
+5. Dead/mock components must not be imported by `src/app/**/page.tsx`.  
+6. **Single React tree** in `ResponsiveLayoutWrapper` / `HomeShell` — chrome via CSS, not double-mount.

@@ -169,7 +169,10 @@ export function BuySheet({
   return (
     <>
       <Sheet open={open} onOpenChange={onOpenChange}>
-        <SheetContent side="bottom" className="mx-auto max-w-lg rounded-t-2xl">
+        <SheetContent
+          side="bottom"
+          className="mx-auto max-w-lg rounded-t-2xl md:inset-y-0 md:right-0 md:left-auto md:mx-0 md:h-full md:max-w-md md:rounded-none md:rounded-l-2xl md:border-l"
+        >
           <SheetHeader>
             <SheetTitle>Buy</SheetTitle>
             <SheetDescription>
