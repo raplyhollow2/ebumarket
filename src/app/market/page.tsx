@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { TeenShell } from "@/components/layout/teen-shell";
+import { ResponsiveLayoutWrapper } from "@/components/layout/ResponsiveLayoutWrapper";
 import { StatusBadge } from "@/components/status-badge";
 import { createClient } from "@/lib/supabase/server";
 import { formatMoney, DEFAULT_CURRENCY } from "@/lib/format";
+import { getGridClassName } from "@/lib/grid-system";
 import type { ListingWithPhotos } from "@/lib/types";
 import { RequireAuthLink } from "@/components/auth/require-auth-link";
 
@@ -29,7 +30,7 @@ export default async function MarketPage() {
   } = await supabase.auth.getUser();
 
   return (
-    <TeenShell>
+    <ResponsiveLayoutWrapper>
       <div className="mb-4 flex items-end justify-between gap-3">
         <div>
           <h1 className="font-[family-name:var(--font-display)] text-3xl font-semibold tracking-tight">
@@ -62,7 +63,7 @@ export default async function MarketPage() {
           </Link>
         </div>
       ) : (
-        <ul className="grid grid-cols-2 gap-3">
+        <ul className={getGridClassName('marketplace')}>
           {listings.map((item) => {
             const photo =
               item.listing_photos?.sort((a, b) => a.sort_order - b.sort_order)[0];
@@ -99,6 +100,6 @@ export default async function MarketPage() {
           })}
         </ul>
       )}
-    </TeenShell>
+    </ResponsiveLayoutWrapper>
   );
 }

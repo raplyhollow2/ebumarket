@@ -1,4 +1,4 @@
-import { TeenShell } from "@/components/layout/teen-shell";
+import { ResponsiveLayoutWrapper } from "@/components/layout/ResponsiveLayoutWrapper";
 import { HomeHero } from "@/components/home/home-hero";
 import { createClient } from "@/lib/supabase/server";
 
@@ -9,8 +9,8 @@ export default async function HomePage() {
   } = await supabase.auth.getUser();
 
   return (
-    <TeenShell>
+    <ResponsiveLayoutWrapper>
       <HomeHero isAuthed={Boolean(user)} />
-    </TeenShell>
+    </ResponsiveLayoutWrapper>
   );
 }

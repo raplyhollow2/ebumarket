@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { TeenShell } from "@/components/layout/teen-shell";
+import { ResponsiveLayoutWrapper } from "@/components/layout/ResponsiveLayoutWrapper";
 import { StatusBadge } from "@/components/status-badge";
 import { RequireAuthLink } from "@/components/auth/require-auth-link";
 import { createClient } from "@/lib/supabase/server";
+import { getGridClassName } from "@/lib/grid-system";
 import type { ListingWithPhotos } from "@/lib/types";
 
 export default async function DonatePage() {
@@ -19,7 +20,7 @@ export default async function DonatePage() {
   } = await supabase.auth.getUser();
 
   return (
-    <TeenShell>
+    <ResponsiveLayoutWrapper>
       <div className="mb-4 flex items-end justify-between gap-3">
         <div>
           <h1 className="font-[family-name:var(--font-display)] text-3xl font-semibold">
@@ -38,7 +39,7 @@ export default async function DonatePage() {
           No donations live yet. List something to give away.
         </div>
       ) : (
-        <ul className="grid grid-cols-2 gap-3">
+        <ul className={getGridClassName('marketplace')}>
           {listings.map((item) => {
             const photo = item.listing_photos?.sort(
               (a, b) => a.sort_order - b.sort_order,
@@ -72,6 +73,6 @@ export default async function DonatePage() {
           })}
         </ul>
       )}
-    </TeenShell>
+    </ResponsiveLayoutWrapper>
   );
 }

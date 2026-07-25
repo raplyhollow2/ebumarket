@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { TeenShell } from "@/components/layout/teen-shell";
+import { ResponsiveLayoutWrapper } from "@/components/layout/ResponsiveLayoutWrapper";
 import { AuthSheetTrigger } from "@/components/auth/auth-sheet-trigger";
 import { ActivityClient } from "@/components/activity/activity-client";
 import { createClient } from "@/lib/supabase/server";
@@ -13,7 +13,7 @@ export default async function ActivityPage() {
 
   if (!user) {
     return (
-      <TeenShell>
+      <ResponsiveLayoutWrapper>
         <h1 className="font-[family-name:var(--font-display)] text-3xl font-semibold">
           Activity
         </h1>
@@ -23,7 +23,7 @@ export default async function ActivityPage() {
         <div className="mt-4">
           <AuthSheetTrigger />
         </div>
-      </TeenShell>
+      </ResponsiveLayoutWrapper>
     );
   }
 
@@ -62,7 +62,7 @@ export default async function ActivityPage() {
   }
 
   return (
-    <TeenShell>
+    <ResponsiveLayoutWrapper>
       <div className="mb-4 flex items-center justify-between">
         <h1 className="font-[family-name:var(--font-display)] text-3xl font-semibold">
           Activity
@@ -77,6 +77,6 @@ export default async function ActivityPage() {
         claims={[...claimMap.values()]}
         userId={user.id}
       />
-    </TeenShell>
+    </ResponsiveLayoutWrapper>
   );
 }
