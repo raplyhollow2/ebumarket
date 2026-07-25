@@ -28,22 +28,41 @@ export default async function DonationCenterDetailPage({
   if (!center) notFound();
   const c = center as DonationCenter;
 
+  // Public RLS only exposes verified listings — do not query claimed for anon.
   const { data: listings } = await supabase
     .from("listings")
     .select("id, title, status, category, size, created_at, type")
     .eq("type", "donation")
     .eq("center_id", c.id)
-    .in("status", ["verified", "claimed"])
+    .eq("status", "verified")
     .order("created_at", { ascending: false })
     .limit(40);
 
   const items = (listings ?? []) as Listing[];
+
+  let isStaff = false;
+  if (user) {
+    const { data: membership } = await supabase
+      .from("center_members")
+      .select("id, member_role")
+      .eq("center_id", c.id)
+      .eq("user_id", user.id)
+      .maybeSingle();
+    isStaff = Boolean(membership);
+  }
 
   return (
     <ResponsiveLayoutWrapper>
       <Link href="/donate/centers" className="text-sm text-muted-foreground">
         ← All centres
       </Link>
+
+      {isStaff ? (
+        <div className="mt-3 rounded-xl bg-primary/10 px-3 py-2 text-sm text-primary">
+          You are staff at this centre. Claim tagged gifts from Activity when
+          live (staff inbox expands in Phase 2).
+        </div>
+      ) : null}
 
       <div className="mt-3 overflow-hidden rounded-2xl ring-1 ring-border/60">
         <div className="relative aspect-[21/9] min-h-[140px] bg-muted">

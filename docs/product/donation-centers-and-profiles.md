@@ -168,3 +168,11 @@ Profiles feel like a **personal page**, not a form: banner, colors, bio, layout 
 - Center self-signup KYC portal  
 - Full Tumblr post/blog feed  
 - Push notifications for tier ups  
+
+## Production inventory
+
+Hyper-specific front / API / route / middleware / schema + phased build:
+
+→ [../production/00-index.md](../production/00-index.md)  
+→ [../production/donation-domain.md](../production/donation-domain.md)  
+→ [../production/phased-roadmap.md](../production/phased-roadmap.md)  

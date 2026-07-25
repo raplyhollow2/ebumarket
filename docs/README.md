@@ -23,6 +23,7 @@ This folder is the **drawing board** — product intent, flows, wireframes, live
 | [product/mobile-desktop-parity.md](./product/mobile-desktop-parity.md) | **Hard rule:** desktop features = mobile features |
 | [product/admin-erp.md](./product/admin-erp.md) | ERP modules to run the live site |
 | [product/donation-centers-and-profiles.md](./product/donation-centers-and-profiles.md) | Orphanages/centers, donor tiers, Tumblr-like profiles |
+| [production/00-index.md](./production/00-index.md) | **Production:** routes, APIs, middleware, schema, phases |
 | [research/usability-plan.md](./research/usability-plan.md) | Research tasks & measures |
 | [research/marketplace-payment-model.md](./research/marketplace-payment-model.md) | Split payment ledger |
 

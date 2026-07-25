@@ -20,6 +20,7 @@ The Admin ERP is the **operations control plane** for the live site: verificatio
 | --- | --- | --- |
 | `/admin` | Approver+ | Pending verification queue (primary daily tool) |
 | `/admin/dashboard` | Admin | ERP overview + module launcher |
+| `/admin/centers` | Admin | Orphanages/centres CRUD + staff (`center_members`) |
 | `/admin/transactions` | Admin | Ledger, payout mark paid-out |
 | `/admin/cms` | Admin | Hero builder, activate live homepage hero |
 | `/admin/experiments` | Admin | Create / start / pause A/B experiments |

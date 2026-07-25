@@ -1,3 +1,8 @@
+/**
+ * @deprecated MOCK — not imported by any App Router page.
+ * Use live `/donate/centers/[id]` + `donation_centers` table instead.
+ * Scheduled for removal in Phase 2 (see docs/production/phased-roadmap.md).
+ */
 'use client'
 
 import { useState, useEffect } from 'react'

@@ -53,6 +53,8 @@ type SeedListing = {
   status: "verified" | "pending";
   image: string;
   seller: "Maya" | "Jordan" | "Sam";
+  /** donation_centers.slug — donations only */
+  centerSlug?: string;
 };
 
 /** Distinct Unsplash fashion images for seed photos */
@@ -271,6 +273,7 @@ const CATALOG: SeedListing[] = [
     condition: "Good",
     price: null,
     image: IMAGES.sweater,
+    centerSlug: "paro-youth-centre",
   },
   {
     seller: "Sam",
@@ -283,6 +286,7 @@ const CATALOG: SeedListing[] = [
     condition: "Good",
     price: null,
     image: IMAGES.kids,
+    centerSlug: "thimphu-childrens-home",
   },
   {
     seller: "Maya",
@@ -295,6 +299,7 @@ const CATALOG: SeedListing[] = [
     condition: "Like new",
     price: null,
     image: IMAGES.scarf,
+    centerSlug: "thimphu-childrens-home",
   },
   {
     seller: "Maya",
@@ -307,6 +312,7 @@ const CATALOG: SeedListing[] = [
     condition: "Fair",
     price: null,
     image: IMAGES.shirt,
+    centerSlug: "thimphu-childrens-home",
   },
   {
     seller: "Jordan",
@@ -319,6 +325,7 @@ const CATALOG: SeedListing[] = [
     condition: "Good",
     price: null,
     image: IMAGES.hoodie,
+    centerSlug: "bhutan-youth-cso",
   },
   {
     seller: "Jordan",
@@ -343,6 +350,7 @@ const CATALOG: SeedListing[] = [
     condition: "Good",
     price: null,
     image: IMAGES.coat,
+    centerSlug: "phuentsholing-shelter-hub",
   },
 ];
 
@@ -402,6 +410,7 @@ async function upsertListing(
   pg: Client,
   sellerId: string,
   item: SeedListing,
+  centerIdBySlug: Record<string, string>,
 ) {
   // Replace prior seed row with same seller + title so re-runs stay clean
   await pg.query(
@@ -409,15 +418,21 @@ async function upsertListing(
     [sellerId, item.title],
   );
 
+  const centerId =
+    item.type === "donation" && item.centerSlug
+      ? centerIdBySlug[item.centerSlug] ?? null
+      : null;
+
   const { rows } = await pg.query(
     `insert into public.listings
       (seller_id, type, title, description, category, size, condition,
-       price_cents, currency, status, verified_at, verified_by)
+       price_cents, currency, status, verified_at, verified_by, center_id)
      values (
        $1::uuid, $2::text, $3::text, $4::text, $5::text, $6::text, $7::text,
        $8::integer, 'BTN', $9::text,
        case when $9::text = 'verified' then now() else null end,
-       case when $9::text = 'verified' then $1::uuid else null end
+       case when $9::text = 'verified' then $1::uuid else null end,
+       $10::uuid
      )
      returning id`,
     [
@@ -430,6 +445,7 @@ async function upsertListing(
       item.condition,
       item.price,
       item.status,
+      centerId,
     ],
   );
   const listingId = rows[0].id as string;
@@ -496,23 +512,86 @@ async function main() {
     console.log("user", u.display_name, id);
   }
 
+  const centerRows = await pg.query(
+    `select id, slug from public.donation_centers`,
+  );
+  const centerIdBySlug: Record<string, string> = {};
+  for (const row of centerRows.rows) {
+    centerIdBySlug[row.slug as string] = row.id as string;
+  }
+  console.log("centers", Object.keys(centerIdBySlug).length);
+
+  // Staff: Sam owns Thimphu Children's Home; Jordan staff at Paro Youth
+  if (ids.Sam && centerIdBySlug["thimphu-childrens-home"]) {
+    await pg.query(
+      `insert into public.center_members (center_id, user_id, member_role)
+       values ($1, $2, 'owner')
+       on conflict (center_id, user_id) do update set member_role = excluded.member_role`,
+      [centerIdBySlug["thimphu-childrens-home"], ids.Sam],
+    );
+  }
+  if (ids.Jordan && centerIdBySlug["paro-youth-centre"]) {
+    await pg.query(
+      `insert into public.center_members (center_id, user_id, member_role)
+       values ($1, $2, 'staff')
+       on conflict (center_id, user_id) do update set member_role = excluded.member_role`,
+      [centerIdBySlug["paro-youth-centre"], ids.Jordan],
+    );
+  }
+
+  // Sample Tumblr-like theme for Sam
+  if (ids.Sam) {
+    await pg.query(
+      `insert into public.profile_themes (
+         user_id, banner_url, avatar_url, bio, accent_color,
+         background_style, layout_style, show_donation_stats, show_listings, custom_links
+       ) values (
+         $1,
+         'https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&w=1600&q=80',
+         'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80',
+         'Giving clothes a second life in Phuentsholing — open to centre drives.',
+         '#1c3024', 'soft_wash', 'classic', true, true,
+         '[{"label":"Donation Hub","url":"/donate"}]'::jsonb
+       )
+       on conflict (user_id) do update set
+         banner_url = excluded.banner_url,
+         avatar_url = excluded.avatar_url,
+         bio = excluded.bio,
+         accent_color = excluded.accent_color,
+         updated_at = now()`,
+      [ids.Sam],
+    );
+  }
+
   let market = 0;
   let donate = 0;
   let pending = 0;
+  let tagged = 0;
 
   for (const item of CATALOG) {
     const sellerId = ids[item.seller];
     if (!sellerId) continue;
-    const id = await upsertListing(pg, sellerId, item);
+    const id = await upsertListing(pg, sellerId, item, centerIdBySlug);
     if (item.status === "pending") pending += 1;
     else if (item.type === "marketplace") market += 1;
     else donate += 1;
+    if (item.centerSlug) tagged += 1;
     console.log(
       `${item.type}/${item.status}`,
       item.title,
+      item.centerSlug ? `@${item.centerSlug}` : "",
       "→",
       id.slice(0, 8),
     );
+  }
+
+  // Recompute donor tiers for all donation sellers
+  for (const name of ["Maya", "Jordan", "Sam"] as const) {
+    if (ids[name]) {
+      await pg.query(`select public.recompute_donor_stats($1::uuid)`, [
+        ids[name],
+      ]);
+    }
   }
 
   const counts = await pg.query(
@@ -523,8 +602,16 @@ async function main() {
   );
   console.log("\nLive listing counts:");
   console.table(counts.rows);
+  const stats = await pg.query(
+    `select p.display_name, d.tier, d.points, d.items_donated, d.center_donations
+     from public.donor_stats d
+     join public.profiles p on p.id = d.user_id
+     order by d.points desc`,
+  );
+  console.log("\nDonor stats:");
+  console.table(stats.rows);
   console.log(
-    `\nSeeded catalog: ${market} verified market, ${donate} verified donations, ${pending} pending`,
+    `\nSeeded catalog: ${market} verified market, ${donate} verified donations (${tagged} centre-tagged), ${pending} pending`,
   );
 
   await pg.end();

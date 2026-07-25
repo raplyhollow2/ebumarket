@@ -1,8 +1,17 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
+import { getViewerAccess } from '@/lib/settings'
 
 export async function GET(request: Request) {
   try {
+    const { user, isAdmin, canApprove } = await getViewerAccess()
+    if (!user || (!isAdmin && !canApprove)) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized' },
+        { status: 401 },
+      )
+    }
+
     const supabase = await createClient()
 
     // Get today's date range

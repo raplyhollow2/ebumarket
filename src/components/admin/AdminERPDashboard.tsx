@@ -17,7 +17,8 @@ import {
   Home,
   TrendingUp,
   Package,
-  Eye
+  Eye,
+  Building2,
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -112,6 +113,7 @@ export function AdminERPDashboard() {
   const navItems = [
     { icon: Home, label: 'Dashboard', href: '/admin/dashboard', current: true },
     { icon: ShoppingBag, label: 'Approval queue', href: '/admin', count: stats?.pendingListings || 0 },
+    { icon: Building2, label: 'Centres', href: '/admin/centers' },
     { icon: DollarSign, label: 'Transactions', href: '/admin/transactions' },
     { icon: FileText, label: 'CMS', href: '/admin/cms' },
     { icon: Activity, label: 'A/B experiments', href: '/admin/experiments' },

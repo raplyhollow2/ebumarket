@@ -1,3 +1,8 @@
+/**
+ * @deprecated MOCK — not imported by any App Router page.
+ * Live centre stats come from tagged `listings` + `donor_stats`.
+ * Removal: Phase 2 (docs/production/phased-roadmap.md).
+ */
 'use client'
 
 import { useState, useEffect } from 'react'

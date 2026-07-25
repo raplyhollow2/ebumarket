@@ -11,12 +11,14 @@ import {
   BarChart3,
   Settings,
   ExternalLink,
+  Building2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const MODULES = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin", label: "Queue", icon: CheckSquare, exact: true },
+  { href: "/admin/centers", label: "Centres", icon: Building2 },
   { href: "/admin/transactions", label: "Money", icon: Receipt },
   { href: "/admin/cms", label: "CMS", icon: PanelsTopLeft },
   { href: "/admin/experiments", label: "A/B", icon: FlaskConical },

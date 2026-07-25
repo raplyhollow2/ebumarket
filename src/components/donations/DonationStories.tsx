@@ -1,3 +1,8 @@
+/**
+ * @deprecated MOCK — not imported by any App Router page.
+ * Live donation hub: `/donate` + Supabase `listings` / `donation_centers`.
+ * Removal: Phase 2 (docs/production/phased-roadmap.md).
+ */
 'use client'
 
 import { useState, useEffect } from 'react'
