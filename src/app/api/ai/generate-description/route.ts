@@ -1,10 +1,10 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
+import { createClient } from '@/lib/supabase/server'
+
 import { NextResponse } from 'next/server'
 
 export async function POST(request: Request) {
   try {
-    const supabase = createRouteHandlerClient({ cookies })
+    const supabase = await createClient()
     const body = await request.json()
     const { image_url, listing_data = {} } = body
 
@@ -119,14 +119,14 @@ async function analyzeWithOpenAI(imageUrl: string) {
           content: [
             {
               type: 'text',
-              text: 'Analyze this clothing image and provide:
+              text: `Analyze this clothing image and provide:
               1. A detailed product description
               2. Detected category, condition, size
               3. Suggested tags for marketplace
               4. Confidence score in detected attributes
               5. Suggestions for improving the listing
 
-              Format your response as structured JSON.'
+              Format your response as structured JSON.`
             },
             {
               type: 'image_url',

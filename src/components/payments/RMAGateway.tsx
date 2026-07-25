@@ -1,14 +1,14 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { CreditCard, Smartphone, QrCode, Shield, Check, AlertCircle } from 'lucide-react'
+import { CreditCard, Smartphone, QrCode, Shield, Check, AlertCircle, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
-import { formatCurrency } from '@/lib/format'
+import { formatMoney } from '@/lib/format'
 
 interface RMAIntegrationProps {
   amount_cents: number
@@ -112,7 +112,7 @@ export function RMAIntegration({
         <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg text-center">
           <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Amount</div>
           <div className="text-3xl font-bold">
-            {formatCurrency(amount_cents / 100, 'BTN')}
+            {formatMoney(amount_cents / 100, 'BTN')}
           </div>
         </div>
 
@@ -153,10 +153,10 @@ export function RMAIntegration({
                       <div className="mt-2 text-sm">
                         <span className="text-gray-500">Processing fee: </span>
                         <span className="font-semibold text-orange-600">
-                          {formatCurrency(method.fee_cents / 100, 'BTN')}
+                          {formatMoney(method.fee_cents / 100, 'BTN')}
                         </span>
                         <span className="text-gray-400 ml-2">
-                          (Total: {formatCurrency(totalWithFee / 100, 'BTN')})
+                          (Total: {formatMoney(totalWithFee / 100, 'BTN')})
                         </span>
                       </div>
                     )}
@@ -245,7 +245,7 @@ export function RMAIntegration({
           ) : (
             <>
               <Check size={18} className="mr-2" />
-              Pay {formatCurrency(amount_cents / 100, 'BTN')}
+              Pay {formatMoney(amount_cents / 100, 'BTN')}
             </>
           )}
         </Button>

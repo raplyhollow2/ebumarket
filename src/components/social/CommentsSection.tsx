@@ -216,8 +216,8 @@ export function CommentsSection({ listingId, className = '' }: CommentsSectionPr
   const CommentItem = ({ comment, isReply = false, parentId }: { comment: CommentWithReplies, isReply?: boolean, parentId?: string }) => (
     <div className={`${isReply ? 'ml-8 mt-2' : 'mb-4'}`}>
       <div className="flex gap-3">
-        <Avatar size="sm">
-          <AvatarImage src={comment.profiles?.avatar_url} />
+        <Avatar className="h-8 w-8">
+          <AvatarImage src={comment.profiles?.avatar_url as string | undefined} />
           <AvatarFallback>
             {comment.profiles?.display_name?.[0]?.toUpperCase() || 'U'}
           </AvatarFallback>

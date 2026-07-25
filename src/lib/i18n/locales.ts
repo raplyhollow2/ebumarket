@@ -85,14 +85,12 @@ export const translations = {
     send_message: 'Send Message',
     follow: 'Follow',
     following: 'Following',
-    save: 'Save',
     saved: 'Saved',
     share: 'Share',
     report: 'Report',
 
     // Social
     followers: 'Followers',
-    following: 'Following',
     followers_count: '{count} followers',
     following_count: '{count} following',
     like: 'Like',
@@ -104,7 +102,6 @@ export const translations = {
     donate: 'Donate',
     claim: 'Claim',
     donation: 'Donation',
-    donations: 'Donations',
     impact: 'Impact',
     help_needed: 'Help Needed',
     give_back: 'Give Back',
@@ -267,7 +264,6 @@ export const translations = {
     send_message: 'འཕྲིན་ཐོག་སྤྲདབ',
     follow: 'རྗེས་འདེད',
     following: 'རྗེས་འདེད་འདུག',
-    save: 'སྲུར་བཞག',
     saved: 'སྲུར་བཞག',
     share: 'སྤེལ་བ',
     report: 'སྙོར་ཞུ་',
@@ -276,7 +272,6 @@ export const translations = {
     donate: 'སྦྱིན་བརྒྱུན',
     claim: 'རེ་དཔ',
     donation: 'སྦྱིན་བརྒྱུན',
-    donations: 'སྦྱིན་བརྒྱུན',
     impact: 'ཕན་ཡོན',
     help_needed: 'རོགས་རམ་དགོས་',
     give_back: 'སླེགས་སྲུབས',
@@ -286,7 +281,7 @@ export const translations = {
     bhutan: 'འབྲུག',
     thimphu: 'ཐིམ་ཕུ་',
     paro: 'སྤ་རོ',
-    phuentsholing: 'ཕུན་ཚོངས་སྲིབ'
+    phuentsholing: 'ཕུན་ཚོངས་སྲིབ',
 
     // Environmental
     environmental_impact: 'གནས་སྐབས་ཀྱི་ཕན་ཡོན',
@@ -294,7 +289,7 @@ export const translations = {
     co2_prevented: 'CO₂ གདུགས་བཏུབ་པ།',
     water_saved: 'ཆུ་བསྲུབས',
     zero_waste: 'གད་སྙོབུབས་མེད',
-    sustainable: 'རྒྱུན་སྐྱོབ་པ།
+    sustainable: 'རྒྱུན་སྐྱོབ་པ།'
   }
 }
 
@@ -335,7 +330,7 @@ export function formatCurrencyWithLocale(
   }
 
   // Default English formatting
-  return new Intl.NumberFormat(locale === 'dz' ? 'dz-BT' : 'en-BT', {
+  return new Intl.NumberFormat('en-BT', {
     style: 'currency',
     currency: currency,
     minimumFractionDigits: 2,

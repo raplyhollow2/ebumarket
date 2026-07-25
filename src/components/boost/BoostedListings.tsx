@@ -2,18 +2,26 @@
 
 import { useState, useEffect } from 'react'
 import { TrendingUp, Clock, Eye, Sparkles } from 'lucide-react'
-import { Card } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { ExtendedListingWithPhotos } from '@/lib/types'
 import { ListingCard } from '@/components/listings/ListingCard'
-import { formatDistanceToNow } from '@/lib/format'
+import { formatDistanceToNow } from 'date-fns'
 
 interface BoostedListingsProps {
   className?: string
 }
 
 export function BoostedListings({ className = '' }: BoostedListingsProps) {
-  const [boostedListings, setBoostedListings] = useState<ExtendedListingWithPhotos[]>([])
+  const [boostedListings, setBoostedListings] = useState<Array<{
+    id: string
+    listing_id: string
+    boosted_by: string
+    boost_type: string
+    start_date: string
+    end_date: string
+    listings: ExtendedListingWithPhotos
+  }>>([])
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {

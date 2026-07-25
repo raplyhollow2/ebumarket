@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/dialog'
 import { Slider } from '@/components/ui/slider'
 import { toast } from 'sonner'
-import { formatCurrency } from '@/lib/format'
+import { formatMoney } from '@/lib/format'
 
 interface OfferModalProps {
   isOpen: boolean
@@ -113,7 +113,7 @@ export function OfferModal({
           <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-600 dark:text-gray-400">Listing price:</span>
-              <span className="font-medium">{formatCurrency(listingPrice / 100, currency)}</span>
+              <span className="font-medium">{formatMoney(listingPrice / 100, currency)}</span>
             </div>
           </div>
 
@@ -124,7 +124,7 @@ export function OfferModal({
               <Input
                 id="offer-amount"
                 type="text"
-                value={formatCurrency(offerAmount / 100, currency)}
+                value={formatMoney(offerAmount / 100, currency)}
                 onChange={(e) => handleAmountChange(e.target.value)}
                 disabled={isPending}
                 className="text-lg font-semibold"
@@ -195,7 +195,7 @@ export function OfferModal({
             <div className="flex justify-between items-center">
               <span className="text-sm text-green-700 dark:text-green-400">You save:</span>
               <span className="font-semibold text-green-700 dark:text-green-400">
-                {formatCurrency((listingPrice - offerAmount) / 100, currency)}
+                {formatMoney((listingPrice - offerAmount) / 100, currency)}
               </span>
             </div>
           </div>

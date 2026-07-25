@@ -19,8 +19,8 @@ export function MessageBubble({ message, isOwn, showAvatar = true, className = '
     <div className={`flex gap-2 ${isOwn ? 'flex-row-reverse' : 'flex-row'} ${className}`}>
       {/* Avatar */}
       {showAvatar && !isOwn && (
-        <Avatar size="sm">
-          <AvatarImage src={message.sender_profile?.avatar_url} />
+        <Avatar className="h-8 w-8">
+          <AvatarImage src={message.sender_profile?.avatar_url as string | undefined} />
           <AvatarFallback>
             {message.sender_profile?.display_name?.[0]?.toUpperCase() || 'U'}
           </AvatarFallback>

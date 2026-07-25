@@ -80,7 +80,7 @@ export type ListingPhoto = {
 
 export type ListingWithPhotos = Listing & {
   listing_photos: ListingPhoto[];
-  profiles?: Pick<Profile, "display_name" | "area"> | null;
+  profiles?: Pick<ExtendedProfile, "display_name" | "area"> | null;
 };
 
 export const REQUIRED_ANGLES: PhotoAngle[] = [
@@ -143,7 +143,7 @@ export type Comment = {
   parent_comment_id: string | null;
   created_at: string;
   updated_at: string;
-  profiles?: Pick<Profile, "display_name" | "avatar_url"> | null;
+  profiles?: Pick<ExtendedProfile, "display_name" | "avatar_url"> | null;
 };
 
 export type CommentWithReplies = Comment & {
@@ -159,7 +159,7 @@ export type Collection = {
   is_public: boolean;
   created_at: string;
   updated_at: string;
-  profiles?: Pick<Profile, "display_name">;
+  profiles?: Pick<ExtendedProfile, "display_name">;
   _count?: {
     items: number;
   };
@@ -181,8 +181,8 @@ export type Conversation = {
   listing_id: string | null;
   last_message_at: string | null;
   created_at: string;
-  buyer_profile?: Pick<Profile, "display_name" | "avatar_url">;
-  seller_profile?: Pick<Profile, "display_name" | "avatar_url">;
+  buyer_profile?: Pick<ExtendedProfile, "display_name" | "avatar_url">;
+  seller_profile?: Pick<ExtendedProfile, "display_name" | "avatar_url">;
   listing?: Pick<Listing, "id" | "title" | "price_cents" | "currency"> & {
     listing_photos?: Pick<ListingPhoto, "public_url">[];
   };
@@ -199,7 +199,7 @@ export type Message = {
   content: string;
   is_read: boolean;
   created_at: string;
-  sender_profile?: Pick<Profile, "display_name" | "avatar_url">;
+  sender_profile?: Pick<ExtendedProfile, "display_name" | "avatar_url">;
 };
 
 // Offer Types
@@ -214,7 +214,7 @@ export type Offer = {
   expires_at: string;
   status: OfferStatus;
   created_at: string;
-  sender_profile?: Pick<Profile, "display_name">;
+  sender_profile?: Pick<ExtendedProfile, "display_name">;
   listing?: Pick<Listing, "id" | "title" | "price_cents" | "currency">;
 };
 
@@ -290,6 +290,7 @@ export type ExtendedListing = Listing & {
   is_boosted?: boolean;
   boost_end_time?: string | null;
   gst_amount_cents?: number;
+  is_liked?: boolean;
 };
 
 // Enhanced Listing with Photos
@@ -335,12 +336,18 @@ export type AudienceInsights = {
     percentage: number;
   }>;
   engagement_rate: number;
+  total_interactions: number;
   average_session_duration: number;
   best_posting_times: Array<{
     day: string;
     hour: number;
     engagement: number;
   }>;
+  total_listings: number;
+  total_views: number;
+  total_likes: number;
+  total_comments: number;
+  total_shares: number;
 };
 
 // API Response Types

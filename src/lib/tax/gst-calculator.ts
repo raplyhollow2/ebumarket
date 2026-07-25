@@ -298,7 +298,7 @@ export class GSTCalculator {
     const originalCents = Math.round(totalWithGstCents / (1 + gstRate))
     const gstCents = totalWithGstCents - originalCents
 
-    return { original_cents: originalCents, gst_cents }
+    return { original_cents: originalCents, gst_cents: gstCents }
   }
 
   /**

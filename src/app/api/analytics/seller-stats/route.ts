@@ -1,10 +1,10 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
+import { createClient } from '@/lib/supabase/server'
+
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
   try {
-    const supabase = createRouteHandlerClient({ cookies })
+    const supabase = await createClient()
     const { searchParams } = new URL(request.url)
     const period = searchParams.get('period') || '30' // days
     const userId = searchParams.get('user_id')
@@ -100,11 +100,11 @@ export async function GET(request: Request) {
     ])
 
     // Calculate metrics
-    const totalViews = listingsData?.reduce((sum, listing) => sum + (listing.views_count || 0), 0) || 0
-    const totalLikes = listingsData?.reduce((sum, listing) => sum + (listing.likes_count || 0), 0) || 0
-    const totalSales = salesData?.reduce((sum, sale) => sum + (sale.amount_cents || 0), 0) || 0
-    const averagePrice = salesData?.length > 0 ? totalSales / salesData.length : 0
-    const conversionRate = totalListings > 0 ? ((soldListings || 0) / totalListings) * 100 : 0
+    const totalViews = listingsData?.data?.reduce((sum, listing) => sum + (listing.views_count || 0), 0) || 0
+    const totalLikes = listingsData?.data?.reduce((sum, listing) => sum + (listing.likes_count || 0), 0) || 0
+    const totalSales = salesData?.data?.reduce((sum, sale) => sum + (sale.amount_cents || 0), 0) || 0
+    const averagePrice = salesData?.data?.length && salesData.data.length > 0 ? totalSales / salesData.data.length : 0
+    const conversionRate = (totalListings || 0) > 0 ? ((soldListings || 0) / (totalListings || 1)) * 100 : 0
 
     const stats = {
       total_listings: totalListings || 0,

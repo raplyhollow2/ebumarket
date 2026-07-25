@@ -103,7 +103,7 @@ export function CollectionsButton({
   if (variant === 'button') {
     return (
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogTrigger asChild>
+        <DialogTrigger>
           <Button
             variant={isSaved ? 'outline' : 'default'}
             size={size === 'sm' ? 'sm' : size === 'lg' ? 'lg' : 'default'}
@@ -119,7 +119,7 @@ export function CollectionsButton({
               </>
             ) : (
               <>
-                <BookmarkAdd size={iconSizes[size]} className="mr-1" />
+                <BookmarkPlus size={iconSizes[size]} className="mr-1" />
                 Save
               </>
             )}
@@ -144,7 +144,7 @@ export function CollectionsButton({
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
+      <DialogTrigger>
         <Button
           variant="ghost"
           size="icon"

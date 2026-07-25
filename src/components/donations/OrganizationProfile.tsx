@@ -73,7 +73,7 @@ export function OrganizationProfile({ organizationId, className = '' }: Organiza
     <div className={`space-y-6 ${className}`}>
       {/* Header */}
       <div className="flex items-start gap-4">
-        <Avatar size="xl">
+        <Avatar className="h-16 w-16">
           <AvatarImage src={organization.avatar_url} />
           <AvatarFallback className="text-2xl">
             {organization.name?.[0]?.toUpperCase() || 'O'}
