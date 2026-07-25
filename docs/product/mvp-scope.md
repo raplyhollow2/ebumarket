@@ -15,8 +15,10 @@ Goal: **interactive web MVP on live Supabase data** for usability testing — no
 - Single-screen sell composer (details + required photo angles + price)  
 - Uploads → Supabase Storage + `listing_photos`  
 - Listing enters **pending**; public Market shows **verified** only  
-- Detail + Buy Sheet: COD or Stripe test online; fee breakdown  
-- Activity: live listings + transactions  
+- Detail + Buy Sheet: COD or Stripe test online; **split fee breakdown** (buyer → platform, 5% keep, seller payout)  
+- Public buyer/seller profiles (`/profile/[id]`) linked from listings & Activity  
+- Activity: live listings + **incoming buy requests for sellers** + payout claim  
+- Split ledger: `fee_cents` / `seller_payout_cents` / `payout_status`; admin mark paid out 
 
 ### Donation Hub
 
@@ -40,7 +42,7 @@ Goal: **interactive web MVP on live Supabase data** for usability testing — no
 
 ## Out of scope (MVP)
 
-- Production Stripe live mode / payouts / KYC  
+- Production Stripe live mode / Connect KYC / automatic bank payouts (MVP uses claim + admin paid-out ledger) 
 - Shipping labels & logistics  
 - Push / email provider (in-app toasts enough)  
 - Advanced search / recommendations  

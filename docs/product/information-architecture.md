@@ -22,8 +22,8 @@ Low-friction IA: fewer routes, sheets for commit actions, live Supabase behind e
 | Home | Brand hero + dual CTAs: Shop / Donate |
 | Market | Verified listings + Sell CTA → composer |
 | Donate | Hub browse + List donation → composer |
-| Activity | Unified live inbox: listings, buys, claims |
-| Profile | Account, area, meetup points, logout |
+| Activity | Unified live inbox: listings, **buy requests (seller + buyer)**, payout claims, donation claims |
+| Profile | Own account, area, meetup points, logout; **public** `/profile/[id]` for buyers/sellers |
 
 ## Screen inventory (MVP)
 
@@ -34,8 +34,8 @@ Low-friction IA: fewer routes, sheets for commit actions, live Supabase behind e
 - Sell composer (`/market/new`) — single screen  
 - Donate browse / Donate detail (+ **Claim Sheet**)  
 - Donate composer (`/donate/new`) — single screen  
-- Activity (unified)  
-- Profile (includes meetup CRUD)  
+- Activity (unified — seller sees incoming buys; claim payout)  
+- Profile (own meetup CRUD) + **Public profile** `/profile/[id]`  
 - Auth Sheet (signup/login; not a hard gate for browse)  
 
 ### Admin routes
