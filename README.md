@@ -15,6 +15,10 @@ Product / drawing board (source of truth for intent):
 - [docs/README.md](./docs/README.md)
 - [docs/drawing-board/00-index.md](./docs/drawing-board/00-index.md)
 - [docs/product/tech-sketch.md](./docs/product/tech-sketch.md)
+- [docs/product/mobile-desktop-parity.md](./docs/product/mobile-desktop-parity.md) — desktop features must also ship on mobile
+- [docs/product/admin-erp.md](./docs/product/admin-erp.md) — ERP modules to run the live site
+
+Admin ERP: `/admin/dashboard` (phone + desktop via `AdminShell`).
 
 ## Deploy (Vercel + GitHub)
 
