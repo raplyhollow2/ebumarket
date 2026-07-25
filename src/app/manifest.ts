@@ -2,11 +2,12 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
+    id: "/",
     name: "Zyra — Circular fashion",
     short_name: "Zyra",
     description:
       "Teen marketplace and free donation hub with Verified by Zyra listings.",
-    start_url: "/",
+    start_url: "/?source=pwa",
     scope: "/",
     display: "standalone",
     orientation: "portrait-primary",

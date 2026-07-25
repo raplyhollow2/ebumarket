@@ -22,10 +22,20 @@ Zyra installs as a standalone app on mobile/desktop.
 
 ## Install
 
-1. Deploy over **HTTPS**
-2. Open in Chrome/Safari → browser “Add to Home Screen” / Install
-3. Android Chrome may show the in-app **Install Zyra** chip once
+1. Deploy over **HTTPS** (required except `localhost`)
+2. Open the site, wait ~2s — install chip appears:
+   - **Android Chrome:** Install button (when browser fires `beforeinstallprompt`)
+   - **iPhone Safari:** instructions — Share → Add to Home Screen
+   - **Fallback tip:** Chrome ⋮ → Install app
+3. If you dismissed it, it reappears after 3 days (or clear `localStorage.zyra-pwa-dismissed`)
 
-## Dev note
+### Why the Chrome Install button sometimes doesn’t appear
 
-Service worker registers in production and on `localhost`. Hard-refresh or unregister SW when debugging stale caches (`Application → Service Workers` in DevTools).
+`beforeinstallprompt` only fires when Chrome decides the app is installable (HTTPS, valid SW + manifest, not already installed). It does **not** fire on iOS. Zyra always shows a helpful tip/instructions so install isn’t blocked on that event alone.
+
+### DevTools check
+
+1. Application → Manifest (icons + start_url OK)
+2. Application → Service Workers (`/sw.js` activated)
+3. Lighthouse → PWA / Installable
+4. Ensure `/sw.js` is not HTML (middleware must skip it)

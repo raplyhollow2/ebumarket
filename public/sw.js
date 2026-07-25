@@ -1,79 +1,115 @@
-/* Zyra PWA service worker — cache shell + static assets */
-const CACHE = "zyra-v1";
+/* Zyra PWA service worker */
+const CACHE = "zyra-v2";
 const PRECACHE = [
-  "/",
-  "/manifest.webmanifest",
   "/icons/icon-192.png",
   "/icons/icon-512.png",
   "/icons/apple-touch-icon.png",
   "/icons/maskable-512.png",
+  "/manifest.webmanifest",
 ];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE).then((cache) => cache.addAll(PRECACHE)).then(() => self.skipWaiting()),
+    (async () => {
+      const cache = await caches.open(CACHE);
+      // Precache each asset individually so one failure doesn't kill install
+      await Promise.all(
+        PRECACHE.map((url) =>
+          cache.add(url).catch((err) => {
+            console.warn("[zyra-sw] precache skip", url, err);
+          }),
+        ),
+      );
+      await self.skipWaiting();
+    })(),
   );
 });
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))),
-    ).then(() => self.clients.claim()),
+    (async () => {
+      const keys = await caches.keys();
+      await Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)));
+      await self.clients.claim();
+    })(),
   );
 });
 
+// Required for installability — handle same-origin GETs
 self.addEventListener("fetch", (event) => {
   const { request } = event;
   if (request.method !== "GET") return;
 
-  const url = new URL(request.url);
+  let url;
+  try {
+    url = new URL(request.url);
+  } catch {
+    return;
+  }
   if (url.origin !== self.location.origin) return;
 
-  // Never cache API / auth / checkout
+  // Bypass API / dynamic backends
   if (
     url.pathname.startsWith("/api/") ||
-    url.pathname.startsWith("/auth") ||
-    url.pathname.includes("checkout")
+    url.pathname.includes("checkout") ||
+    url.pathname.startsWith("/auth")
   ) {
     return;
   }
 
-  // Navigations: network-first, fall back to cache / offline home
+  // Navigations: network first
   if (request.mode === "navigate") {
     event.respondWith(
-      fetch(request)
-        .then((res) => {
-          const copy = res.clone();
-          caches.open(CACHE).then((c) => c.put(request, copy));
+      (async () => {
+        try {
+          const res = await fetch(request);
+          const cache = await caches.open(CACHE);
+          cache.put(request, res.clone());
           return res;
-        })
-        .catch(async () => {
-          const cached = await caches.match(request);
-          return cached || caches.match("/");
-        }),
+        } catch {
+          return (
+            (await caches.match(request)) ||
+            (await caches.match("/")) ||
+            new Response("Zyra is offline. Reconnect to continue.", {
+              status: 503,
+              headers: { "Content-Type": "text/plain" },
+            })
+          );
+        }
+      })(),
     );
     return;
   }
 
-  // Static assets: stale-while-revalidate
+  // Static / icons / images: cache-first
   if (
     url.pathname.startsWith("/_next/static/") ||
     url.pathname.startsWith("/bhutan/") ||
     url.pathname.startsWith("/icons/") ||
-    url.pathname.match(/\.(webp|png|jpg|jpeg|svg|woff2?)$/i)
+    url.pathname === "/manifest.webmanifest" ||
+    url.pathname === "/sw.js" ||
+    /\.(webp|png|jpg|jpeg|svg|woff2?|js|css)$/i.test(url.pathname)
   ) {
     event.respondWith(
-      caches.open(CACHE).then(async (cache) => {
+      (async () => {
+        const cache = await caches.open(CACHE);
         const cached = await cache.match(request);
-        const network = fetch(request)
-          .then((res) => {
-            if (res.ok) cache.put(request, res.clone());
-            return res;
-          })
-          .catch(() => cached);
-        return cached || network;
-      }),
+        if (cached) {
+          fetch(request)
+            .then((res) => {
+              if (res.ok) cache.put(request, res.clone());
+            })
+            .catch(() => {});
+          return cached;
+        }
+        try {
+          const res = await fetch(request);
+          if (res.ok) cache.put(request, res.clone());
+          return res;
+        } catch {
+          return new Response("", { status: 504 });
+        }
+      })(),
     );
   }
 });
