@@ -52,7 +52,8 @@ docs/
 | Donations verify | Same admin verification queue as marketplace |
 | Data | **All live on Supabase** — no client-only DB |
 | UI | **shadcn/ui** + Tailwind; sheets/composers over wizards |
-| Admin | Inline approve/reject on queue; transactions DataTable |
+| Admin | Full ERP via `AdminShell`: queue, money, CMS, A/B, analytics, settings |
+| Parity | Desktop features must ship with mobile equivalents same release |
 | Fidelity | Interactive MVP on live data for usability testing |
 
 ## Suggested review order

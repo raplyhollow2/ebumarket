@@ -190,7 +190,7 @@ export function CollectionsModal({ listingId, onSaved, onCancel }: CollectionsMo
               >
                 <div className="flex items-center gap-3">
                   {collection.is_public ? (
-                    <FolderOpen size={20} className="text-pink-500" />
+                    <FolderOpen size={20} className="text-primary" />
                   ) : (
                     <FolderPlus size={20} className="text-gray-400" />
                   )}

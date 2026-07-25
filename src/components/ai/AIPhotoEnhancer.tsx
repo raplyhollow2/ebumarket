@@ -67,7 +67,7 @@ export function AIPhotoEnhancer({ imageUrl, onEnhanced, className = '' }: AIPhot
       <Button
         variant="outline"
         onClick={() => setIsOpen(true)}
-        className={`${className} bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200 hover:border-purple-300`}
+        className={`${className} bg-gradient-to-r from-muted to-muted border-border hover:border-primary/40`}
       >
         <Wand2 size={18} className="mr-2" />
         AI Photo Enhancer
@@ -79,7 +79,7 @@ export function AIPhotoEnhancer({ imageUrl, onEnhanced, className = '' }: AIPhot
     <Card className={className}>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Sparkles size={20} className="text-pink-500" />
+          <Sparkles size={20} className="text-primary" />
           AI Photo Enhancer
         </CardTitle>
         <CardDescription>
@@ -100,7 +100,7 @@ export function AIPhotoEnhancer({ imageUrl, onEnhanced, className = '' }: AIPhot
             <div className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center">
               {isProcessing ? (
                 <div className="text-center">
-                  <Loader2 size={32} className="animate-spin text-pink-500 mx-auto mb-2" />
+                  <Loader2 size={32} className="animate-spin text-primary mx-auto mb-2" />
                   <p className="text-sm text-gray-600">Enhancing...</p>
                 </div>
               ) : (
@@ -181,7 +181,7 @@ export function AIPhotoEnhancer({ imageUrl, onEnhanced, className = '' }: AIPhot
           <Button
             onClick={handleEnhance}
             disabled={isProcessing || isPending}
-            className="flex-1 bg-gradient-to-r from-pink-500 to-purple-500"
+            className="flex-1 bg-primary"
           >
             {isProcessing ? (
               <>

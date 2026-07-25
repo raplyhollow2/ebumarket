@@ -1,10 +1,10 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
+import { createClient } from '@/lib/supabase/server'
+
 import { NextResponse } from 'next/server'
 
 export async function POST(request: Request) {
   try {
-    const supabase = createRouteHandlerClient({ cookies })
+    const supabase = await createClient()
     const body = await request.json()
     const { listing_id, boost_type, duration_hours = 24 } = body
 
@@ -83,9 +83,10 @@ export async function POST(request: Request) {
     }
 
     // Find closest duration pricing
-    const durationKeys = Object.keys(pricing[boost_type]).map(Number).sort((a, b) => a - b)
+    const pricingForType = pricing[boost_type as keyof typeof pricing]
+    const durationKeys = Object.keys(pricingForType).map(Number).sort((a, b) => a - b)
     const closestDuration = durationKeys.find(key => key >= duration_hours) || durationKeys[durationKeys.length - 1]
-    const priceCents = pricing[boost_type][closestDuration as keyof typeof pricing[typeof boost_type]]
+    const priceCents = pricingForType[closestDuration as keyof typeof pricingForType]
 
     const start_date = new Date().toISOString()
     const end_date = new Date(Date.now() + duration_hours * 60 * 60 * 1000).toISOString()
@@ -136,7 +137,7 @@ export async function POST(request: Request) {
 
 export async function GET(request: Request) {
   try {
-    const supabase = createRouteHandlerClient({ cookies })
+    const supabase = await createClient()
     const { searchParams } = new URL(request.url)
     const listingId = searchParams.get('listing_id')
     const userId = searchParams.get('user_id')

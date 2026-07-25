@@ -5,11 +5,12 @@ Zyra’s UI is built with **Tailwind CSS + shadcn/ui** (Radix primitives). This 
 ## Principles
 
 1. **Mobile-first** — single column; thumb-reach primary actions
-2. **Fewer screens** — prefer **Sheet** / **Dialog** over new routes for Buy, Claim, Auth
-3. **Trust visible** — verification **Badge** always next to title on detail; mark on browse tiles
-4. **Brand first on Home** — Zyra is the hero signal; no dashboard clutter in first viewport
-5. **Cards only for interaction** — listing tiles in browse grids; avoid decorative card chrome elsewhere
-6. **Large tap targets** — teen-friendly; sticky primary CTA on long composers
+2. **Feature parity** — anything on desktop must also work on mobile (see [mobile-desktop-parity.md](./mobile-desktop-parity.md)); only layout/interaction may differ
+3. **Fewer screens** — prefer **Sheet** / **Dialog** over new routes for Buy, Claim, Auth
+4. **Trust visible** — verification **Badge** always next to title on detail; mark on browse tiles
+5. **Brand first on Home** — Zyra is the hero signal; no dashboard clutter in first viewport
+6. **Cards only for interaction** — listing tiles in browse grids; avoid decorative card chrome elsewhere
+7. **Large tap targets** — teen-friendly; sticky primary CTA on long composers; no hover-only primary actions
 
 ## Component map
 
@@ -42,9 +43,14 @@ Zyra’s UI is built with **Tailwind CSS + shadcn/ui** (Radix primitives). This 
 └─────────────────────────┘
 ```
 
-### Admin
+### Admin ERP
 
-Separate layout (no teen tab bar): sidebar or top nav — Queue | Transactions.
+Shared `AdminShell` (no teen tab bar):
+
+- **Mobile:** sticky header + horizontal scroll module chips  
+- **Desktop:** left sidebar  
+
+Modules: Dashboard | Queue | Money | CMS | A/B | Stats | Settings — see [admin-erp.md](./admin-erp.md).
 
 ## Status badge copy
 

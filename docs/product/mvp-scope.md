@@ -24,12 +24,18 @@ Goal: **interactive web MVP on live Supabase data** for usability testing — no
 - Browse + Claim Sheet  
 - Donor approve/decline claims in Activity  
 - Same verification queue as marketplace  
+- **Donation Centers** — orphanages / centres as selectable destinations ([donation-centers-and-profiles.md](./donation-centers-and-profiles.md))  
+- **Donor tiers** — points + Seedling→Champion badges to motivate giving  
+- **Custom profiles** — Tumblr-like banner, accent, bio, layout on public profile  
 
-### Admin
+### Admin ERP
 
 - Inline verification queue (Approve / Reject + reason)  
-- Transactions DataTable  
-- Audit events on verify/reject  
+- Transactions DataTable + seller payout actions  
+- CMS heroes + A/B experiments + analytics dashboard  
+- Settings: currency, fee %, users / approvers  
+- Shared `AdminShell` — same modules on mobile and desktop  
+- Audit events on verify/reject
 
 ### Platform
 

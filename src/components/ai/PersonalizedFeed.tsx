@@ -58,10 +58,10 @@ export function PersonalizedFeed({ userId, className = '' }: PersonalizedFeedPro
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-bold flex items-center gap-2">
-            <Sparkles size={20} className="text-pink-500" />
+            <Sparkles size={20} className="text-primary" />
             Personalized For You
           </h2>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <p className="text-sm text-muted-foreground">
             Listings curated based on your style and preferences
           </p>
         </div>
@@ -81,10 +81,10 @@ export function PersonalizedFeed({ userId, className = '' }: PersonalizedFeedPro
               {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
                 <Card key={i}>
                   <CardContent className="p-0">
-                    <div className="aspect-square bg-gray-200 animate-pulse"></div>
+                    <div className="aspect-[3/4] bg-muted animate-pulse"></div>
                     <div className="p-3 space-y-2">
-                      <div className="h-4 bg-gray-200 animate-pulse rounded"></div>
-                      <div className="h-3 bg-gray-200 animate-pulse rounded w-2/3"></div>
+                      <div className="h-4 bg-muted animate-pulse rounded"></div>
+                      <div className="h-3 bg-muted animate-pulse rounded w-2/3"></div>
                     </div>
                   </CardContent>
                 </Card>
@@ -93,12 +93,12 @@ export function PersonalizedFeed({ userId, className = '' }: PersonalizedFeedPro
           ) : listings.length === 0 ? (
             <Card>
               <CardContent className="p-12 text-center">
-                <TrendingUp size={48} className="mx-auto mb-4 text-gray-400" />
+                <TrendingUp size={48} className="mx-auto mb-4 text-muted-foreground" />
                 <h3 className="text-lg font-semibold mb-2">No recommendations yet</h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">
+                <p className="text-muted-foreground mb-4">
                   Start liking and following listings to get personalized recommendations!
                 </p>
-                <Button variant="outline">
+                <Button variant="outline" onClick={() => { window.location.href = '/market' }}>
                   Browse Marketplace
                 </Button>
               </CardContent>

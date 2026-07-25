@@ -19,8 +19,8 @@ export function MessageBubble({ message, isOwn, showAvatar = true, className = '
     <div className={`flex gap-2 ${isOwn ? 'flex-row-reverse' : 'flex-row'} ${className}`}>
       {/* Avatar */}
       {showAvatar && !isOwn && (
-        <Avatar size="sm">
-          <AvatarImage src={message.sender_profile?.avatar_url} />
+        <Avatar className="h-8 w-8">
+          <AvatarImage src={message.sender_profile?.avatar_url as string | undefined} />
           <AvatarFallback>
             {message.sender_profile?.display_name?.[0]?.toUpperCase() || 'U'}
           </AvatarFallback>
@@ -32,7 +32,7 @@ export function MessageBubble({ message, isOwn, showAvatar = true, className = '
         <div
           className={`px-4 py-2 rounded-2xl ${
             isOwn
-              ? 'bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-br-sm'
+              ? 'bg-primary text-white rounded-br-sm'
               : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-bl-sm'
           }`}
         >

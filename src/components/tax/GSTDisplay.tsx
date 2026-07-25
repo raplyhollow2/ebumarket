@@ -5,7 +5,7 @@ import { Receipt, Info } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { calculateGST, shouldApplyGST, getGSTConfig } from '@/lib/tax/gst-calculator'
-import { formatCurrency } from '@/lib/format'
+import { formatMoney } from '@/lib/format'
 
 interface GSTDisplayProps {
   amount_cents: number
@@ -65,7 +65,7 @@ export function GSTDisplay({
       <div className={`text-sm flex items-center gap-2 ${className}`}>
         <span className="text-gray-600 dark:text-gray-400">Including GST:</span>
         <span className="font-semibold">
-          {formatCurrency(calculation!.total_cents / 100, 'BTN')}
+          {formatMoney(calculation!.total_cents / 100, 'BTN')}
         </span>
       </div>
     )
@@ -83,19 +83,19 @@ export function GSTDisplay({
         <div className="flex justify-between text-sm">
           <span className="text-gray-600 dark:text-gray-400">Subtotal:</span>
           <span className="font-medium">
-            {formatCurrency(calculation!.breakdown.subtotal, 'BTN')}
+            {formatMoney(calculation!.breakdown.subtotal, 'BTN')}
           </span>
         </div>
         <div className="flex justify-between text-sm">
           <span className="text-gray-600 dark:text-gray-400">GST ({calculation!.gst_rate}%):</span>
           <span className="font-medium text-blue-600">
-            {formatCurrency(calculation!.breakdown.gst, 'BTN')}
+            {formatMoney(calculation!.breakdown.gst, 'BTN')}
           </span>
         </div>
         <div className="flex justify-between text-sm pt-2 border-t">
           <span className="font-semibold">Total:</span>
           <span className="font-bold text-lg">
-            {formatCurrency(calculation!.breakdown.total, 'BTN')}
+            {formatMoney(calculation!.breakdown.total, 'BTN')}
           </span>
         </div>
 

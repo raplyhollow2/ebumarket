@@ -22,6 +22,7 @@ export function ConversationsList({
   className = ''
 }: ConversationsListProps) {
   const [conversations, setConversations] = useState<Conversation[]>([])
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
 
@@ -33,6 +34,7 @@ export function ConversationsList({
         const result = await response.json()
         if (result.success) {
           setConversations(result.data || [])
+          setCurrentUserId(result.currentUserId || null)
         }
       } catch (error) {
         console.error('Error fetching conversations:', error)
@@ -56,8 +58,6 @@ export function ConversationsList({
       conv.listing?.title?.toLowerCase().includes(searchTerm)
     )
   })
-
-  const currentUser = typeof window !== 'undefined' && window.supabase?.auth?.user()
 
   return (
     <div className={`flex flex-col h-full bg-gray-50 dark:bg-gray-900 ${className}`}>
@@ -88,7 +88,7 @@ export function ConversationsList({
         ) : (
           <div className="divide-y dark:divide-gray-800">
             {filteredConversations.map(conversation => {
-              const isBuyer = conversation.buyer_id === currentUser?.id
+              const isBuyer = conversation.buyer_id === currentUserId
               const otherProfile = isBuyer ? conversation.seller_profile : conversation.buyer_profile
               const unreadCount = conversation._count?.unread_messages || 0
               const isSelected = conversation.id === selectedId
@@ -103,7 +103,7 @@ export function ConversationsList({
                 >
                   <div className="relative">
                     <Avatar>
-                      <AvatarImage src={otherProfile?.avatar_url} />
+                      <AvatarImage src={otherProfile?.avatar_url as string | undefined} />
                       <AvatarFallback>
                         {otherProfile?.display_name?.[0]?.toUpperCase() || 'U'}
                       </AvatarFallback>
@@ -152,7 +152,7 @@ export function ConversationsList({
 
       {/* New Message Button */}
       <div className="p-4 border-t dark:border-gray-700">
-        <Button className="w-full bg-gradient-to-r from-pink-500 to-purple-500">
+        <Button className="w-full bg-primary">
           <MessageCircle size={18} className="mr-2" />
           Start new conversation
         </Button>

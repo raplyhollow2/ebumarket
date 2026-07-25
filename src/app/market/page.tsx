@@ -1,39 +1,54 @@
 import Link from "next/link";
-import { TeenShell } from "@/components/layout/teen-shell";
-import { StatusBadge } from "@/components/status-badge";
+import { ResponsiveLayoutWrapper } from "@/components/layout/ResponsiveLayoutWrapper";
+import { MarketBrowseClient } from "@/components/listings/MarketBrowseClient";
 import { createClient } from "@/lib/supabase/server";
-import { formatMoney, DEFAULT_CURRENCY } from "@/lib/format";
-import type { ListingWithPhotos } from "@/lib/types";
+import type { ExtendedListingWithPhotos } from "@/lib/types";
 import { RequireAuthLink } from "@/components/auth/require-auth-link";
 
-async function getVerifiedListings(type: "marketplace" | "donation") {
+async function getVerifiedListings(category?: string) {
   const supabase = await createClient();
-  const { data, error } = await supabase
+  let query = supabase
     .from("listings")
-    .select("*, listing_photos(*)")
-    .eq("type", type)
+    .select(
+      "*, listing_photos(*), profiles:seller_id(display_name, area)",
+    )
+    .eq("type", "marketplace")
     .eq("status", "verified")
     .order("created_at", { ascending: false });
+
+  if (category) {
+    query = query.eq("category", category);
+  }
+
+  const { data, error } = await query;
   if (error) {
     console.error(error);
-    return [] as ListingWithPhotos[];
+    return [] as ExtendedListingWithPhotos[];
   }
-  return (data ?? []) as ListingWithPhotos[];
+  return (data ?? []) as ExtendedListingWithPhotos[];
 }
 
-export default async function MarketPage() {
-  const listings = await getVerifiedListings("marketplace");
+export default async function MarketPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ category?: string }>;
+}) {
+  const { category } = await searchParams;
+  const listings = await getVerifiedListings(category);
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   return (
-    <TeenShell>
-      <div className="mb-4 flex items-end justify-between gap-3">
+    <ResponsiveLayoutWrapper>
+      <div className="mb-6 flex items-end justify-between gap-3">
         <div>
           <h1 className="font-[family-name:var(--font-display)] text-3xl font-semibold tracking-tight">
             Market
+            {category ? (
+              <span className="text-muted-foreground"> · {category}</span>
+            ) : null}
           </h1>
           <p className="text-sm text-muted-foreground">
             Only Verified by Zyra listings.
@@ -52,7 +67,9 @@ export default async function MarketPage() {
         <div className="rounded-2xl border border-dashed border-border bg-card/60 p-8 text-center">
           <p className="font-medium">No live items yet</p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Be first — list something for verification.
+            {category
+              ? `Nothing verified in ${category} right now.`
+              : "Be first — list something for verification."}
           </p>
           <Link
             href="/market/new"
@@ -62,43 +79,8 @@ export default async function MarketPage() {
           </Link>
         </div>
       ) : (
-        <ul className="grid grid-cols-2 gap-3">
-          {listings.map((item) => {
-            const photo =
-              item.listing_photos?.sort((a, b) => a.sort_order - b.sort_order)[0];
-            return (
-              <li key={item.id}>
-                <Link
-                  href={`/market/${item.id}`}
-                  className="block overflow-hidden rounded-xl bg-card shadow-sm ring-1 ring-border/60 transition hover:ring-foreground/20"
-                >
-                  <div className="relative aspect-[3/4] bg-muted">
-                    {photo ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={photo.public_url}
-                        alt={item.title}
-                        className="h-full w-full object-cover"
-                      />
-                    ) : null}
-                    <div className="absolute left-2 top-2">
-                      <StatusBadge status="verified" />
-                    </div>
-                  </div>
-                  <div className="space-y-0.5 p-2.5">
-                    <p className="truncate text-sm font-medium">{item.title}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {item.price_cents != null
-                        ? formatMoney(item.price_cents, item.currency)
-                        : "—"}
-                    </p>
-                  </div>
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
+        <MarketBrowseClient listings={listings} isAuthed={Boolean(user)} />
       )}
-    </TeenShell>
+    </ResponsiveLayoutWrapper>
   );
 }

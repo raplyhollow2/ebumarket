@@ -21,9 +21,9 @@ Low-friction IA: fewer routes, sheets for commit actions, live Supabase behind e
 | --- | --- |
 | Home | Brand hero + dual CTAs: Shop / Donate |
 | Market | Verified listings + Sell CTA → composer |
-| Donate | Hub browse + List donation → composer |
+| Donate | Hub browse + List donation → composer; **Centers** directory |
 | Activity | Unified live inbox: listings, buys, claims |
-| Profile | Account, area, meetup points, logout |
+| Profile | Account, meetups, **Customize page** (Tumblr-like), donor tier |
 
 ## Screen inventory (MVP)
 
@@ -34,14 +34,23 @@ Low-friction IA: fewer routes, sheets for commit actions, live Supabase behind e
 - Sell composer (`/market/new`) — single screen  
 - Donate browse / Donate detail (+ **Claim Sheet**)  
 - Donate composer (`/donate/new`) — single screen  
+- **Donation Centers** `/donate/centers`, `/donate/centers/[id]`  
 - Activity (unified)  
-- Profile (includes meetup CRUD)  
+- Profile (meetups + **Customize page** + donor tier)  
+- Public profile `/profile/[id]` (themed)  
 - Auth Sheet (signup/login; not a hard gate for browse)  
 
-### Admin routes
+### Admin ERP routes (mobile + desktop)
 
-- Verification queue (inline Approve / Reject)  
-- Transactions DataTable  
+- `/admin/dashboard` — ERP overview  
+- `/admin` — Verification queue (inline Approve / Reject)  
+- `/admin/transactions` — Money / payout ledger  
+- `/admin/cms` — Homepage heroes & content  
+- `/admin/experiments` — A/B experiments  
+- `/admin/analytics` — Ops analytics  
+- `/admin/settings` — Currency, fees, users, approvers  
+
+All modules share `AdminShell` so phone operators can run the site. See [admin-erp.md](./admin-erp.md) and [mobile-desktop-parity.md](./mobile-desktop-parity.md).
 
 ### Removed vs earlier wizard IA
 

@@ -1,10 +1,10 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
+import { createClient } from '@/lib/supabase/server'
+
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
   try {
-    const supabase = createRouteHandlerClient({ cookies })
+    const supabase = await createClient()
     const { searchParams } = new URL(request.url)
     const userId = searchParams.get('user_id')
 
@@ -65,11 +65,12 @@ export async function GET(request: Request) {
       categoryMap.set(listing.category, count + 1)
     })
 
+    const listingsCount = listings?.length || 0
     const topCategories = Array.from(categoryMap.entries())
       .map(([category, count]) => ({
         category,
         count,
-        percentage: listings.length > 0 ? (count / listings.length) * 100 : 0
+        percentage: listingsCount > 0 ? (count / listingsCount) * 100 : 0
       }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 5)

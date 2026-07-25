@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { TeenShell } from "@/components/layout/teen-shell";
+import { ResponsiveLayoutWrapper } from "@/components/layout/ResponsiveLayoutWrapper";
 import { DonateDetailClient } from "@/components/listings/donate-detail-client";
 import { createClient } from "@/lib/supabase/server";
 import type { ListingWithPhotos } from "@/lib/types";
@@ -14,7 +14,9 @@ export default async function DonateDetailPage({
   const supabase = await createClient();
   const { data } = await supabase
     .from("listings")
-    .select("*, listing_photos(*)")
+    .select(
+      "*, listing_photos(*), profiles:seller_id(id, display_name, area, is_organization), donation_centers:center_id(id, name, slug, center_type, area)",
+    )
     .eq("id", id)
     .eq("type", "donation")
     .maybeSingle();
@@ -24,7 +26,7 @@ export default async function DonateDetailPage({
   } = await supabase.auth.getUser();
 
   return (
-    <TeenShell>
+    <ResponsiveLayoutWrapper>
       <Link href="/donate" className="text-sm text-muted-foreground">
         ← Donation Hub
       </Link>
@@ -34,6 +36,6 @@ export default async function DonateDetailPage({
           isAuthed={Boolean(user)}
         />
       </div>
-    </TeenShell>
+    </ResponsiveLayoutWrapper>
   );
 }

@@ -1,10 +1,10 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
+import { createClient } from '@/lib/supabase/server'
+
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
   try {
-    const supabase = createRouteHandlerClient({ cookies })
+    const supabase = await createClient()
     const { searchParams } = new URL(request.url)
     const listingId = searchParams.get('listing_id')
     const userId = searchParams.get('user_id')
@@ -75,7 +75,7 @@ export async function GET(request: Request) {
     const dailyMetrics = new Map<string, { views: number; likes: number; shares: number; clicks: number }>()
 
     // Initialize with analytics data
-    analyticsData?.forEach(data => {
+    analyticsData?.data?.forEach(data => {
       dailyMetrics.set(data.event_date, {
         views: data.views,
         likes: data.likes,
@@ -85,7 +85,7 @@ export async function GET(request: Request) {
     })
 
     // Add views from interactions table
-    viewsData?.forEach(view => {
+    viewsData?.data?.forEach(view => {
       const date = view.created_at.split('T')[0]
       const existing = dailyMetrics.get(date) || { views: 0, likes: 0, shares: 0, clicks: 0 }
       existing.views += 1

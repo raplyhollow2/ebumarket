@@ -2,18 +2,26 @@
 
 import { useState, useEffect } from 'react'
 import { TrendingUp, Clock, Eye, Sparkles } from 'lucide-react'
-import { Card } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { ExtendedListingWithPhotos } from '@/lib/types'
 import { ListingCard } from '@/components/listings/ListingCard'
-import { formatDistanceToNow } from '@/lib/format'
+import { formatDistanceToNow } from 'date-fns'
 
 interface BoostedListingsProps {
   className?: string
 }
 
 export function BoostedListings({ className = '' }: BoostedListingsProps) {
-  const [boostedListings, setBoostedListings] = useState<ExtendedListingWithPhotos[]>([])
+  const [boostedListings, setBoostedListings] = useState<Array<{
+    id: string
+    listing_id: string
+    boosted_by: string
+    boost_type: string
+    start_date: string
+    end_date: string
+    listings: ExtendedListingWithPhotos
+  }>>([])
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -43,14 +51,14 @@ export function BoostedListings({ className = '' }: BoostedListingsProps) {
     return (
       <div className={`space-y-4 ${className}`}>
         <div className="flex items-center gap-2 mb-4">
-          <TrendingUp size={20} className="text-pink-500" />
+          <TrendingUp size={20} className="text-primary" />
           <h3 className="font-semibold">Promoted Listings</h3>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map(i => (
             <Card key={i}>
               <CardContent className="p-0">
-                <div className="aspect-square bg-gray-200 animate-pulse"></div>
+                <div className="aspect-[3/4] bg-muted animate-pulse"></div>
               </CardContent>
             </Card>
           ))}
@@ -66,7 +74,7 @@ export function BoostedListings({ className = '' }: BoostedListingsProps) {
   return (
     <div className={`space-y-4 ${className}`}>
       <div className="flex items-center gap-2 mb-4">
-        <TrendingUp size={20} className="text-pink-500" />
+        <TrendingUp size={20} className="text-primary" />
         <h3 className="font-semibold">Promoted Listings</h3>
         <Badge variant="secondary" className="text-xs">
           <Sparkles size={12} className="mr-1" />
@@ -85,7 +93,7 @@ export function BoostedListings({ className = '' }: BoostedListingsProps) {
             <div key={listing.id} className="relative">
               <ListingCard listing={listing} />
               <div className="absolute top-2 right-2">
-                <Badge className="bg-gradient-to-r from-pink-500 to-purple-500 text-xs">
+                <Badge className="bg-primary text-xs">
                   <TrendingUp size={12} className="mr-1" />
                   Promoted
                 </Badge>

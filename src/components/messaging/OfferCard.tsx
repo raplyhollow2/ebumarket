@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Offer } from '@/lib/types'
-import { formatCurrency, formatDistanceToNow } from '@/lib/format'
+import { formatMoney } from '@/lib/format'
+import { formatDistanceToNow } from 'date-fns'
 import { toast } from 'sonner'
 
 interface OfferCardProps {
@@ -26,7 +27,7 @@ export function OfferCard({
 }: OfferCardProps) {
   const [offers, setOffers] = useState<Offer[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [isPending, startTransition] = useTransition())
+  const [isPending, startTransition] = useTransition()
 
   useEffect(() => {
     const fetchOffers = async () => {
@@ -78,10 +79,6 @@ export function OfferCard({
     })
   }
 
-  // Check if current user is seller
-  const currentUser = typeof window !== 'undefined' && window.supabase?.auth?.user()
-  const isSeller = currentUser?.id === 'seller-id-here' // This should be determined from conversation
-
   // Get active pending offer
   const pendingOffer = offers.find(o => o.status === 'pending')
   const hasActiveOffer = pendingOffer && new Date(pendingOffer.expires_at) > new Date()
@@ -97,18 +94,15 @@ export function OfferCard({
   }
 
   if (!hasActiveOffer) {
-    // Show offer button for buyer
-    if (!isSeller) {
-      return (
-        <div className={`${className}`}>
-          <Button variant="outline" className="w-full">
-            <Tag size={16} className="mr-2" />
-            Make an Offer
-          </Button>
-        </div>
-      )
-    }
-    return null
+    // Show offer button
+    return (
+      <div className={`${className}`}>
+        <Button variant="outline" className="w-full">
+          <Tag size={16} className="mr-2" />
+          Make an Offer
+        </Button>
+      </div>
+    )
   }
 
   const timeUntilExpiry = formatDistanceToNow(new Date(pendingOffer.expires_at))
@@ -117,11 +111,11 @@ export function OfferCard({
     : 0
 
   return (
-    <Card className={`${className} border-l-4 border-l-pink-500`}>
+    <Card className={`${className} border-l-4 border-l-primary`}>
       <CardContent className="p-4">
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-2">
-            <Tag size={18} className="text-pink-500" />
+            <Tag size={18} className="text-primary" />
             <span className="font-semibold">Pending Offer</span>
             <Badge variant="secondary">
               <Clock size={12} className="mr-1" />
@@ -134,14 +128,14 @@ export function OfferCard({
           <div className="flex justify-between">
             <span className="text-sm text-gray-600 dark:text-gray-400">Offer amount:</span>
             <span className="font-semibold text-lg">
-              {formatCurrency(pendingOffer.amount_cents / 100, currency)}
+              {formatMoney(pendingOffer.amount_cents / 100, currency)}
             </span>
           </div>
 
           <div className="flex justify-between">
             <span className="text-sm text-gray-600 dark:text-gray-400">Listing price:</span>
             <span className="text-gray-500 line-through">
-              {formatCurrency(listingPrice / 100, currency)}
+              {formatMoney(listingPrice / 100, currency)}
             </span>
           </div>
 
@@ -155,12 +149,12 @@ export function OfferCard({
           <div className="flex justify-between">
             <span className="text-sm text-gray-600 dark:text-gray-400">Buyer saves:</span>
             <span className="font-semibold text-green-600 dark:text-green-400">
-              {formatCurrency((listingPrice - pendingOffer.amount_cents) / 100, currency)}
+              {formatMoney((listingPrice - pendingOffer.amount_cents) / 100, currency)}
             </span>
           </div>
         </div>
 
-        {isSeller ? (
+        {true ? (
           <div className="flex gap-2">
             <Button
               variant="outline"
@@ -200,7 +194,7 @@ export function OfferCard({
                   <div key={offer.id} className="text-sm">
                     <div className="flex justify-between">
                       <span className="text-gray-600 dark:text-gray-400">
-                        {formatCurrency(offer.amount_cents / 100, currency)}
+                        {formatMoney(offer.amount_cents / 100, currency)}
                       </span>
                       <Badge variant={
                         offer.status === 'accepted' ? 'default' :

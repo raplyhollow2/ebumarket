@@ -20,14 +20,13 @@ interface ConversationViewProps {
 export function ConversationView({ conversationId, onBack, className = '' }: ConversationViewProps) {
   const [conversation, setConversation] = useState<Conversation | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
   const [newMessage, setNewMessage] = useState('')
   const [isPending, startTransition] = useTransition()
   const [isLoading, setIsLoading] = useState(true)
   const [otherUser, setOtherUser] = useState<{ id: string; name: string; avatar?: string } | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
-
-  const currentUser = typeof window !== 'undefined' && window.supabase?.auth?.user()
 
   // Fetch conversation details
   useEffect(() => {
@@ -36,11 +35,12 @@ export function ConversationView({ conversationId, onBack, className = '' }: Con
         const response = await fetch(`/api/messaging/conversations?listing_id=`)
         const result = await response.json()
         if (result.success) {
+          setCurrentUserId(result.currentUserId || null)
           const conv = result.data?.find((c: Conversation) => c.id === conversationId)
           if (conv) {
             setConversation(conv)
             // Determine other user
-            const isBuyer = conv.buyer_id === currentUser?.id
+            const isBuyer = conv.buyer_id === result.currentUserId
             setOtherUser({
               id: isBuyer ? conv.seller_id : conv.buyer_id,
               name: isBuyer ? conv.seller_profile?.display_name : conv.buyer_profile?.display_name,
@@ -56,7 +56,7 @@ export function ConversationView({ conversationId, onBack, className = '' }: Con
     }
 
     fetchConversation()
-  }, [conversationId, currentUser])
+  }, [conversationId])
 
   // Fetch messages
   useEffect(() => {
@@ -103,7 +103,7 @@ export function ConversationView({ conversationId, onBack, className = '' }: Con
     const optimisticMessage: Message = {
       id: 'temp',
       conversation_id: conversationId,
-      sender_id: currentUser?.id || '',
+      sender_id: currentUserId || '',
       content: messageContent,
       is_read: false,
       created_at: new Date().toISOString()
@@ -210,7 +210,7 @@ export function ConversationView({ conversationId, onBack, className = '' }: Con
             <MessageBubble
               key={message.id}
               message={message}
-              isOwn={message.sender_id === currentUser?.id}
+              isOwn={message.sender_id === currentUserId}
             />
           ))
         )}
@@ -223,7 +223,7 @@ export function ConversationView({ conversationId, onBack, className = '' }: Con
           <OfferCard
             conversationId={conversationId}
             listingId={conversation.listing.id}
-            listingPrice={conversation.listing.price_cents}
+            listingPrice={conversation.listing.price_cents || 0}
             currency={conversation.listing.currency}
           />
         </div>

@@ -4,7 +4,15 @@
       "WebSearch",
       "WebFetch(domain:www.depop.com)",
       "WebFetch(domain:depophelp.zendesk.com)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run build:*)",
+      "Bash(find:*)",
+      "WebFetch(domain:engineering.depop.com)",
+      "WebFetch(domain:medium.com)",
+      "WebFetch(domain:blog.prototypr.io)"
     ]
   }
 }

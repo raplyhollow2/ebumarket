@@ -81,7 +81,16 @@ export function AdminQueueClient({
         payload: {},
       });
       setItems((prev) => prev.filter((l) => l.id !== id));
-      toast.success("Approved — Verified by Zyra");
+      const item = items.find((l) => l.id === id);
+      if (item?.type === "donation") {
+        toast.success(
+          item.center_id
+            ? "Approved — donor +15 pts (10 verify + 5 centre tag)"
+            : "Approved — donor +10 pts toward next tier",
+        );
+      } else {
+        toast.success("Approved — Verified by Zyra");
+      }
       router.refresh();
     });
   }

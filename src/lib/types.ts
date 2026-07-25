@@ -17,7 +17,109 @@ export type TransactionStatus =
   | "accepted"
   | "completed"
   | "cancelled";
+export type PayoutStatus =
+  | "pending"
+  | "claimable"
+  | "claimed"
+  | "paid_out"
+  | "not_applicable";
 export type ClaimStatus = "requested" | "approved" | "fulfilled" | "declined";
+
+export type CenterType =
+  | "orphanage"
+  | "community_center"
+  | "cso"
+  | "shelter"
+  | "other";
+
+export type DonorTier = "seedling" | "helper" | "guardian" | "champion";
+
+export type ProfileBackgroundStyle =
+  | "plain"
+  | "soft_wash"
+  | "grid_dots"
+  | "photo_blur";
+
+export type ProfileLayoutStyle = "classic" | "stacked" | "magazine";
+
+export type DonationCenter = {
+  id: string;
+  name: string;
+  center_type: CenterType;
+  slug: string;
+  tagline: string;
+  description: string;
+  area: string;
+  contact_email: string | null;
+  contact_phone: string | null;
+  website: string | null;
+  cover_url: string | null;
+  logo_url: string | null;
+  needs: string[];
+  is_verified: boolean;
+  is_active: boolean;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type CenterMember = {
+  id: string;
+  center_id: string;
+  user_id: string;
+  member_role: "owner" | "staff";
+  created_at: string;
+};
+
+export type DonorStats = {
+  user_id: string;
+  points: number;
+  items_donated: number;
+  items_fulfilled: number;
+  center_donations: number;
+  tier: DonorTier;
+  updated_at: string;
+};
+
+export type ProfileCustomLink = {
+  label: string;
+  url: string;
+};
+
+export type ProfileTheme = {
+  user_id: string;
+  banner_url: string | null;
+  avatar_url: string | null;
+  bio: string;
+  accent_color: string;
+  background_style: ProfileBackgroundStyle;
+  layout_style: ProfileLayoutStyle;
+  show_donation_stats: boolean;
+  show_listings: boolean;
+  custom_links: ProfileCustomLink[];
+  updated_at: string;
+};
+
+export type Transaction = {
+  id: string;
+  listing_id: string;
+  buyer_id: string;
+  seller_id: string;
+  payment_method: PaymentMethod;
+  meetup_point_id: string | null;
+  item_price_cents: number;
+  fee_cents: number;
+  total_cents: number;
+  seller_payout_cents: number;
+  payout_status: PayoutStatus;
+  payout_claimed_at: string | null;
+  payout_paid_at: string | null;
+  status: TransactionStatus;
+  stripe_checkout_session_id: string | null;
+  stripe_payment_intent_id: string | null;
+  created_at: string;
+  updated_at: string;
+};
 
 export type DonationClaim = {
   id: string;
@@ -64,6 +166,7 @@ export type Listing = {
   reject_reason: string | null;
   verified_at: string | null;
   verified_by: string | null;
+  center_id: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -80,7 +183,14 @@ export type ListingPhoto = {
 
 export type ListingWithPhotos = Listing & {
   listing_photos: ListingPhoto[];
-  profiles?: Pick<Profile, "display_name" | "area"> | null;
+  profiles?: Pick<
+    ExtendedProfile,
+    "id" | "display_name" | "area" | "is_organization" | "avatar_url" | "followers_count"
+  > | null;
+  donation_centers?: Pick<
+    DonationCenter,
+    "id" | "name" | "slug" | "center_type" | "area"
+  > | null;
 };
 
 export const REQUIRED_ANGLES: PhotoAngle[] = [
@@ -143,7 +253,7 @@ export type Comment = {
   parent_comment_id: string | null;
   created_at: string;
   updated_at: string;
-  profiles?: Pick<Profile, "display_name" | "avatar_url"> | null;
+  profiles?: Pick<ExtendedProfile, "display_name" | "avatar_url"> | null;
 };
 
 export type CommentWithReplies = Comment & {
@@ -159,7 +269,7 @@ export type Collection = {
   is_public: boolean;
   created_at: string;
   updated_at: string;
-  profiles?: Pick<Profile, "display_name">;
+  profiles?: Pick<ExtendedProfile, "display_name">;
   _count?: {
     items: number;
   };
@@ -181,8 +291,8 @@ export type Conversation = {
   listing_id: string | null;
   last_message_at: string | null;
   created_at: string;
-  buyer_profile?: Pick<Profile, "display_name" | "avatar_url">;
-  seller_profile?: Pick<Profile, "display_name" | "avatar_url">;
+  buyer_profile?: Pick<ExtendedProfile, "display_name" | "avatar_url">;
+  seller_profile?: Pick<ExtendedProfile, "display_name" | "avatar_url">;
   listing?: Pick<Listing, "id" | "title" | "price_cents" | "currency"> & {
     listing_photos?: Pick<ListingPhoto, "public_url">[];
   };
@@ -199,7 +309,7 @@ export type Message = {
   content: string;
   is_read: boolean;
   created_at: string;
-  sender_profile?: Pick<Profile, "display_name" | "avatar_url">;
+  sender_profile?: Pick<ExtendedProfile, "display_name" | "avatar_url">;
 };
 
 // Offer Types
@@ -214,7 +324,7 @@ export type Offer = {
   expires_at: string;
   status: OfferStatus;
   created_at: string;
-  sender_profile?: Pick<Profile, "display_name">;
+  sender_profile?: Pick<ExtendedProfile, "display_name">;
   listing?: Pick<Listing, "id" | "title" | "price_cents" | "currency">;
 };
 
@@ -290,12 +400,17 @@ export type ExtendedListing = Listing & {
   is_boosted?: boolean;
   boost_end_time?: string | null;
   gst_amount_cents?: number;
+  is_liked?: boolean;
 };
 
 // Enhanced Listing with Photos
 export type ExtendedListingWithPhotos = ExtendedListing & {
   listing_photos: ListingPhoto[];
   profiles?: Pick<ExtendedProfile, "display_name" | "area" | "avatar_url" | "followers_count"> | null;
+  donation_centers?: Pick<
+    DonationCenter,
+    "id" | "name" | "slug" | "center_type" | "area"
+  > | null;
 };
 
 // Seller Analytics Types
@@ -335,12 +450,18 @@ export type AudienceInsights = {
     percentage: number;
   }>;
   engagement_rate: number;
+  total_interactions: number;
   average_session_duration: number;
   best_posting_times: Array<{
     day: string;
     hour: number;
     engagement: number;
   }>;
+  total_listings: number;
+  total_views: number;
+  total_likes: number;
+  total_comments: number;
+  total_shares: number;
 };
 
 // API Response Types
@@ -405,4 +526,227 @@ export type Notification = {
   data?: Record<string, unknown>;
   is_read: boolean;
   created_at: string;
+};
+
+// ============================================================================
+// RBAC AND CMS TYPES
+// ============================================================================
+
+// Admin Role Types
+export type AdminRole = {
+  id: string;
+  name: string;
+  description: string | null;
+  permissions: string[];
+  created_at: string;
+  updated_at: string;
+};
+
+export type AdminRoleAssignment = {
+  id: string;
+  user_id: string;
+  role_id: string;
+  assigned_by: string | null;
+  assigned_at: string;
+  expires_at: string | null;
+  is_active: boolean;
+  admin_roles?: AdminRole;
+  profiles?: Pick<Profile, "display_name">;
+};
+
+export type AdminAuditLog = {
+  id: string;
+  actor_id: string | null;
+  action: string;
+  resource_type: string;
+  resource_id: string | null;
+  ip_address: string | null;
+  user_agent: string | null;
+  metadata: Record<string, unknown>;
+  status: "success" | "failure" | "partial";
+  created_at: string;
+  profiles?: Pick<Profile, "display_name">;
+};
+
+// CMS Types
+export type ContentBlockType = "hero" | "banner" | "feature" | "category_highlight" | "announcement";
+export type ContentBlockStatus = "draft" | "active" | "archived" | "scheduled";
+
+export type ContentBlock = {
+  id: string;
+  block_type: ContentBlockType;
+  title: string;
+  content: Record<string, unknown>;
+  targeting_rules: Record<string, unknown>;
+  schedule_start: string | null;
+  schedule_end: string | null;
+  priority: number;
+  status: ContentBlockStatus;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+  published_at: string | null;
+};
+
+export type HeroType = "slider" | "static" | "video" | "interactive" | "product_showcase";
+
+export type HeroSection = {
+  id: string;
+  name: string;
+  hero_type: HeroType;
+  slides: Record<string, unknown>[];
+  settings: Record<string, unknown>;
+  ab_test_config: Record<string, unknown>;
+  is_active: boolean;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type FeaturedSectionType = "listing_grid" | "category_showcase" | "seller_spotlight" | "collection";
+
+export type FeaturedSection = {
+  id: string;
+  section_name: string;
+  section_type: FeaturedSectionType;
+  content_config: Record<string, unknown>;
+  display_rules: Record<string, unknown>;
+  priority: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+// Analytics Types
+export type AnalyticsEvent = {
+  id: string;
+  event_type: string;
+  user_id: string | null;
+  session_id: string | null;
+  listing_id: string | null;
+  properties: Record<string, unknown>;
+  created_at: string;
+};
+
+export type AnalyticsDailyAggregate = {
+  date: string;
+  metric_name: string;
+  metric_value: number;
+  dimensions: Record<string, unknown>;
+  updated_at: string;
+};
+
+// A/B Testing Types
+export type ExperimentStatus = "draft" | "running" | "paused" | "completed" | "archived";
+
+export type ABExperiment = {
+  id: string;
+  name: string;
+  description: string | null;
+  variants: Record<string, unknown>[];
+  targeting_rules: Record<string, unknown>;
+  traffic_allocation: Record<string, unknown>;
+  metrics: Record<string, unknown>;
+  status: ExperimentStatus;
+  start_date: string | null;
+  end_date: string | null;
+  winning_variant: string | null;
+  statistical_significance: number | null;
+  sample_size: number | null;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ABExposureEvent = {
+  id: string;
+  experiment_id: string;
+  user_id: string | null;
+  session_id: string | null;
+  variant: string;
+  exposed_at: string;
+};
+
+export type ABConversionEvent = {
+  id: string;
+  experiment_id: string;
+  user_id: string | null;
+  variant: string;
+  metric_name: string;
+  metric_value: number | null;
+  occurred_at: string;
+};
+
+// Admin Permission Constants
+export const ADMIN_PERMISSIONS = [
+  "cms.manage",
+  "cms.publish",
+  "listings.moderate",
+  "analytics.view",
+  "media.manage",
+  "transactions.view",
+  "transactions.refund",
+  "reports.finance",
+  "gst.manage",
+  "payouts.manage",
+  "users.moderate",
+  "comments.moderate",
+  "support.respond",
+  "reports.view",
+  "admin.view",
+  "insights.view"
+] as const;
+
+export type AdminPermission = typeof ADMIN_PERMISSIONS[number];
+
+// Admin Role Constants
+export const DEFAULT_ADMIN_ROLES = {
+  SUPER_ADMIN: "Super Admin",
+  CONTENT_MANAGER: "Content Manager",
+  FINANCE_MANAGER: "Finance Manager",
+  COMMUNITY_MANAGER: "Community Manager",
+  ANALYTICS_VIEWER: "Analytics Viewer"
+} as const;
+
+// API Response Types for Admin
+export type AdminRolesResponse = {
+  success: boolean;
+  data?: AdminRole[];
+  error?: string;
+  count?: number;
+};
+
+export type AdminRoleAssignmentsResponse = {
+  success: boolean;
+  data?: AdminRoleAssignment[];
+  error?: string;
+  count?: number;
+};
+
+export type ContentBlocksResponse = {
+  success: boolean;
+  data?: ContentBlock[];
+  error?: string;
+  count?: number;
+};
+
+export type HeroSectionsResponse = {
+  success: boolean;
+  data?: HeroSection[];
+  error?: string;
+  count?: number;
+};
+
+export type ExperimentsResponse = {
+  success: boolean;
+  data?: ABExperiment[];
+  error?: string;
+  count?: number;
+};
+
+export type AdminAnalyticsResponse = {
+  success: boolean;
+  data?: AnalyticsDailyAggregate[] | Record<string, unknown>;
+  error?: string;
+  count?: number;
 };

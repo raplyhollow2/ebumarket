@@ -80,7 +80,7 @@ export function AutoDescription({
       <Button
         variant="outline"
         onClick={() => setIsOpen(true)}
-        className={`${className} bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200 hover:border-purple-300`}
+        className={`${className} bg-gradient-to-r from-muted to-muted border-border hover:border-primary/40`}
       >
         <Sparkles size={18} className="mr-2" />
         Generate with AI
@@ -92,7 +92,7 @@ export function AutoDescription({
     <Card className={className}>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Sparkles size={20} className="text-pink-500" />
+          <Sparkles size={20} className="text-primary" />
           AI Description Generator
         </CardTitle>
         <CardDescription>
@@ -107,7 +107,7 @@ export function AutoDescription({
 
         {isGenerating ? (
           <div className="text-center py-8">
-            <Loader2 size={32} className="animate-spin text-pink-500 mx-auto mb-3" />
+            <Loader2 size={32} className="animate-spin text-primary mx-auto mb-3" />
             <p className="text-sm text-gray-600">Analyzing image with AI...</p>
             <p className="text-xs text-gray-500 mt-1">This may take a few seconds</p>
           </div>
@@ -212,7 +212,7 @@ export function AutoDescription({
               <Button
                 onClick={handleApply}
                 disabled={isPending}
-                className="flex-1 bg-gradient-to-r from-pink-500 to-purple-500"
+                className="flex-1 bg-primary"
               >
                 Apply Description
               </Button>
@@ -223,7 +223,7 @@ export function AutoDescription({
             <Button
               onClick={handleGenerate}
               disabled={isPending}
-              className="bg-gradient-to-r from-pink-500 to-purple-500"
+              className="bg-primary"
             >
               <Sparkles size={16} className="mr-2" />
               Generate Description

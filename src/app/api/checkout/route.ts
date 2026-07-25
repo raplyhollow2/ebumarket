@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { createClient } from "@/lib/supabase/server";
-import { platformFeeCents } from "@/lib/format";
+import { splitPaymentCents } from "@/lib/format";
+import { getAppSettings } from "@/lib/settings";
 
 export async function POST(req: Request) {
   try {
@@ -37,8 +38,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Listing not available" }, { status: 404 });
     }
 
-    const fee = platformFeeCents(listing.price_cents);
-    const total = listing.price_cents + fee;
+    const settings = await getAppSettings();
+    const split = splitPaymentCents(
+      listing.price_cents,
+      settings.platformFeePercent,
+    );
 
     const { data: tx, error: txErr } = await supabase
       .from("transactions")
@@ -47,9 +51,11 @@ export async function POST(req: Request) {
         buyer_id: user.id,
         seller_id: listing.seller_id,
         payment_method: "online",
-        item_price_cents: listing.price_cents,
-        fee_cents: fee,
-        total_cents: total,
+        item_price_cents: split.item_price_cents,
+        fee_cents: split.fee_cents,
+        total_cents: split.total_cents,
+        seller_payout_cents: split.seller_payout_cents,
+        payout_status: "pending",
         status: "awaiting_payment",
       })
       .select("id")
@@ -68,13 +74,22 @@ export async function POST(req: Request) {
         {
           quantity: 1,
           price_data: {
-            currency: (listing.currency || "btn").toLowerCase(),
-            unit_amount: total,
-            product_data: { name: listing.title },
+            currency: (listing.currency || settings.currency || "btn").toLowerCase(),
+            unit_amount: split.total_cents,
+            product_data: {
+              name: listing.title,
+              description: `Item ${split.item_price_cents / 100} + platform fee ${split.fee_cents / 100} (Zyra keeps ${settings.platformFeePercent}%; seller receives item price)`,
+            },
           },
         },
       ],
-      metadata: { transaction_id: tx.id, listing_id: listing.id },
+      metadata: {
+        transaction_id: tx.id,
+        listing_id: listing.id,
+        seller_id: listing.seller_id,
+        fee_cents: String(split.fee_cents),
+        seller_payout_cents: String(split.seller_payout_cents),
+      },
     });
 
     await supabase

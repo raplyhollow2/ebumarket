@@ -22,6 +22,20 @@ export function platformFeeCents(
   return Math.round((itemPriceCents * percent) / 100);
 }
 
+/** Buyer pays platform; platform keeps fee; seller receives item price. */
+export function splitPaymentCents(
+  itemPriceCents: number,
+  percent = Number(process.env.PLATFORM_FEE_PERCENT ?? 5),
+) {
+  const fee_cents = platformFeeCents(itemPriceCents, percent);
+  return {
+    item_price_cents: itemPriceCents,
+    fee_cents,
+    total_cents: itemPriceCents + fee_cents,
+    seller_payout_cents: itemPriceCents,
+  };
+}
+
 export function statusLabel(status: string) {
   switch (status) {
     case "pending":
@@ -41,7 +55,7 @@ export function statusLabel(status: string) {
     case "awaiting_payment":
       return "Awaiting payment";
     case "paid":
-      return "Paid";
+      return "Paid to platform";
     case "accepted":
       return "Accepted";
     case "completed":
@@ -54,6 +68,14 @@ export function statusLabel(status: string) {
       return "Fulfilled";
     case "declined":
       return "Declined";
+    case "claimable":
+      return "Payout ready";
+    case "claimed":
+      return "Payout claimed";
+    case "paid_out":
+      return "Paid to seller";
+    case "not_applicable":
+      return "Cash at meetup";
     default:
       return status;
   }

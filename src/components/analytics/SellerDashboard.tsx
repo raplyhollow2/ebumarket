@@ -6,7 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { SellerStats } from '@/lib/types'
-import { formatCurrency } from '@/lib/format'
+import { formatMoney } from '@/lib/format'
+import { ListingPerformance } from './ListingPerformance'
+import { AudienceInsights } from './AudienceInsights'
 
 interface SellerDashboardProps {
   userId?: string
@@ -104,7 +106,7 @@ export function SellerDashboard({ userId, className = '' }: SellerDashboardProps
         </div>
         <div className="flex items-center gap-2">
           <Calendar size={18} className="text-gray-400" />
-          <Select value={period} onValueChange={setPeriod}>
+          <Select value={period} onValueChange={(value) => setPeriod(value || '30')}>
             <SelectTrigger className="w-[140px]">
               <SelectValue />
             </SelectTrigger>
@@ -131,7 +133,7 @@ export function SellerDashboard({ userId, className = '' }: SellerDashboardProps
         />
         <MetricCard
           title="Total Sales"
-          value={formatCurrency(stats.total_sales_cents / 100, 'BTN')}
+          value={formatMoney(stats.total_sales_cents / 100, 'BTN')}
           icon={DollarSign}
         />
         <MetricCard
@@ -156,7 +158,7 @@ export function SellerDashboard({ userId, className = '' }: SellerDashboardProps
         />
         <MetricCard
           title="Avg. Price"
-          value={formatCurrency(stats.average_price_cents / 100, 'BTN')}
+          value={formatMoney(stats.average_price_cents / 100, 'BTN')}
           icon={DollarSign}
         />
       </div>
@@ -209,7 +211,7 @@ export function SellerDashboard({ userId, className = '' }: SellerDashboardProps
               <CardContent>
                 <div className="text-center">
                   <div className="text-3xl font-bold text-green-600">
-                    {formatCurrency(stats.total_sales_cents / 100, 'BTN')}
+                    {formatMoney(stats.total_sales_cents / 100, 'BTN')}
                   </div>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Total Revenue</p>
                 </div>
@@ -218,7 +220,7 @@ export function SellerDashboard({ userId, className = '' }: SellerDashboardProps
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600 dark:text-gray-400">Per Sale Average</span>
                       <span className="font-semibold">
-                        {formatCurrency((stats.total_sales_cents / stats.sold_listings) / 100, 'BTN')}
+                        {formatMoney((stats.total_sales_cents / stats.sold_listings) / 100, 'BTN')}
                       </span>
                     </div>
                   </div>

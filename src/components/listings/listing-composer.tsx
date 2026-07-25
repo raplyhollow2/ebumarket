@@ -1,9 +1,10 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { TeenShell } from "@/components/layout/teen-shell";
+import { ResponsiveLayoutWrapper } from "@/components/layout/ResponsiveLayoutWrapper";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,23 +17,122 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { createClient } from "@/lib/supabase/client";
+import { CENTER_TYPE_LABELS } from "@/lib/donor-tiers";
 import {
   CATEGORIES,
   CONDITIONS,
   REQUIRED_ANGLES,
   SIZES,
+  type DonationCenter,
   type ListingType,
   type PhotoAngle,
 } from "@/lib/types";
 
 type Slot = { file: File | null; preview: string | null };
 
+type BasketItem = {
+  key: string;
+  title: string;
+  description: string;
+  category: string;
+  size: string;
+  condition: string;
+  centerId: string | null;
+  centerName: string | null;
+  slots: Record<PhotoAngle, Slot>;
+};
+
+const NONE_CENTER = "__none__";
+
+function emptySlots(): Record<PhotoAngle, Slot> {
+  return {
+    front: { file: null, preview: null },
+    back: { file: null, preview: null },
+    tag: { file: null, preview: null },
+    defect: { file: null, preview: null },
+    other: { file: null, preview: null },
+  };
+}
+
+function revokeSlots(slots: Record<PhotoAngle, Slot>) {
+  for (const s of Object.values(slots)) {
+    if (s.preview) URL.revokeObjectURL(s.preview);
+  }
+}
+
+async function createListingWithPhotos(opts: {
+  userId: string;
+  type: ListingType;
+  title: string;
+  description: string;
+  category: string;
+  size: string;
+  condition: string;
+  priceCents: number | null;
+  centerId: string | null;
+  slots: Record<PhotoAngle, Slot>;
+}) {
+  const supabase = createClient();
+  const { data: listing, error } = await supabase
+    .from("listings")
+    .insert({
+      seller_id: opts.userId,
+      type: opts.type,
+      title: opts.title.trim(),
+      description: opts.description.trim(),
+      category: opts.category,
+      size: opts.size,
+      condition: opts.condition,
+      price_cents: opts.priceCents,
+      currency: "BTN",
+      status: "pending",
+      center_id: opts.centerId,
+    })
+    .select("id")
+    .single();
+  if (error || !listing) {
+    throw new Error(error?.message ?? "Could not create listing");
+  }
+
+  const angles = REQUIRED_ANGLES.concat(
+    opts.slots.other.file ? (["other"] as PhotoAngle[]) : [],
+  );
+  for (let i = 0; i < angles.length; i++) {
+    const angle = angles[i];
+    const file = opts.slots[angle].file!;
+    const path = `${opts.userId}/${listing.id}/${angle}-${Date.now()}-${i}`;
+    const { error: upErr } = await supabase.storage
+      .from("listing-photos")
+      .upload(path, file, { upsert: true, contentType: file.type });
+    if (upErr) throw new Error(upErr.message);
+    const { data: pub } = supabase.storage
+      .from("listing-photos")
+      .getPublicUrl(path);
+    const { error: photoErr } = await supabase.from("listing_photos").insert({
+      listing_id: listing.id,
+      angle,
+      storage_path: path,
+      public_url: pub.publicUrl,
+      sort_order: i,
+    });
+    if (photoErr) throw new Error(photoErr.message);
+  }
+  return listing.id as string;
+}
+
 export function ListingComposer({
   type,
   userId,
+  centers = [],
+  initialCenterId = null,
 }: {
   type: ListingType;
   userId: string;
+  centers?: Pick<
+    DonationCenter,
+    "id" | "name" | "center_type" | "area" | "is_verified"
+  >[];
+  initialCenterId?: string | null;
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -42,13 +142,20 @@ export function ListingComposer({
   const [size, setSize] = useState<string>(SIZES[2]);
   const [condition, setCondition] = useState<string>(CONDITIONS[1]);
   const [price, setPrice] = useState("");
-  const [slots, setSlots] = useState<Record<PhotoAngle, Slot>>({
-    front: { file: null, preview: null },
-    back: { file: null, preview: null },
-    tag: { file: null, preview: null },
-    defect: { file: null, preview: null },
-    other: { file: null, preview: null },
-  });
+  const [centerId, setCenterId] = useState<string>(
+    initialCenterId && centers.some((c) => c.id === initialCenterId)
+      ? initialCenterId
+      : NONE_CENTER,
+  );
+  const [slots, setSlots] = useState<Record<PhotoAngle, Slot>>(emptySlots);
+  const [basket, setBasket] = useState<BasketItem[]>([]);
+
+  const isDonation = type === "donation";
+
+  const selectedCenter = useMemo(
+    () => centers.find((c) => c.id === centerId) ?? null,
+    [centers, centerId],
+  );
 
   const requiredReady = useMemo(
     () => REQUIRED_ANGLES.every((a) => slots[a].file),
@@ -68,93 +175,270 @@ export function ListingComposer({
     });
   }
 
-  function submit() {
-    startTransition(async () => {
-      if (!title.trim()) {
-        toast.error("Add a title");
-        return;
-      }
-      if (!requiredReady) {
-        toast.error("Add Front, Back, Tag, and Defect photos");
-        return;
-      }
-      const priceCents =
-        type === "marketplace" ? Math.round(Number(price) * 100) : null;
-      if (type === "marketplace" && (!priceCents || priceCents <= 0)) {
-        toast.error("Enter a valid price");
-        return;
-      }
+  function resetForm(keepCenter = true) {
+    setTitle("");
+    setDescription("");
+    setCategory(CATEGORIES[0]);
+    setSize(SIZES[2]);
+    setCondition(CONDITIONS[1]);
+    setPrice("");
+    if (!keepCenter) setCenterId(NONE_CENTER);
+    setSlots((prev) => {
+      revokeSlots(prev);
+      return emptySlots();
+    });
+  }
 
-      const supabase = createClient();
-      const { data: listing, error } = await supabase
-        .from("listings")
-        .insert({
-          seller_id: userId,
-          type,
-          title: title.trim(),
-          description: description.trim(),
+  function validateCurrent(): string | null {
+    if (!title.trim()) return "Add a title";
+    if (!requiredReady) return "Add Front, Back, Tag, and Defect photos";
+    if (type === "marketplace") {
+      const priceCents = Math.round(Number(price) * 100);
+      if (!priceCents || priceCents <= 0) return "Enter a valid price";
+    }
+    return null;
+  }
+
+  function addToBasket() {
+    const err = validateCurrent();
+    if (err) {
+      toast.error(err);
+      return;
+    }
+    const item: BasketItem = {
+      key: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      title: title.trim(),
+      description: description.trim(),
+      category,
+      size,
+      condition,
+      centerId: centerId !== NONE_CENTER ? centerId : null,
+      centerName: selectedCenter?.name ?? null,
+      slots,
+    };
+    setBasket((prev) => [...prev, item]);
+    // Detach current slots into basket — don't revoke previews
+    setTitle("");
+    setDescription("");
+    setCategory(CATEGORIES[0]);
+    setSize(SIZES[2]);
+    setCondition(CONDITIONS[1]);
+    setSlots(emptySlots());
+    toast.success(`Added to basket (${basket.length + 1})`);
+  }
+
+  function removeFromBasket(key: string) {
+    setBasket((prev) => {
+      const target = prev.find((i) => i.key === key);
+      if (target) revokeSlots(target.slots);
+      return prev.filter((i) => i.key !== key);
+    });
+  }
+
+  function submitMarketplace() {
+    startTransition(async () => {
+      const err = validateCurrent();
+      if (err) {
+        toast.error(err);
+        return;
+      }
+      try {
+        await createListingWithPhotos({
+          userId,
+          type: "marketplace",
+          title,
+          description,
           category,
           size,
           condition,
-          price_cents: priceCents,
-          currency: "BTN",
-          status: "pending",
-        })
-        .select("id")
-        .single();
-      if (error || !listing) {
-        toast.error(error?.message ?? "Could not create listing");
+          priceCents: Math.round(Number(price) * 100),
+          centerId: null,
+          slots,
+        });
+        toast.success("Sent for verification");
+        router.push("/activity");
+        router.refresh();
+      } catch (e) {
+        toast.error(e instanceof Error ? e.message : "Submit failed");
+      }
+    });
+  }
+
+  function submitBasket() {
+    startTransition(async () => {
+      // Include in-progress form if valid
+      let items = [...basket];
+      const formErr = validateCurrent();
+      if (!formErr && title.trim() && requiredReady) {
+        items = [
+          ...items,
+          {
+            key: "current",
+            title: title.trim(),
+            description: description.trim(),
+            category,
+            size,
+            condition,
+            centerId: centerId !== NONE_CENTER ? centerId : null,
+            centerName: selectedCenter?.name ?? null,
+            slots,
+          },
+        ];
+      }
+
+      if (items.length === 0) {
+        toast.error("Add at least one item to the basket");
         return;
       }
 
-      const angles = REQUIRED_ANGLES.concat(
-        slots.other.file ? (["other"] as PhotoAngle[]) : [],
-      );
-      for (let i = 0; i < angles.length; i++) {
-        const angle = angles[i];
-        const file = slots[angle].file!;
-        const path = `${userId}/${listing.id}/${angle}-${Date.now()}`;
-        const { error: upErr } = await supabase.storage
-          .from("listing-photos")
-          .upload(path, file, { upsert: true, contentType: file.type });
-        if (upErr) {
-          toast.error(upErr.message);
-          return;
+      try {
+        for (const item of items) {
+          await createListingWithPhotos({
+            userId,
+            type: "donation",
+            title: item.title,
+            description: item.description,
+            category: item.category,
+            size: item.size,
+            condition: item.condition,
+            priceCents: null,
+            centerId: item.centerId,
+            slots: item.slots,
+          });
         }
-        const { data: pub } = supabase.storage
-          .from("listing-photos")
-          .getPublicUrl(path);
-        const { error: photoErr } = await supabase.from("listing_photos").insert({
-          listing_id: listing.id,
-          angle,
-          storage_path: path,
-          public_url: pub.publicUrl,
-          sort_order: i,
-        });
-        if (photoErr) {
-          toast.error(photoErr.message);
-          return;
-        }
+        toast.success(
+          items.length === 1
+            ? "1 donation sent for verification"
+            : `${items.length} donations sent for verification`,
+        );
+        setBasket([]);
+        resetForm(true);
+        router.push("/activity");
+        router.refresh();
+      } catch (e) {
+        toast.error(e instanceof Error ? e.message : "Submit failed");
       }
-
-      toast.success("Sent for verification");
-      router.push("/activity");
-      router.refresh();
     });
   }
 
   return (
-    <TeenShell>
+    <ResponsiveLayoutWrapper>
       <div className="mb-4">
         <h1 className="font-[family-name:var(--font-display)] text-3xl font-semibold">
-          {type === "marketplace" ? "Sell an item" : "List a donation"}
+          {isDonation ? "Donation basket" : "Sell an item"}
         </h1>
         <p className="text-sm text-muted-foreground">
-          One screen — submit for Verified by Zyra review.
+          {isDonation
+            ? "Add multiple clothes to your basket, then submit all for Zyra verification."
+            : "One screen — submit for Verified by Zyra review."}
         </p>
       </div>
 
-      <div className="space-y-4 pb-24">
+      {isDonation && basket.length > 0 ? (
+        <div className="mb-6 space-y-2 rounded-2xl bg-card p-3 ring-1 ring-border/60">
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-sm font-medium">
+              Basket · {basket.length} item{basket.length === 1 ? "" : "s"}
+            </p>
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              disabled={pending}
+              onClick={() => {
+                basket.forEach((i) => revokeSlots(i.slots));
+                setBasket([]);
+              }}
+            >
+              Clear
+            </Button>
+          </div>
+          <ul className="space-y-2">
+            {basket.map((item, idx) => (
+              <li
+                key={item.key}
+                className="flex items-center gap-3 rounded-xl bg-muted/50 p-2"
+              >
+                <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-muted">
+                  {item.slots.front.preview ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={item.slots.front.preview}
+                      alt=""
+                      className="h-full w-full object-cover"
+                    />
+                  ) : null}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium">
+                    {idx + 1}. {item.title}
+                  </p>
+                  <p className="truncate text-xs text-muted-foreground">
+                    {item.category} · {item.size}
+                    {item.centerName ? ` · ${item.centerName}` : " · Peer gift"}
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  disabled={pending}
+                  onClick={() => removeFromBasket(item.key)}
+                >
+                  Remove
+                </Button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
+      <div className={`space-y-4 ${isDonation ? "pb-36" : "pb-24"}`}>
+        {isDonation ? (
+          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            {basket.length === 0 ? "Item 1" : `Next item (${basket.length + 1})`}
+          </p>
+        ) : null}
+
+        {isDonation && centers.length > 0 ? (
+          <div className="space-y-1.5">
+            <Label>Donate to (optional)</Label>
+            <Select value={centerId} onValueChange={(v) => v && setCenterId(v)}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Peer gift or pick a centre" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={NONE_CENTER}>
+                  Peer gift — anyone can claim
+                </SelectItem>
+                {centers.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    {c.name}
+                    {c.area ? ` · ${c.area}` : ""}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {selectedCenter ? (
+              <p className="text-xs text-muted-foreground">
+                Tagged for {selectedCenter.name} (
+                {CENTER_TYPE_LABELS[selectedCenter.center_type] ?? "centre"}).{" "}
+                <Link href="/donate/centers" className="underline">
+                  Browse centres
+                </Link>
+              </p>
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                Or{" "}
+                <Link href="/donate/centers" className="underline">
+                  browse orphanages & centres
+                </Link>{" "}
+                first.
+              </p>
+            )}
+          </div>
+        ) : null}
+
         <div className="space-y-1.5">
           <Label htmlFor="title">Title</Label>
           <Input
@@ -276,15 +560,40 @@ export function ListingComposer({
         </div>
       </div>
 
-      <div className="fixed inset-x-0 bottom-16 z-30 mx-auto max-w-lg px-4 pb-2">
-        <Button
-          className="h-12 w-full shadow-lg"
-          disabled={pending}
-          onClick={submit}
-        >
-          {pending ? "Submitting…" : "Submit for verification"}
-        </Button>
+      <div className="fixed inset-x-0 bottom-16 z-30 mx-auto max-w-lg space-y-2 px-4 pb-2 md:bottom-4">
+        {isDonation ? (
+          <>
+            <Button
+              type="button"
+              variant="outline"
+              className="h-11 w-full bg-background shadow-lg"
+              disabled={pending}
+              onClick={addToBasket}
+            >
+              + Add to basket
+            </Button>
+            <Button
+              className="h-12 w-full shadow-lg"
+              disabled={pending}
+              onClick={submitBasket}
+            >
+              {pending
+                ? "Submitting…"
+                : basket.length > 0
+                  ? `Submit basket (${basket.length}${title.trim() && requiredReady ? "+1" : ""})`
+                  : "Submit for verification"}
+            </Button>
+          </>
+        ) : (
+          <Button
+            className="h-12 w-full shadow-lg"
+            disabled={pending}
+            onClick={submitMarketplace}
+          >
+            {pending ? "Submitting…" : "Submit for verification"}
+          </Button>
+        )}
       </div>
-    </TeenShell>
+    </ResponsiveLayoutWrapper>
   );
 }

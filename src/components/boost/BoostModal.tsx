@@ -60,17 +60,17 @@ export function BoostModal({ isOpen, onClose, listingId, onBoosted }: BoostModal
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <TrendingUp size={24} className="text-pink-500" />
+            <TrendingUp size={24} className="text-primary" />
             Boost Your Listing
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           {/* Benefits */}
-          <Card className="bg-gradient-to-r from-pink-50 to-purple-50 dark:from-pink-900/20 dark:to-purple-900/20">
+          <Card className="bg-muted">
             <CardContent className="p-4">
               <h3 className="font-semibold mb-3 flex items-center gap-2">
-                <Sparkles size={18} className="text-pink-500" />
+                <Sparkles size={18} className="text-primary" />
                 Why Boost?
               </h3>
               <div className="space-y-2 text-sm">
@@ -87,7 +87,7 @@ export function BoostModal({ isOpen, onClose, listingId, onBoosted }: BoostModal
                   <span>3x more engagement on average</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <TrendingUp size={16} className="text-pink-500" />
+                  <TrendingUp size={16} className="text-primary" />
                   <span>50% faster selling time</span>
                 </div>
               </div>
@@ -104,7 +104,7 @@ export function BoostModal({ isOpen, onClose, listingId, onBoosted }: BoostModal
                   onClick={() => setSelectedDuration(duration.hours)}
                   className={`p-4 rounded-lg border-2 text-left transition-all ${
                     selectedDuration === duration.hours
-                      ? 'border-pink-500 bg-pink-50 dark:bg-pink-900/20'
+                      ? 'border-primary bg-primary/10'
                       : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
                   }`}
                 >
@@ -114,10 +114,10 @@ export function BoostModal({ isOpen, onClose, listingId, onBoosted }: BoostModal
                       <div className="text-xs text-gray-500">{duration.impressions} impressions</div>
                     </div>
                     {selectedDuration === duration.hours && (
-                      <Badge variant="default" className="bg-pink-500">Selected</Badge>
+                      <Badge variant="default" className="bg-primary">Selected</Badge>
                     )}
                   </div>
-                  <div className="font-bold text-pink-600 dark:text-pink-400">
+                  <div className="font-bold text-primary dark:text-primary">
                     Nu. {(duration.price / 100).toFixed(2)}
                   </div>
                 </button>
@@ -141,7 +141,7 @@ export function BoostModal({ isOpen, onClose, listingId, onBoosted }: BoostModal
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600 dark:text-gray-400">Total cost:</span>
-                <span className="font-bold text-pink-600 dark:text-pink-400">
+                <span className="font-bold text-primary dark:text-primary">
                   Nu. {(selectedPackage.price / 100).toFixed(2)}
                 </span>
               </div>
@@ -164,7 +164,7 @@ export function BoostModal({ isOpen, onClose, listingId, onBoosted }: BoostModal
           <Button
             onClick={handleBoost}
             disabled={isPending}
-            className="bg-gradient-to-r from-pink-500 to-purple-500"
+            className="bg-primary"
           >
             {isPending ? (
               'Processing...'

@@ -1,10 +1,10 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
+import { createClient } from '@/lib/supabase/server'
+
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
   try {
-    const supabase = createRouteHandlerClient({ cookies })
+    const supabase = await createClient()
     const { searchParams } = new URL(request.url)
     const listingId = searchParams.get('listing_id')
 
@@ -59,6 +59,7 @@ export async function GET(request: Request) {
     return NextResponse.json({
       success: true,
       data: conversationsWithCounts,
+      currentUserId: user.id,
       count: conversationsWithCounts.length
     })
   } catch (error) {
@@ -72,7 +73,7 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const supabase = createRouteHandlerClient({ cookies })
+    const supabase = await createClient()
     const body = await request.json()
     const { listing_id, seller_id } = body
 

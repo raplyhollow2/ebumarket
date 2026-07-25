@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AdminQueueClient } from "@/app/admin/admin-queue-client";
 import { AdminLoginGate } from "@/app/admin/admin-login-gate";
+import { AdminShell } from "@/components/admin/AdminShell";
 import { createClient } from "@/lib/supabase/server";
 import { getViewerAccess } from "@/lib/settings";
 import type { ListingWithPhotos } from "@/lib/types";
@@ -52,36 +53,16 @@ export default async function AdminPage() {
   ]);
 
   return (
-    <div className="mx-auto min-h-dvh max-w-3xl px-4 py-6">
-      <div className="mb-6 flex items-center justify-between gap-3">
-        <div>
-          <h1 className="font-[family-name:var(--font-display)] text-3xl font-semibold">
-            Approval
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Review photos, then Approve or Reject. Pending:{" "}
-            {(listings ?? []).length}
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-3 text-sm">
-          <Link href="/admin/transactions" className="underline">
-            Transactions
-          </Link>
-          {isAdmin ? (
-            <Link href="/admin/settings" className="underline">
-              Settings
-            </Link>
-          ) : null}
-          <Link href="/" className="underline">
-            App
-          </Link>
-        </div>
-      </div>
+    <AdminShell title="Approval queue">
+      <p className="mb-4 text-sm text-muted-foreground">
+        Review photos, then Approve or Reject. Pending:{" "}
+        {(listings ?? []).length}
+      </p>
       <AdminQueueClient
         listings={(listings ?? []) as QueueItem[]}
         history={(history ?? []) as QueueItem[]}
         adminId={user.id}
       />
-    </div>
+    </AdminShell>
   );
 }
