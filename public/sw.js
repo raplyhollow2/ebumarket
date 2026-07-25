@@ -1,5 +1,5 @@
 /* Zyra PWA service worker */
-const CACHE = "zyra-v2";
+const CACHE = "zyra-v3";
 const PRECACHE = [
   "/icons/icon-192.png",
   "/icons/icon-512.png",

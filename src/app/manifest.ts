@@ -10,10 +10,11 @@ export default function manifest(): MetadataRoute.Manifest {
     start_url: "/?source=pwa",
     scope: "/",
     display: "standalone",
-    orientation: "portrait-primary",
     background_color: "#f7f4ef",
     theme_color: "#1c3024",
     categories: ["shopping", "lifestyle", "social"],
+    // Keep false so Chrome prefers installing this web app
+    prefer_related_applications: false,
     icons: [
       {
         src: "/icons/icon-192.png",

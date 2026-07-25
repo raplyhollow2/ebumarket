@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Fraunces, DM_Sans } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { ServiceWorkerRegister } from "@/components/pwa/ServiceWorkerRegister";
+import { PWA_BOOT_SCRIPT } from "@/lib/pwa-install";
 import "./globals.css";
 
 const display = Fraunces({
@@ -55,6 +56,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${display.variable} ${sans.variable}`}>
+      <head>
+        {/* Capture beforeinstallprompt before React hydrates (Chrome fires once). */}
+        <script dangerouslySetInnerHTML={{ __html: PWA_BOOT_SCRIPT }} />
+      </head>
       <body className="min-h-dvh bg-[radial-gradient(ellipse_at_top,_#f3efe6_0%,_#ebe4d6_45%,_#e2ddd2_100%)] font-sans text-foreground antialiased">
         {children}
         <Toaster richColors position="top-center" />

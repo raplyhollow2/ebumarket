@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { InstallPwaCard } from "@/components/pwa/InstallPwaCard";
 import { createClient } from "@/lib/supabase/client";
 import type { MeetupPoint, Profile } from "@/lib/types";
 
@@ -80,25 +81,7 @@ export function ProfileClient({
 
   return (
     <div className="space-y-6">
-      <div className="rounded-2xl bg-card p-4 ring-1 ring-border/60">
-        <p className="text-sm font-medium">Install Zyra app</p>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Phone: look for the Install banner, or Safari Share → Add to Home
-          Screen. Android Chrome: menu ⋮ → Install app.
-        </p>
-        <Button
-          type="button"
-          size="sm"
-          variant="outline"
-          className="mt-3"
-          onClick={() => {
-            localStorage.removeItem("zyra-pwa-dismissed");
-            toast.message("Reload the page to see the install tip again");
-          }}
-        >
-          Show install tip again
-        </Button>
-      </div>
+      <InstallPwaCard />
 
       <div className="flex items-center justify-between gap-3">
         <p className="text-sm text-muted-foreground">
